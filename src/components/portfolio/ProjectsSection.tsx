@@ -14,33 +14,40 @@ interface Project {
 
 const projects: Project[] = [
   {
+    title: "CatalogAI – AI Product Catalog",
+    description:
+      "AI-powered product catalog system with automatic categorization, smart tagging, relevance-ranked search, and a recommendation engine. Secure image storage with AWS S3 and role-based auth.",
+    tech: ["React", "Spring Boot", "PostgreSQL", "AWS S3", "AI/ML"],
+    impact: "Automated product categorization",
+  },
+  {
+    title: "TenderFlow AI",
+    description:
+      "KI-driven tender management software that automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade. Turns weeks of work into a few clicks.",
+    tech: ["React", "Spring Boot", "AI/NLP", "PostgreSQL", "REST API"],
+    impact: "Weeks → minutes for tender processing",
+  },
+  {
+    title: "Mind Platform – Risk Management",
+    description:
+      "Municipal risk management system deployed for municipalities in Oman and Doha. Engineered scalable backend services and integrated with modern frontends for real-time dashboards.",
+    tech: ["Java Spring Boot", "React", "Angular", "PostgreSQL", "AWS"],
+    impact: "Deployed across Gulf municipalities",
+  },
+  {
     title: "Kaufda & Bonial Console",
     description:
-      "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Designed custom ReactJS components for performance and streamlined workflows.",
+      "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Designed custom ReactJS components for performance.",
     tech: ["React", "TypeScript", "Java Spring Boot", "CI/CD"],
     impact: "2 platforms migrated to TS",
-  },
-  {
-    title: "Banking System Dashboard",
-    description:
-      "Developed secure, high-performance RESTful APIs for banking systems with Spring Security. Integrated with ReactJS/Angular frontends for real-time dashboard views.",
-    tech: ["Java Spring Boot", "Spring Security", "React", "PostgreSQL"],
-    impact: "Secure financial APIs at scale",
-  },
-  {
-    title: "Go Rent Car Platform",
-    description:
-      "End-to-end car rental platform with RESTful APIs, React/Angular frontends. Managed CI/CD on AWS using Docker, Jenkins, SonarQube, and GitHub Actions.",
-    tech: ["React", "Angular", "Java Spring Boot", "Docker", "AWS"],
-    impact: "Full CI/CD pipeline",
   },
 ];
 
 const otherProjects = [
+  { title: "Banking System Dashboard", description: "Secure high-performance APIs for banking with Spring Security and React/Angular dashboards.", tech: ["Spring Boot", "Spring Security", "React"] },
+  { title: "Go Rent Car Platform", description: "End-to-end car rental platform with CI/CD on AWS using Docker and Jenkins.", tech: ["React", "Spring Boot", "Docker", "AWS"] },
   { title: "Dwaya – Medicine Delivery", description: "Full-stack medicine delivery app with ReactJS and NestJS backend.", tech: ["React", "NestJS", "MongoDB"] },
   { title: "ChadiAcademy", description: "Educational platform for web dev mentorship with video content.", tech: ["React", "Angular", "YouTube"] },
-  { title: "Yanyi ERP Integration", description: "Odoo ERP integration with custom features and DevOps.", tech: ["Odoo", "Spring Boot", "CI/CD"] },
-  { title: "E-Commerce Backend", description: "Scalable microservices replacing legacy e-commerce systems.", tech: ["Java", "Microservices", "Docker"] },
   { title: "PetroServCatering", description: "Full-stack platform with Spring Boot services and Angular.", tech: ["Spring Boot", "Angular", "PostgreSQL"] },
   { title: "Android App (ITGate)", description: "Android app with RxJS reactive data flows and Firebase.", tech: ["Android", "Kotlin", "Firebase"] },
 ];
