@@ -5,7 +5,7 @@ const ContactSection = () => {
   return (
     <section id="contact" className="py-24">
       <div className="container mx-auto px-6 max-w-2xl text-center">
-        <SectionHeading number="04" title="Get In Touch" />
+        <SectionHeading number="05" title="Get In Touch" />
 
         <p className="text-muted-foreground text-lg leading-relaxed mb-10">
           I'm currently open to new opportunities and always interested in
@@ -14,7 +14,7 @@ const ContactSection = () => {
         </p>
 
         <a
-          href="mailto:alex@example.com"
+          href="mailto:chadi.troudi@example.com"
           className="inline-flex items-center gap-2 border border-primary text-primary font-mono px-8 py-3 rounded-md hover:bg-primary/10 transition-colors animate-pulse-glow"
         >
           <Mail size={18} />
@@ -22,10 +22,10 @@ const ContactSection = () => {
         </a>
 
         <div className="flex items-center justify-center gap-6 mt-12">
-          <SocialIcon href="https://github.com" icon={<Github size={20} />} label="GitHub" />
-          <SocialIcon href="https://linkedin.com" icon={<Linkedin size={20} />} label="LinkedIn" />
+          <SocialIcon href="https://github.com/chaditroudi" icon={<Github size={20} />} label="GitHub" />
+          <SocialIcon href="https://www.linkedin.com/in/chaditroudi" icon={<Linkedin size={20} />} label="LinkedIn" />
           <SocialIcon href="https://twitter.com" icon={<Twitter size={20} />} label="Twitter" />
-          <SocialIcon href="mailto:alex@example.com" icon={<Mail size={20} />} label="Email" />
+          <SocialIcon href="mailto:chadi.troudi@example.com" icon={<Mail size={20} />} label="Email" />
         </div>
       </div>
     </section>
@@ -33,13 +33,7 @@ const ContactSection = () => {
 };
 
 const SocialIcon = ({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={label}
-    className="text-muted-foreground hover:text-primary hover:-translate-y-1 transition-all"
-  >
+  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="text-muted-foreground hover:text-primary hover:-translate-y-1 transition-all">
     {icon}
   </a>
 );
