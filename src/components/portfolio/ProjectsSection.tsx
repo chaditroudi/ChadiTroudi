@@ -7,6 +7,7 @@ interface Project {
   title: string;
   description: string;
   tech: string[];
+  company: string;
   github?: string;
   live?: string;
   impact?: string;
@@ -15,6 +16,7 @@ interface Project {
 const projects: Project[] = [
   {
     title: "CatalogAI – AI Product Catalog",
+    company: "Yanyi",
     description:
       "AI-powered product catalog system with automatic categorization, smart tagging, relevance-ranked search, and a recommendation engine. Secure image storage with AWS S3 and role-based auth.",
     tech: ["React", "Spring Boot", "PostgreSQL", "AWS S3", "AI/ML"],
@@ -22,6 +24,7 @@ const projects: Project[] = [
   },
   {
     title: "TenderFlow AI",
+    company: "Yanyi",
     description:
       "KI-driven tender management software that automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade. Turns weeks of work into a few clicks.",
     tech: ["React", "Spring Boot", "AI/NLP", "PostgreSQL", "REST API"],
@@ -29,6 +32,7 @@ const projects: Project[] = [
   },
   {
     title: "Mind Platform – Risk Management",
+    company: "AlMergab",
     description:
       "Municipal risk management system deployed for municipalities in Oman and Doha. Engineered scalable backend services and integrated with modern frontends for real-time dashboards.",
     tech: ["Java Spring Boot", "React", "Angular", "PostgreSQL", "AWS"],
@@ -36,6 +40,7 @@ const projects: Project[] = [
   },
   {
     title: "Kaufda & Bonial Console",
+    company: "Bonial Germany",
     description:
       "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Designed custom ReactJS components for performance.",
     tech: ["React", "TypeScript", "Java Spring Boot", "CI/CD"],
@@ -43,13 +48,20 @@ const projects: Project[] = [
   },
 ];
 
-const otherProjects = [
-  { title: "Banking System Dashboard", description: "Secure high-performance APIs for banking with Spring Security and React/Angular dashboards.", tech: ["Spring Boot", "Spring Security", "React"] },
-  { title: "Go Rent Car Platform", description: "End-to-end car rental platform with CI/CD on AWS using Docker and Jenkins.", tech: ["React", "Spring Boot", "Docker", "AWS"] },
-  { title: "Dwaya – Medicine Delivery", description: "Full-stack medicine delivery app with ReactJS and NestJS backend.", tech: ["React", "NestJS", "MongoDB"] },
-  { title: "ChadiAcademy", description: "Educational platform for web dev mentorship with video content.", tech: ["React", "Angular", "YouTube"] },
-  { title: "PetroServCatering", description: "Full-stack platform with Spring Boot services and Angular.", tech: ["Spring Boot", "Angular", "PostgreSQL"] },
-  { title: "Android App (ITGate)", description: "Android app with RxJS reactive data flows and Firebase.", tech: ["Android", "Kotlin", "Firebase"] },
+interface OtherProject {
+  title: string;
+  description: string;
+  tech: string[];
+  company: string;
+}
+
+const otherProjects: OtherProject[] = [
+  { title: "Banking System Dashboard", company: "AlMergab", description: "Secure high-performance APIs for banking with Spring Security and React/Angular dashboards.", tech: ["Spring Boot", "Spring Security", "React"] },
+  { title: "Go Rent Car Platform", company: "AlMergab", description: "End-to-end car rental platform with CI/CD on AWS using Docker and Jenkins.", tech: ["React", "Spring Boot", "Docker", "AWS"] },
+  { title: "Dwaya – Medicine Delivery", company: "Dwaya", description: "Full-stack medicine delivery app with ReactJS and NestJS backend.", tech: ["React", "NestJS", "MongoDB"] },
+  { title: "ChadiAcademy", company: "Self-founded", description: "Educational platform for web dev mentorship with video content.", tech: ["React", "Angular", "YouTube"] },
+  { title: "PetroServCatering", company: "SSET", description: "Full-stack platform with Spring Boot services and Angular.", tech: ["Spring Boot", "Angular", "PostgreSQL"] },
+  { title: "Android App", company: "ITGate", description: "Android app with RxJS reactive data flows and Firebase.", tech: ["Android", "Kotlin", "Firebase"] },
 ];
 
 const ProjectsSection = () => {
@@ -70,11 +82,14 @@ const ProjectsSection = () => {
               >
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
+                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                         <Folder className="text-primary" size={20} />
                       </div>
-                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{project.title}</h3>
+                      <div>
+                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{project.title}</h3>
+                        <p className="text-xs font-mono text-muted-foreground">@ {project.company}</p>
+                      </div>
                     </div>
                     <p className="text-muted-foreground leading-relaxed mb-4 max-w-xl">{project.description}</p>
                     <div className="flex flex-wrap gap-2">
@@ -105,7 +120,8 @@ const ProjectsSection = () => {
                 whileHover={{ y: -4 }}
                 className="glass rounded-xl p-6 flex flex-col hover:border-primary/20 transition-all duration-300 group h-full"
               >
-                <h4 className="text-foreground font-semibold mb-2 group-hover:text-primary transition-colors">{p.title}</h4>
+                <h4 className="text-foreground font-semibold mb-1 group-hover:text-primary transition-colors">{p.title}</h4>
+                <p className="text-xs font-mono text-primary/70 mb-2">@ {p.company}</p>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">{p.description}</p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {p.tech.map((t) => (
