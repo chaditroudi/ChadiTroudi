@@ -1,4 +1,5 @@
 import AnimatedSection from "./AnimatedSection";
+import profileImg from "@/assets/profile.jpg";
 
 const AboutSection = () => {
   return (
@@ -57,18 +58,15 @@ const AboutSection = () => {
 
           <AnimatedSection delay={0.3} direction="right">
             <div className="relative group mx-auto md:mx-0">
-              <div className="w-64 h-64 rounded-lg overflow-hidden relative z-10 bg-secondary">
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center space-y-3">
-                    <div className="w-24 h-24 mx-auto rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center text-primary text-3xl font-bold group-hover:border-primary/60 transition-colors">
-                      CT
-                    </div>
-                    <p className="text-foreground font-medium">Chadi Troudi</p>
-                    <p className="text-muted-foreground text-xs font-mono">Full-Stack Engineer</p>
-                  </div>
-                </div>
+              <div className="w-64 h-72 rounded-lg overflow-hidden relative z-10">
+                <img
+                  src={profileImg}
+                  alt="Chadi Troudi - Full-Stack Engineer"
+                  className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors duration-500" />
               </div>
-              <div className="absolute top-4 left-4 w-64 h-64 border-2 border-primary/40 rounded-lg -z-0 group-hover:top-2 group-hover:left-2 transition-all duration-500" />
+              <div className="absolute top-4 left-4 w-64 h-72 border-2 border-primary/40 rounded-lg -z-0 group-hover:top-2 group-hover:left-2 transition-all duration-500" />
             </div>
           </AnimatedSection>
         </div>
