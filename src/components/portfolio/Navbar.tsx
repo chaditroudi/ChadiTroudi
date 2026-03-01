@@ -18,7 +18,6 @@ const Navbar = () => {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
-
       const sections = navLinks.map((l) => l.href.slice(1));
       for (const id of [...sections].reverse()) {
         const el = document.getElementById(id);
@@ -38,12 +37,13 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass" : ""
+        scrolled ? "glass shadow-lg" : ""
       }`}
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
-        <a href="#" className="text-xl font-bold font-mono text-gradient">
-          {"<CT />"}
+        <a href="#" className="text-xl font-black tracking-tight">
+          <span className="text-gradient">CT</span>
+          <span className="text-primary">.</span>
         </a>
 
         <ul className="hidden md:flex items-center gap-1">
@@ -56,10 +56,10 @@ const Navbar = () => {
             >
               <a
                 href={l.href}
-                className={`text-sm px-3 py-2 rounded-md font-mono transition-all duration-200 ${
+                className={`text-sm px-4 py-2 rounded-full transition-all duration-200 ${
                   activeSection === l.href.slice(1)
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "text-primary bg-primary/10 font-medium"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {l.label}
@@ -74,7 +74,7 @@ const Navbar = () => {
             <a
               href="/resume.pdf"
               target="_blank"
-              className="text-sm font-mono border border-primary text-primary px-4 py-2 rounded-md hover:bg-primary/10 transition-all duration-200 ml-2"
+              className="text-sm font-semibold bg-primary text-primary-foreground px-5 py-2 rounded-full hover:shadow-[0_0_20px_-5px_hsl(45_100%_60%/0.4)] transition-all duration-200 ml-2"
             >
               Resume
             </a>
@@ -110,7 +110,7 @@ const Navbar = () => {
                   <a
                     href={l.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-muted-foreground hover:text-primary transition-colors font-mono"
+                    className="text-muted-foreground hover:text-primary transition-colors font-medium"
                   >
                     {l.label}
                   </a>

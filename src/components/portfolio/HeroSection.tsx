@@ -1,137 +1,146 @@
-import { ArrowDown, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import profileImg from "@/assets/profile.jpg";
+import bannerImg from "@/assets/banner.jpeg";
 
 const container = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
 
 const HeroSection = () => {
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden" aria-label="Hero">
-      {/* Grid pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(hsl(160 84% 50%) 1px, transparent 1px), linear-gradient(90deg, hsl(160 84% 50%) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
+    <section className="min-h-screen relative overflow-hidden flex items-center" aria-label="Hero">
+      {/* Background image with overlay */}
+      <div className="absolute inset-0">
+        <img
+          src={bannerImg}
+          alt=""
+          className="w-full h-full object-cover opacity-[0.07]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+      </div>
 
-      {/* Animated glow blobs */}
+      {/* Warm glow */}
       <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.04, 0.08, 0.04] }}
+        animate={{ opacity: [0.04, 0.08, 0.04] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-primary rounded-full blur-[160px] pointer-events-none"
-      />
-      <motion.div
-        animate={{ scale: [1.2, 1, 1.2], opacity: [0.03, 0.06, 0.03] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-accent rounded-full blur-[140px] pointer-events-none"
+        className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-primary rounded-full blur-[200px] pointer-events-none"
       />
 
       <div className="container mx-auto px-6 relative z-10">
-        <motion.div
-          className="max-w-3xl"
-          variants={container}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div variants={item} className="flex items-center gap-2 mb-6">
-            <div className="h-px w-8 bg-primary" />
-            <p className="text-primary font-mono text-sm tracking-wider">
-              Hello, my name is
-            </p>
+        <div className="grid lg:grid-cols-[1fr_auto] gap-16 items-center max-w-6xl mx-auto">
+          {/* Text content */}
+          <motion.div variants={container} initial="hidden" animate="visible">
+            <motion.p variants={item} className="text-primary font-mono text-sm tracking-[0.2em] uppercase mb-6">
+              Full-Stack Engineer
+            </motion.p>
+
+            <motion.h1 variants={item} className="text-5xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight mb-6">
+              Chadi
+              <br />
+              <span className="text-gradient">Troudi</span>
+              <span className="text-primary">.</span>
+            </motion.h1>
+
+            <motion.p variants={item} className="text-muted-foreground max-w-lg text-lg leading-relaxed mb-8">
+              Building retail tech at <span className="text-foreground font-medium">Bonial Germany</span> with 
+              React/TypeScript & Java Spring Boot. Shipped products across{" "}
+              <span className="text-foreground">banking, health, mobility & e-commerce</span>.
+            </motion.p>
+
+            <motion.div variants={item} className="flex flex-wrap items-center gap-4 mb-12">
+              <a
+                href="#projects"
+                className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-sm px-7 py-3.5 rounded-full hover:shadow-[0_0_40px_-5px_hsl(45_100%_60%/0.5)] transition-all duration-300"
+              >
+                View My Work
+                <ArrowDown size={16} className="group-hover:translate-y-0.5 transition-transform" />
+              </a>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-sm px-7 py-3.5 rounded-full hover:border-primary/50 hover:text-primary transition-all duration-300"
+              >
+                Get In Touch
+              </a>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div variants={item} className="flex flex-wrap gap-10">
+              {[
+                { value: "5+", label: "Years" },
+                { value: "6", label: "Companies" },
+                { value: "10+", label: "Projects" },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <p className="text-3xl font-black text-gradient">{stat.value}</p>
+                  <p className="text-muted-foreground text-xs font-mono mt-1 uppercase tracking-wider">{stat.label}</p>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
 
-          <motion.h1 variants={item} className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 tracking-tight">
-            Chadi Troudi<span className="text-gradient">.</span>
-          </motion.h1>
-
-          <motion.h2 variants={item} className="text-2xl md:text-4xl lg:text-5xl font-bold text-muted-foreground mb-8">
-            Full-Stack Engineer
-          </motion.h2>
-
-          <motion.p variants={item} className="text-muted-foreground max-w-xl text-lg leading-relaxed mb-4">
-            Building retail tech at <span className="text-foreground font-medium">Bonial Germany</span> with 
-            React/TypeScript & Java Spring Boot. I've shipped products across{" "}
-            <span className="text-foreground">banking, health, mobility, e-commerce & education</span> — 
-            focused on clean architecture and measurable impact.
-          </motion.p>
-
-          <motion.div variants={item} className="flex items-center gap-2 text-muted-foreground text-sm font-mono mb-10">
-            <MapPin size={14} className="text-primary" />
-            Tunis, Tunisia · Open to opportunities
-          </motion.div>
-
-          <motion.div variants={item} className="flex flex-wrap items-center gap-4">
-            <a
-              href="#projects"
-              className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-mono text-sm px-6 py-3 rounded-lg hover:shadow-[0_0_30px_-5px_hsl(160_84%_50%/0.5)] transition-all duration-300"
-            >
-              View Projects
-              <ArrowDown size={16} className="group-hover:translate-y-0.5 transition-transform" />
-            </a>
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 border border-border text-foreground font-mono text-sm px-6 py-3 rounded-lg hover:border-primary/50 hover:text-primary transition-all duration-200"
-            >
-              Get In Touch
-            </a>
-            <div className="flex items-center gap-3 ml-2">
-              <SocialLink href="https://www.linkedin.com/in/chaditroudi" icon={<Linkedin size={18} />} label="LinkedIn" />
-              <SocialLink href="https://github.com/chaditroudi" icon={<Github size={18} />} label="GitHub" />
-              <SocialLink href="mailto:chadi.troudi@example.com" icon={<Mail size={18} />} label="Email" />
+          {/* Profile photo */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="hidden lg:block relative"
+          >
+            <div className="w-[340px] h-[420px] rounded-2xl overflow-hidden relative">
+              <img
+                src={profileImg}
+                alt="Chadi Troudi"
+                className="w-full h-full object-cover object-top"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+            </div>
+            {/* Decorative frame */}
+            <div className="absolute -top-3 -right-3 w-full h-full border-2 border-primary/20 rounded-2xl -z-10" />
+            <div className="absolute -bottom-3 -left-3 w-full h-full border border-primary/10 rounded-2xl -z-10" />
+            
+            {/* Social links floating */}
+            <div className="absolute -left-14 top-1/2 -translate-y-1/2 flex flex-col gap-4">
+              {[
+                { href: "https://www.linkedin.com/in/chaditroudi", icon: <Linkedin size={18} /> },
+                { href: "https://github.com/chaditroudi", icon: <Github size={18} /> },
+                { href: "mailto:chadi.troudi@example.com", icon: <Mail size={18} /> },
+              ].map((s, i) => (
+                <motion.a
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 + i * 0.1 }}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {s.icon}
+                </motion.a>
+              ))}
             </div>
           </motion.div>
-
-          {/* Stats bar */}
-          <motion.div variants={item} className="flex flex-wrap gap-8 mt-16 pt-8 border-t border-border">
-            {[
-              { value: "5+", label: "Years Experience" },
-              { value: "6+", label: "Companies" },
-              { value: "10+", label: "Projects Shipped" },
-              { value: "1.3K+", label: "LinkedIn Followers" },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <p className="text-2xl font-bold text-gradient">{stat.value}</p>
-                <p className="text-muted-foreground text-xs font-mono mt-1">{stat.label}</p>
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Scroll indicator */}
       <motion.div
         animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        transition={{ duration: 2.5, repeat: Infinity }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
-        <div className="w-5 h-8 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-1.5">
+        <div className="w-5 h-9 rounded-full border-2 border-muted-foreground/20 flex justify-center pt-2">
           <div className="w-1 h-2 rounded-full bg-primary" />
         </div>
       </motion.div>
     </section>
   );
 };
-
-const SocialLink = ({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={label}
-    className="text-muted-foreground hover:text-primary hover:-translate-y-0.5 transition-all duration-200 p-1"
-  >
-    {icon}
-  </a>
-);
 
 export default HeroSection;
