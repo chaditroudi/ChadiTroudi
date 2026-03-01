@@ -5,71 +5,65 @@ interface Project {
   title: string;
   description: string;
   tech: string[];
-  github: string;
-  live: string;
+  github?: string;
+  live?: string;
   featured: boolean;
 }
 
 const projects: Project[] = [
   {
-    title: "TaskFlow – Project Management App",
+    title: "Kaufda & Bonial Console",
     description:
-      "A full-stack Kanban-style project management tool with real-time collaboration, drag-and-drop boards, user authentication, and team workspaces. Built with WebSocket integration for live updates.",
-    tech: ["React", "Node.js", "PostgreSQL", "Socket.io", "Redis", "Docker"],
-    github: "https://github.com",
-    live: "https://example.com",
+      "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Designed custom ReactJS components for performance and streamlined workflows, with Java Spring Boot backend services.",
+    tech: ["React", "TypeScript", "Java Spring Boot", "CI/CD"],
     featured: true,
   },
   {
-    title: "ShopVerse – E-Commerce Platform",
+    title: "Banking System Dashboard",
     description:
-      "Full-featured e-commerce platform with product catalog, shopping cart, Stripe payment integration, order management, and admin dashboard. Includes search, filtering, and responsive design.",
-    tech: ["Next.js", "Express", "MongoDB", "Stripe", "AWS S3", "TypeScript"],
-    github: "https://github.com",
-    live: "https://example.com",
+      "Developed secure, high-performance RESTful APIs for banking systems with strong attention to data integrity and authentication using Spring Security. Integrated with ReactJS/Angular frontends for real-time dashboard views.",
+    tech: ["Java Spring Boot", "Spring Security", "React", "Angular", "PostgreSQL", "AWS"],
     featured: true,
   },
   {
-    title: "DevConnect – Developer Social Network",
+    title: "Go Rent Car – Car Rental Platform",
     description:
-      "A social platform for developers to share posts, comment, and collaborate. Features GitHub OAuth, markdown editor, notification system, and RESTful API with JWT authentication.",
-    tech: ["React", "Node.js", "PostgreSQL", "GraphQL", "JWT", "Tailwind"],
-    github: "https://github.com",
-    live: "https://example.com",
+      "Created RESTful APIs and integrated them with modern React/Angular frontends for a full-featured car rental platform. Managed CI/CD pipelines on AWS using Docker, Jenkins, SonarQube, and GitHub Actions.",
+    tech: ["React", "Angular", "Java Spring Boot", "Docker", "Jenkins", "AWS"],
     featured: true,
   },
 ];
 
 const otherProjects = [
   {
-    title: "CLI Task Tracker",
-    description: "A command-line productivity tool with time tracking, reports, and Pomodoro timer.",
-    tech: ["Node.js", "SQLite", "Chalk"],
+    title: "Dwaya – Medicine Delivery",
+    description: "Full-stack medicine home delivery app with ReactJS frontend and Node.js/NestJS backend, third-party API integrations, and responsive UX.",
+    tech: ["React", "NestJS", "MongoDB"],
   },
   {
-    title: "Weather Dashboard",
-    description: "Real-time weather app with 5-day forecasts, location search, and interactive maps.",
-    tech: ["React", "OpenWeather API", "Leaflet"],
+    title: "ChadiAcademy",
+    description: "Educational platform for web dev mentorship. Created video content on ReactJS, Angular, Symfony, PHP and built a developer community.",
+    tech: ["React", "Angular", "PHP", "YouTube"],
   },
   {
-    title: "Blog CMS",
-    description: "Headless CMS with markdown support, image upload, and SEO optimization tools.",
-    tech: ["Next.js", "Prisma", "PostgreSQL"],
+    title: "Yanyi ERP Integration",
+    description: "Integrated ERP solutions with Odoo and built custom features tailored to business needs, with DevOps and CI/CD pipeline implementation.",
+    tech: ["Odoo", "Java EE", "Spring Boot", "CI/CD"],
   },
   {
-    title: "Chat Application",
-    description: "Real-time messaging with rooms, file sharing, typing indicators, and read receipts.",
-    tech: ["React", "Socket.io", "MongoDB"],
+    title: "E-Commerce Backend",
+    description: "Designed and deployed scalable backend modules for e-commerce platforms using Java, replacing legacy systems with modern microservices.",
+    tech: ["Java", "Microservices", "Docker", "AWS"],
   },
   {
-    title: "Expense Tracker API",
-    description: "RESTful API with budgeting, recurring transactions, and CSV export features.",
-    tech: ["Express", "PostgreSQL", "Jest"],
+    title: "PetroServCatering Platform",
+    description: "Full-stack platform with Spring Boot RESTful services (JPA, Batch, MVC) and Angular frontend, built during SSET internship.",
+    tech: ["Spring Boot", "Angular", "PostgreSQL"],
   },
   {
-    title: "Portfolio Generator",
-    description: "Open-source tool that generates developer portfolios from GitHub profile data.",
-    tech: ["TypeScript", "GitHub API", "Handlebars"],
+    title: "Android Mobile App (ITGate)",
+    description: "Android app in Java with RxJS for reactive data flows, Material Design UI, and Firebase/GraphQL backend integration.",
+    tech: ["Android", "Java", "Kotlin", "Firebase"],
   },
 ];
 
@@ -99,8 +93,7 @@ const ProjectsSection = () => {
 const FeaturedProject = ({ project, index }: { project: Project; index: number }) => {
   const isEven = index % 2 === 0;
   return (
-    <div className={`relative grid md:grid-cols-12 items-center gap-4`}>
-      {/* Image placeholder */}
+    <div className="relative grid md:grid-cols-12 items-center gap-4">
       <div
         className={`md:col-span-7 ${isEven ? "md:col-start-1" : "md:col-start-6"} row-start-1 rounded-lg overflow-hidden bg-secondary h-64 md:h-80 relative group`}
       >
@@ -114,7 +107,6 @@ const FeaturedProject = ({ project, index }: { project: Project; index: number }
         </div>
       </div>
 
-      {/* Content */}
       <div
         className={`md:col-span-6 ${isEven ? "md:col-start-7 md:text-right" : "md:col-start-1 md:text-left"} row-start-1 relative z-20`}
       >
@@ -129,12 +121,16 @@ const FeaturedProject = ({ project, index }: { project: Project; index: number }
           ))}
         </ul>
         <div className={`flex items-center gap-4 ${isEven ? "md:justify-end" : ""}`}>
-          <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-primary transition-colors">
-            <Github size={20} />
-          </a>
-          <a href={project.live} target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-primary transition-colors">
-            <ExternalLink size={20} />
-          </a>
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-primary transition-colors">
+              <Github size={20} />
+            </a>
+          )}
+          {project.live && (
+            <a href={project.live} target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-primary transition-colors">
+              <ExternalLink size={20} />
+            </a>
+          )}
         </div>
       </div>
     </div>
@@ -145,9 +141,6 @@ const OtherProject = ({ title, description, tech }: { title: string; description
   <div className="card-gradient border border-border rounded-lg p-6 flex flex-col hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group">
     <div className="flex items-center justify-between mb-4">
       <Folder className="text-primary" size={28} />
-      <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-        <Github size={18} />
-      </a>
     </div>
     <h4 className="text-foreground font-semibold mb-2 group-hover:text-primary transition-colors">{title}</h4>
     <p className="text-muted-foreground text-sm leading-relaxed flex-1">{description}</p>

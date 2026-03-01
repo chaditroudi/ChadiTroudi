@@ -7,32 +7,33 @@ const AboutSection = () => {
         <div className="grid md:grid-cols-[3fr_2fr] gap-12 items-start">
           <div className="space-y-4 text-muted-foreground leading-relaxed">
             <p>
-              I'm a full-stack developer with 4+ years of experience building scalable web
-              applications. My journey started with tinkering on WordPress themes and evolved
-              into architecting complex distributed systems.
+              I'm a Full-Stack Engineer at <span className="text-foreground">Bonial Germany</span>, building retail tech with 
+              React/TypeScript on the front end and Java Spring Boot on the back end. With <span className="text-foreground">5+ years</span> of 
+              experience, I've shipped products across banking, health, mobility, e-commerce, and education.
             </p>
             <p>
-              I specialize in the React ecosystem on the frontend and Node.js on the backend,
-              with production experience deploying to AWS, Vercel, and Docker-based
-              environments. I care deeply about code quality, testing, and developer experience.
+              Previously at <span className="text-foreground">Yanyi</span>, I represented the team at <span className="text-foreground">Web Summit Qatar 2025</span>, 
+              showcasing our AI work. Across roles I've led migrations from JavaScript to TypeScript, created reusable 
+              React component libraries, and scaled back-end services on AWS/Docker with CI/CD.
             </p>
             <p>
-              When I'm not coding, you'll find me contributing to open-source, writing
-              technical blog posts, or mentoring junior developers.
+              I'm also the founder of <span className="text-foreground">ChadiAcademy</span>, an educational platform where I mentor 
+              developers and create content on web development and software engineering. I enjoy improving 
+              performance, reducing toil, and helping devs grow.
             </p>
 
             <div className="pt-4">
               <p className="text-foreground font-medium mb-3">Technologies I work with:</p>
               <ul className="grid grid-cols-2 gap-2 text-sm font-mono">
                 {[
-                  "TypeScript / JavaScript",
-                  "React & Next.js",
-                  "Node.js & Express",
+                  "React & TypeScript",
+                  "Java Spring Boot",
+                  "Angular",
+                  "Node.js & NestJS",
                   "PostgreSQL & MongoDB",
                   "Docker & AWS",
-                  "GraphQL & REST",
-                  "Git & CI/CD",
-                  "Tailwind CSS",
+                  "CI/CD & DevOps",
+                  "Odoo ERP",
                 ].map((tech) => (
                   <li key={tech} className="flex items-center gap-2">
                     <span className="text-primary">▹</span> {tech}
@@ -47,9 +48,9 @@ const AboutSection = () => {
               <div className="w-full h-full flex items-center justify-center text-muted-foreground font-mono text-sm">
                 <div className="text-center space-y-2">
                   <div className="w-20 h-20 mx-auto rounded-full bg-primary/20 flex items-center justify-center text-primary text-2xl font-bold">
-                    AC
+                    CT
                   </div>
-                  <p>Alex Chen</p>
+                  <p>Chadi Troudi</p>
                 </div>
               </div>
             </div>
