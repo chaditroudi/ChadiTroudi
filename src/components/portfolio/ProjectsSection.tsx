@@ -9,7 +9,6 @@ interface Project {
   tech: string[];
   github?: string;
   live?: string;
-  featured: boolean;
   impact?: string;
 }
 
@@ -17,92 +16,96 @@ const projects: Project[] = [
   {
     title: "Kaufda & Bonial Console",
     description:
-      "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Designed custom ReactJS components for performance and streamlined workflows, with Java Spring Boot backend services.",
+      "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Designed custom ReactJS components for performance and streamlined workflows.",
     tech: ["React", "TypeScript", "Java Spring Boot", "CI/CD"],
-    impact: "2 major platforms migrated to TypeScript",
-    featured: true,
+    impact: "2 platforms migrated to TS",
   },
   {
     title: "Banking System Dashboard",
     description:
-      "Developed secure, high-performance RESTful APIs for banking systems with strong attention to data integrity and authentication using Spring Security. Integrated with ReactJS/Angular frontends for real-time dashboard views.",
-    tech: ["Java Spring Boot", "Spring Security", "React", "Angular", "PostgreSQL", "AWS"],
-    impact: "Secure APIs handling financial data at scale",
-    featured: true,
+      "Developed secure, high-performance RESTful APIs for banking systems with Spring Security. Integrated with ReactJS/Angular frontends for real-time dashboard views.",
+    tech: ["Java Spring Boot", "Spring Security", "React", "PostgreSQL"],
+    impact: "Secure financial APIs at scale",
   },
   {
-    title: "Go Rent Car – Car Rental Platform",
+    title: "Go Rent Car Platform",
     description:
-      "Created RESTful APIs and integrated them with modern React/Angular frontends for a full-featured car rental platform. Managed CI/CD pipelines on AWS using Docker, Jenkins, SonarQube, and GitHub Actions.",
-    tech: ["React", "Angular", "Java Spring Boot", "Docker", "Jenkins", "AWS"],
-    impact: "End-to-end CI/CD with automated quality gates",
-    featured: true,
+      "End-to-end car rental platform with RESTful APIs, React/Angular frontends. Managed CI/CD on AWS using Docker, Jenkins, SonarQube, and GitHub Actions.",
+    tech: ["React", "Angular", "Java Spring Boot", "Docker", "AWS"],
+    impact: "Full CI/CD pipeline",
   },
 ];
 
 const otherProjects = [
-  {
-    title: "Dwaya – Medicine Delivery",
-    description:
-      "Full-stack medicine home delivery app with ReactJS frontend and Node.js/NestJS backend, third-party API integrations, and responsive UX.",
-    tech: ["React", "NestJS", "MongoDB"],
-  },
-  {
-    title: "ChadiAcademy",
-    description:
-      "Educational platform for web dev mentorship. Created video content on ReactJS, Angular, Symfony, PHP and built a developer community.",
-    tech: ["React", "Angular", "PHP", "YouTube"],
-  },
-  {
-    title: "Yanyi ERP Integration",
-    description:
-      "Integrated ERP solutions with Odoo and built custom features tailored to business needs, with DevOps and CI/CD pipeline implementation.",
-    tech: ["Odoo", "Java EE", "Spring Boot", "CI/CD"],
-  },
-  {
-    title: "E-Commerce Backend",
-    description:
-      "Designed and deployed scalable backend modules for e-commerce platforms using Java, replacing legacy systems with modern microservices.",
-    tech: ["Java", "Microservices", "Docker", "AWS"],
-  },
-  {
-    title: "PetroServCatering Platform",
-    description:
-      "Full-stack platform with Spring Boot RESTful services (JPA, Batch, MVC) and Angular frontend, built during SSET internship.",
-    tech: ["Spring Boot", "Angular", "PostgreSQL"],
-  },
-  {
-    title: "Android Mobile App (ITGate)",
-    description:
-      "Android app in Java with RxJS for reactive data flows, Material Design UI, and Firebase/GraphQL backend integration.",
-    tech: ["Android", "Java", "Kotlin", "Firebase"],
-  },
+  { title: "Dwaya – Medicine Delivery", description: "Full-stack medicine delivery app with ReactJS and NestJS backend.", tech: ["React", "NestJS", "MongoDB"] },
+  { title: "ChadiAcademy", description: "Educational platform for web dev mentorship with video content.", tech: ["React", "Angular", "YouTube"] },
+  { title: "Yanyi ERP Integration", description: "Odoo ERP integration with custom features and DevOps.", tech: ["Odoo", "Spring Boot", "CI/CD"] },
+  { title: "E-Commerce Backend", description: "Scalable microservices replacing legacy e-commerce systems.", tech: ["Java", "Microservices", "Docker"] },
+  { title: "PetroServCatering", description: "Full-stack platform with Spring Boot services and Angular.", tech: ["Spring Boot", "Angular", "PostgreSQL"] },
+  { title: "Android App (ITGate)", description: "Android app with RxJS reactive data flows and Firebase.", tech: ["Android", "Kotlin", "Firebase"] },
 ];
 
 const ProjectsSection = () => {
   return (
-    <section id="projects" className="py-24 relative">
-      <div className="section-divider mb-24" />
-      <div className="container mx-auto px-6 max-w-5xl">
+    <section id="projects" className="py-28 relative">
+      <div className="section-divider mb-28" />
+      <div className="container mx-auto px-6 max-w-6xl">
         <AnimatedSection>
-          <SectionHeading number="02" title="Featured Projects" />
+          <SectionHeading number="02" title="Featured Work" />
         </AnimatedSection>
 
-        <div className="space-y-20 mb-24">
+        <div className="space-y-6 mb-24">
           {projects.map((project, i) => (
             <AnimatedSection key={project.title} delay={i * 0.1}>
-              <FeaturedProject project={project} index={i} />
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="group glass rounded-2xl p-8 md:p-10 hover:border-primary/30 transition-all duration-500"
+              >
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <Folder className="text-primary" size={20} />
+                      </div>
+                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{project.title}</h3>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed mb-4 max-w-xl">{project.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {project.tech.map((t) => (
+                        <span key={t} className="text-xs font-mono bg-muted px-2.5 py-1 rounded-full text-muted-foreground">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                  {project.impact && (
+                    <div className="shrink-0 flex items-center gap-2 bg-primary/10 text-primary text-xs font-mono px-4 py-2 rounded-full whitespace-nowrap">
+                      <ArrowUpRight size={14} />
+                      {project.impact}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             </AnimatedSection>
           ))}
         </div>
 
         <AnimatedSection>
-          <h3 className="text-center text-xl font-bold mb-8">Other Noteworthy Projects</h3>
+          <h3 className="text-center text-xl font-bold mb-10">Other Projects</h3>
         </AnimatedSection>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {otherProjects.map((p, i) => (
             <AnimatedSection key={p.title} delay={i * 0.05}>
-              <OtherProject {...p} />
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="glass rounded-xl p-6 flex flex-col hover:border-primary/20 transition-all duration-300 group h-full"
+              >
+                <h4 className="text-foreground font-semibold mb-2 group-hover:text-primary transition-colors">{p.title}</h4>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1">{p.description}</p>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {p.tech.map((t) => (
+                    <span key={t} className="text-xs font-mono bg-muted/50 px-2 py-0.5 rounded-full text-muted-foreground">{t}</span>
+                  ))}
+                </div>
+              </motion.div>
             </AnimatedSection>
           ))}
         </div>
@@ -110,94 +113,5 @@ const ProjectsSection = () => {
     </section>
   );
 };
-
-const FeaturedProject = ({ project, index }: { project: Project; index: number }) => {
-  const isEven = index % 2 === 0;
-  return (
-    <div className="relative grid md:grid-cols-12 items-center gap-4 group">
-      <div
-        className={`md:col-span-7 ${isEven ? "md:col-start-1" : "md:col-start-6"} row-start-1 rounded-xl overflow-hidden bg-secondary h-64 md:h-80 relative`}
-      >
-        <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/0 transition-colors duration-500 z-10" />
-        <div className="absolute inset-0 dot-pattern opacity-30" />
-        <div className="w-full h-full flex items-center justify-center relative z-20">
-          <div className="text-center space-y-3 p-6">
-            <div className="w-16 h-16 mx-auto rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 group-hover:border-primary/40 transition-all duration-500">
-              <Folder className="text-primary" size={28} />
-            </div>
-            <p className="text-foreground font-display font-semibold text-lg">{project.title}</p>
-            <p className="text-muted-foreground text-xs max-w-xs font-mono">{project.tech.join(" · ")}</p>
-            {project.impact && (
-              <div className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-mono px-3 py-1 rounded-full">
-                <ArrowUpRight size={12} /> {project.impact}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div
-        className={`md:col-span-6 ${isEven ? "md:col-start-7 md:text-right" : "md:col-start-1 md:text-left"} row-start-1 relative z-20`}
-      >
-        <p className="text-primary font-mono text-xs mb-1 tracking-wider uppercase">Featured Project</p>
-        <h3 className="text-xl font-bold mb-4 group-hover:text-gradient transition-all">{project.title}</h3>
-        <div className="glass p-6 rounded-xl mb-4">
-          <p className="text-muted-foreground text-sm leading-relaxed">{project.description}</p>
-        </div>
-        <ul
-          className={`flex flex-wrap gap-3 text-xs font-mono text-muted-foreground mb-4 ${isEven ? "md:justify-end" : ""}`}
-        >
-          {project.tech.map((t) => (
-            <li key={t} className="bg-muted px-2 py-0.5 rounded">{t}</li>
-          ))}
-        </ul>
-        <div className={`flex items-center gap-4 ${isEven ? "md:justify-end" : ""}`}>
-          {project.github && (
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary transition-colors"
-              aria-label={`${project.title} GitHub`}
-            >
-              <Github size={20} />
-            </a>
-          )}
-          {project.live && (
-            <a
-              href={project.live}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary transition-colors"
-              aria-label={`${project.title} live site`}
-            >
-              <ExternalLink size={20} />
-            </a>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const OtherProject = ({ title, description, tech }: { title: string; description: string; tech: string[] }) => (
-  <motion.div
-    whileHover={{ y: -6 }}
-    className="glass rounded-xl p-6 flex flex-col hover:border-primary/30 transition-colors duration-300 group h-full"
-  >
-    <div className="flex items-center justify-between mb-4">
-      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-        <Folder className="text-primary" size={20} />
-      </div>
-    </div>
-    <h4 className="text-foreground font-semibold mb-2 group-hover:text-primary transition-colors">{title}</h4>
-    <p className="text-muted-foreground text-sm leading-relaxed flex-1">{description}</p>
-    <ul className="flex flex-wrap gap-2 mt-4 text-xs font-mono text-muted-foreground">
-      {tech.map((t) => (
-        <li key={t} className="bg-muted/50 px-2 py-0.5 rounded">{t}</li>
-      ))}
-    </ul>
-  </motion.div>
-);
 
 export default ProjectsSection;
