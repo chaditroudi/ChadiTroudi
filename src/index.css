@@ -24,7 +24,7 @@
     --muted: 220 14% 12%;
     --muted-foreground: 215 14% 50%;
 
-    --accent: 160 84% 50%;
+    --accent: 190 90% 50%;
     --accent-foreground: 220 20% 4%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,9 +39,12 @@
     --gradient-primary: linear-gradient(135deg, hsl(160 84% 50%), hsl(190 90% 50%));
     --gradient-card: linear-gradient(145deg, hsl(220 18% 10%), hsl(220 18% 6%));
     --gradient-hero: linear-gradient(180deg, hsl(220 20% 6%) 0%, hsl(220 20% 2%) 100%);
-    
+    --gradient-glass: linear-gradient(135deg, hsl(220 18% 12% / 0.6), hsl(220 18% 8% / 0.3));
+
     --shadow-glow: 0 0 40px -10px hsl(160 84% 50% / 0.3);
+    --shadow-glow-lg: 0 0 60px -10px hsl(160 84% 50% / 0.4);
     --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
+    --shadow-card-hover: 0 8px 40px -8px hsl(160 84% 50% / 0.15);
 
     --font-display: 'Space Grotesk', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -74,6 +77,15 @@
   code, pre {
     font-family: var(--font-mono);
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background-color: hsl(160 84% 50% / 0.2);
+    color: hsl(160 84% 50%);
+  }
 }
 
 @layer utilities {
@@ -86,7 +98,46 @@
     box-shadow: var(--shadow-glow);
   }
 
+  .glow-lg {
+    box-shadow: var(--shadow-glow-lg);
+  }
+
   .card-gradient {
     background: var(--gradient-card);
+  }
+
+  .glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(220 14% 20% / 0.5);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .skill-bar {
+    @apply h-1.5 rounded-full overflow-hidden;
+    background: hsl(220 14% 16%);
+  }
+
+  .skill-bar-fill {
+    @apply h-full rounded-full;
+    background: var(--gradient-primary);
+  }
+
+  .section-divider {
+    @apply w-full h-px;
+    background: linear-gradient(90deg, transparent, hsl(160 84% 50% / 0.2), transparent);
+  }
+
+  .dot-pattern {
+    background-image: radial-gradient(circle, hsl(160 84% 50% / 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 }

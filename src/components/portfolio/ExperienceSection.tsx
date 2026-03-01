@@ -1,5 +1,8 @@
 import { SectionHeading } from "./AboutSection";
 import { Briefcase, GraduationCap } from "lucide-react";
+import AnimatedSection from "./AnimatedSection";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 const experiences = [
   {
@@ -74,50 +77,80 @@ const education = [
   },
 ];
 
+const TimelineItem = ({
+  exp,
+  index,
+}: {
+  exp: (typeof experiences)[0];
+  index: number;
+}) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: -20 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      className="relative pl-8 border-l-2 border-border hover:border-primary/50 transition-colors duration-500 group"
+    >
+      <div className="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-background border-2 border-primary/40 group-hover:border-primary group-hover:shadow-[0_0_10px_-2px_hsl(160_84%_50%/0.5)] flex items-center justify-center transition-all duration-300">
+        <Briefcase size={10} className="text-primary" />
+      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+        <h3 className="text-foreground font-semibold">
+          {exp.role}{" "}
+          <span className="text-primary">@ {exp.company}</span>
+        </h3>
+        <span className="text-muted-foreground font-mono text-xs bg-muted/50 px-2 py-0.5 rounded mt-1 sm:mt-0">
+          {exp.period}
+        </span>
+      </div>
+      <p className="text-muted-foreground text-xs mb-3 font-mono">{exp.location}</p>
+      <ul className="space-y-2">
+        {exp.bullets.map((b, i) => (
+          <li key={i} className="text-muted-foreground text-sm flex items-start gap-2 group/item">
+            <span className="text-primary mt-1 shrink-0 group-hover/item:translate-x-0.5 transition-transform">▹</span>
+            <span className="group-hover/item:text-secondary-foreground transition-colors">{b}</span>
+          </li>
+        ))}
+      </ul>
+    </motion.div>
+  );
+};
+
 const ExperienceSection = () => {
   return (
     <section id="experience" className="py-24">
+      <div className="section-divider mb-24" />
       <div className="container mx-auto px-6 max-w-4xl">
-        <SectionHeading number="04" title="Experience" />
+        <AnimatedSection>
+          <SectionHeading number="04" title="Experience" />
+        </AnimatedSection>
 
         <div className="space-y-10">
-          {experiences.map((exp) => (
-            <div key={exp.company + exp.role} className="relative pl-8 border-l-2 border-border hover:border-primary/50 transition-colors">
-              <div className="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-background border-2 border-primary flex items-center justify-center">
-                <Briefcase size={10} className="text-primary" />
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                <h3 className="text-foreground font-semibold">
-                  {exp.role} <span className="text-primary">@ {exp.company}</span>
-                </h3>
-                <span className="text-muted-foreground font-mono text-xs">{exp.period}</span>
-              </div>
-              <p className="text-muted-foreground text-xs mb-3 font-mono">{exp.location}</p>
-              <ul className="space-y-1.5">
-                {exp.bullets.map((b, i) => (
-                  <li key={i} className="text-muted-foreground text-sm flex items-start gap-2">
-                    <span className="text-primary mt-1.5 shrink-0">▹</span> {b}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {experiences.map((exp, i) => (
+            <TimelineItem key={exp.company + exp.role} exp={exp} index={i} />
           ))}
         </div>
 
-        <div className="mt-16">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <GraduationCap className="text-primary" size={22} /> Education
-          </h3>
-          <div className="space-y-6">
-            {education.map((ed) => (
-              <div key={ed.school} className="pl-8 border-l-2 border-border">
-                <h4 className="text-foreground font-semibold">{ed.degree}</h4>
-                <p className="text-primary text-sm font-mono">{ed.school}</p>
-                <p className="text-muted-foreground text-xs font-mono">{ed.period}</p>
-              </div>
-            ))}
+        <AnimatedSection delay={0.2}>
+          <div className="mt-16">
+            <h3 className="text-xl font-bold mb-8 flex items-center gap-2">
+              <GraduationCap className="text-primary" size={22} /> Education
+            </h3>
+            <div className="grid sm:grid-cols-2 gap-6">
+              {education.map((ed) => (
+                <div key={ed.school} className="glass rounded-xl p-5 hover-lift">
+                  <h4 className="text-foreground font-semibold text-sm">{ed.degree}</h4>
+                  <p className="text-primary text-sm font-mono mt-1">{ed.school}</p>
+                  <p className="text-muted-foreground text-xs font-mono mt-1">{ed.period}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );
