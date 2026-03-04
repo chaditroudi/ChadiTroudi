@@ -72,8 +72,8 @@ const Navbar = () => {
             transition={{ delay: 0.4 }}
           >
             <a
-              href="/resume.pdf"
-              target="_blank"
+              href="/ChadiTroudiCv.pdf"
+              download
               className="text-sm font-semibold bg-primary text-primary-foreground px-5 py-2 rounded-full hover:shadow-[0_0_20px_-5px_hsl(45_100%_60%/0.4)] transition-all duration-200 ml-2"
             >
               Resume

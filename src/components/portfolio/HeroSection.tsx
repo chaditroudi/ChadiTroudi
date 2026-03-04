@@ -1,7 +1,47 @@
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
 import profileImg from "@/assets/profile.jpg";
 import bannerImg from "@/assets/banner.jpeg";
+
+const roles = [
+  "Full-Stack Developer",
+  "Java & Spring Boot Expert",
+  "React Specialist",
+  "API Architect",
+];
+
+const useTypewriter = (words: string[], typingSpeed = 80, deletingSpeed = 40, pauseTime = 2000) => {
+  const [text, setText] = useState("");
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const tick = useCallback(() => {
+    const currentWord = words[wordIndex];
+    if (!isDeleting) {
+      setText(currentWord.slice(0, text.length + 1));
+      if (text.length + 1 === currentWord.length) {
+        setTimeout(() => setIsDeleting(true), pauseTime);
+        return;
+      }
+    } else {
+      setText(currentWord.slice(0, text.length - 1));
+      if (text.length - 1 === 0) {
+        setIsDeleting(false);
+        setWordIndex((prev) => (prev + 1) % words.length);
+        return;
+      }
+    }
+  }, [text, wordIndex, isDeleting, words, pauseTime]);
+
+  useEffect(() => {
+    const speed = isDeleting ? deletingSpeed : typingSpeed;
+    const timer = setTimeout(tick, speed);
+    return () => clearTimeout(timer);
+  }, [tick, isDeleting, typingSpeed, deletingSpeed]);
+
+  return text;
+};
 
 const container = {
   hidden: {},
@@ -14,6 +54,8 @@ const item = {
 };
 
 const HeroSection = () => {
+  const typedRole = useTypewriter(roles);
+
   return (
     <section className="min-h-screen relative overflow-hidden flex items-center" aria-label="Hero">
       {/* Background image with overlay */}
@@ -37,8 +79,9 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-[1fr_auto] gap-16 items-center max-w-6xl mx-auto">
           {/* Text content */}
           <motion.div variants={container} initial="hidden" animate="visible">
-            <motion.p variants={item} className="text-primary font-mono text-sm tracking-[0.2em] uppercase mb-6">
-              Full-Stack Engineer
+            <motion.p variants={item} className="text-primary font-mono text-sm tracking-[0.2em] uppercase mb-6 h-6">
+              {typedRole}
+              <span className="animate-pulse ml-0.5 text-primary">|</span>
             </motion.p>
 
             <motion.h1 variants={item} className="text-5xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight mb-6">
@@ -49,9 +92,12 @@ const HeroSection = () => {
             </motion.h1>
 
             <motion.p variants={item} className="text-muted-foreground max-w-lg text-lg leading-relaxed mb-8">
-              Building retail tech at <span className="text-foreground font-medium">Bonial Germany</span> with 
-              React/TypeScript & Java Spring Boot. Shipped products across{" "}
-              <span className="text-foreground">banking, health, mobility & e-commerce</span>.
+              Full-Stack Developer specializing in scalable web applications using{" "}
+              <span className="text-foreground font-medium">Java (Spring Boot)</span>,{" "}
+              <span className="text-foreground font-medium">React</span>, and microservices.
+              Experienced in building secure RESTful APIs, optimizing performance, and delivering
+              reliable enterprise solutions in Agile environments. Focused on{" "}
+              <span className="text-foreground">clean architecture and maintainable code</span>.
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap items-center gap-4 mb-12">
