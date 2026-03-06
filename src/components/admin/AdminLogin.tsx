@@ -67,7 +67,7 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
           <p className="text-muted-foreground text-sm mt-1">Sign in to manage reviews</p>
         </div>
 
-        <form onSubmit={handleLogin} className="glass rounded-3xl p-8 space-y-5">
+        <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 space-y-5">
           <div>
             <label htmlFor="admin-email" className="text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
               <Mail size={14} className="text-primary" /> Email
