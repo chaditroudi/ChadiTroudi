@@ -105,13 +105,16 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
             whileTap={{ scale: 0.98 }}
             className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-8 py-3.5 rounded-full hover:shadow-[0_0_40px_-5px_hsl(45_100%_60%/0.5)] transition-all duration-300 disabled:opacity-50"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? (isSignUp ? "Creating account…" : "Signing in…") : (isSignUp ? "Sign Up" : "Sign In")}
           </motion.button>
         </form>
 
-        <p className="text-center text-muted-foreground text-xs mt-6">
-          <a href="/" className="hover:text-primary transition-colors">← Back to portfolio</a>
-        </p>
+        <div className="text-center text-muted-foreground text-xs mt-6 space-y-2">
+          <button onClick={() => setIsSignUp(!isSignUp)} className="hover:text-primary transition-colors block mx-auto">
+            {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+          </button>
+          <a href="/" className="hover:text-primary transition-colors block">← Back to portfolio</a>
+        </div>
       </motion.div>
     </div>
   );
