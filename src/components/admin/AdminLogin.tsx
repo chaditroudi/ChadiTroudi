@@ -50,11 +50,11 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
           <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
             <Shield size={28} className="text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{isSignUp ? "Create Account" : "Admin Login"}</h1>
-          <p className="text-muted-foreground text-sm mt-1">{isSignUp ? "Sign up to request admin access" : "Sign in to manage reviews"}</p>
+          <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
+          <p className="text-muted-foreground text-sm mt-1">Sign in to manage reviews</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 space-y-5">
+        <form onSubmit={handleLogin} className="glass rounded-3xl p-8 space-y-5">
           <div>
             <label htmlFor="admin-email" className="text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
               <Mail size={14} className="text-primary" /> Email
@@ -92,16 +92,13 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
             whileTap={{ scale: 0.98 }}
             className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-8 py-3.5 rounded-full hover:shadow-[0_0_40px_-5px_hsl(45_100%_60%/0.5)] transition-all duration-300 disabled:opacity-50"
           >
-            {loading ? (isSignUp ? "Creating account…" : "Signing in…") : (isSignUp ? "Sign Up" : "Sign In")}
+            {loading ? "Signing in…" : "Sign In"}
           </motion.button>
         </form>
 
-        <div className="text-center text-muted-foreground text-xs mt-6 space-y-2">
-          <button onClick={() => setIsSignUp(!isSignUp)} className="hover:text-primary transition-colors block mx-auto">
-            {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
-          </button>
-          <a href="/" className="hover:text-primary transition-colors block">← Back to portfolio</a>
-        </div>
+        <p className="text-center text-muted-foreground text-xs mt-6">
+          <a href="/" className="hover:text-primary transition-colors">← Back to portfolio</a>
+        </p>
       </motion.div>
     </div>
   );
