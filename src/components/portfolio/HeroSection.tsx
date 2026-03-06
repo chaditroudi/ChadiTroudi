@@ -154,8 +154,8 @@ const HeroSection = () => {
             <div className="absolute -left-14 top-1/2 -translate-y-1/2 flex flex-col gap-4">
               {[
                 { href: "https://www.linkedin.com/in/chaditroudi", icon: <Linkedin size={18} /> },
-                { href: "https://github.com/chaditroudi", icon: <Github size={18} />  },
-                Ex-Github Account{ href: "https://github.com/Chadi7781", icon: <Github size={18} />  },
+                { href: "https://github.com/chaditroudi", icon: <Github size={18} /> },
+                { href: "https://github.com/Chadi7781", icon: <Github size={18} /> },
                 { href: "mailto:chadi.troudi@example.com", icon: <Mail size={18} /> },
               ].map((s, i) => (
                 <motion.a
