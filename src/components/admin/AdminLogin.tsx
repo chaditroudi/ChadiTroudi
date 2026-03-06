@@ -8,11 +8,24 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Account created!", description: "Check your email to confirm, then come back and sign in." });
+        setIsSignUp(false);
+      }
+      setLoading(false);
+      return;
+    }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -22,7 +35,6 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
       return;
     }
 
-    // Check if user has admin role
     const { data: roles } = await supabase
       .from("user_roles")
       .select("role")
@@ -51,11 +63,11 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
           <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
             <Shield size={28} className="text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
-          <p className="text-muted-foreground text-sm mt-1">Sign in to manage reviews</p>
+          <h1 className="text-2xl font-bold text-foreground">{isSignUp ? "Create Account" : "Admin Login"}</h1>
+          <p className="text-muted-foreground text-sm mt-1">{isSignUp ? "Sign up to request admin access" : "Sign in to manage reviews"}</p>
         </div>
 
-        <form onSubmit={handleLogin} className="glass rounded-3xl p-8 space-y-5">
+        <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 space-y-5">
           <div>
             <label htmlFor="admin-email" className="text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
               <Mail size={14} className="text-primary" /> Email
@@ -93,13 +105,16 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
             whileTap={{ scale: 0.98 }}
             className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-8 py-3.5 rounded-full hover:shadow-[0_0_40px_-5px_hsl(45_100%_60%/0.5)] transition-all duration-300 disabled:opacity-50"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? (isSignUp ? "Creating account…" : "Signing in…") : (isSignUp ? "Sign Up" : "Sign In")}
           </motion.button>
         </form>
 
-        <p className="text-center text-muted-foreground text-xs mt-6">
-          <a href="/" className="hover:text-primary transition-colors">← Back to portfolio</a>
-        </p>
+        <div className="text-center text-muted-foreground text-xs mt-6 space-y-2">
+          <button onClick={() => setIsSignUp(!isSignUp)} className="hover:text-primary transition-colors block mx-auto">
+            {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+          </button>
+          <a href="/" className="hover:text-primary transition-colors block">← Back to portfolio</a>
+        </div>
       </motion.div>
     </div>
   );
