@@ -8,24 +8,11 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    if (isSignUp) {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Account created!", description: "Check your email to confirm, then come back and sign in." });
-        setIsSignUp(false);
-      }
-      setLoading(false);
-      return;
-    }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
