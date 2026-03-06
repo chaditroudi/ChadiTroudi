@@ -63,8 +63,8 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
           <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
             <Shield size={28} className="text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
-          <p className="text-muted-foreground text-sm mt-1">Sign in to manage reviews</p>
+          <h1 className="text-2xl font-bold text-foreground">{isSignUp ? "Create Account" : "Admin Login"}</h1>
+          <p className="text-muted-foreground text-sm mt-1">{isSignUp ? "Sign up to request admin access" : "Sign in to manage reviews"}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 space-y-5">
