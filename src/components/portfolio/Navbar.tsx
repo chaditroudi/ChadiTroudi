@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -35,15 +35,15 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -80 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? "glass shadow-lg" : ""
       }`}
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
-        <a href="#" className="text-xl font-black tracking-tight">
+        <a href="#" className="text-xl font-bold tracking-tight group">
           <span className="text-gradient">CT</span>
-          <span className="text-primary">.</span>
+          <span className="text-primary group-hover:opacity-0 transition-opacity">.</span>
         </a>
 
         <ul className="hidden md:flex items-center gap-1">
@@ -56,13 +56,20 @@ const Navbar = () => {
             >
               <a
                 href={l.href}
-                className={`text-sm px-4 py-2 rounded-full transition-all duration-200 ${
+                className={`relative text-sm px-4 py-2 rounded-lg transition-all duration-300 ${
                   activeSection === l.href.slice(1)
-                    ? "text-primary bg-primary/10 font-medium"
+                    ? "text-primary font-medium"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {l.label}
+                {activeSection === l.href.slice(1) && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute inset-0 bg-primary/10 rounded-lg -z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
               </a>
             </motion.li>
           ))}
@@ -74,8 +81,9 @@ const Navbar = () => {
             <a
               href="/ChadiTroudiCv.pdf"
               download
-              className="text-sm font-semibold bg-primary text-primary-foreground px-5 py-2 rounded-full hover:shadow-[0_0_20px_-5px_hsl(45_100%_60%/0.4)] transition-all duration-200 ml-2"
+              className="inline-flex items-center gap-2 text-sm font-semibold bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:shadow-[0_4px_20px_-4px_hsl(152_68%_46%/0.5)] transition-all duration-300 ml-3"
             >
+              <Download size={14} />
               Resume
             </a>
           </motion.li>
@@ -116,6 +124,20 @@ const Navbar = () => {
                   </a>
                 </motion.li>
               ))}
+              <motion.li
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <a
+                  href="/ChadiTroudiCv.pdf"
+                  download
+                  className="inline-flex items-center gap-2 text-sm font-semibold bg-primary text-primary-foreground px-6 py-3 rounded-lg"
+                >
+                  <Download size={14} />
+                  Resume
+                </a>
+              </motion.li>
             </ul>
           </motion.div>
         )}

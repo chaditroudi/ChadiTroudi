@@ -2,11 +2,13 @@ import { SectionHeading } from "./AboutSection";
 import AnimatedSection from "./AnimatedSection";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { Monitor, Server, Settings } from "lucide-react";
 
 const skillCategories = [
   {
     category: "Frontend",
-    icon: "✦",
+    icon: <Monitor size={18} />,
+    color: "from-primary to-accent-foreground",
     skills: [
       { name: "React & TypeScript", level: 95 },
       { name: "Angular", level: 80 },
@@ -17,7 +19,8 @@ const skillCategories = [
   },
   {
     category: "Backend",
-    icon: "◆",
+    icon: <Server size={18} />,
+    color: "from-chart-2 to-chart-3",
     skills: [
       { name: "Java Spring Boot", level: 92 },
       { name: "Node.js / NestJS", level: 85 },
@@ -28,7 +31,8 @@ const skillCategories = [
   },
   {
     category: "DevOps & Tools",
-    icon: "▲",
+    icon: <Settings size={18} />,
+    color: "from-chart-4 to-chart-1",
     skills: [
       { name: "Git / GitHub Actions", level: 93 },
       { name: "Docker", level: 85 },
@@ -45,8 +49,8 @@ const SkillBar = ({ name, level, delay }: { name: string; level: number; delay: 
 
   return (
     <div ref={ref} className="group">
-      <div className="flex justify-between text-sm mb-2">
-        <span className="text-foreground/80 group-hover:text-foreground transition-colors">{name}</span>
+      <div className="flex justify-between text-sm mb-2.5">
+        <span className="text-foreground/80 group-hover:text-foreground transition-colors font-medium">{name}</span>
         <motion.span
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -70,9 +74,9 @@ const SkillBar = ({ name, level, delay }: { name: string; level: number; delay: 
 
 const SkillsSection = () => {
   return (
-    <section id="skills" className="py-28 relative">
-      <div className="absolute inset-0 dot-pattern pointer-events-none" />
-      <div className="section-divider mb-28" />
+    <section id="skills" className="py-32 relative">
+      <div className="absolute inset-0 dot-pattern pointer-events-none opacity-50" />
+      <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-5xl relative z-10">
         <AnimatedSection>
           <SectionHeading number="03" title="Skills & Expertise" />
@@ -81,9 +85,11 @@ const SkillsSection = () => {
         <div className="grid md:grid-cols-3 gap-6">
           {skillCategories.map((cat, ci) => (
             <AnimatedSection key={cat.category} delay={ci * 0.1}>
-              <div className="glass rounded-2xl p-7 h-full hover:border-primary/20 transition-colors duration-500">
+              <div className="glass rounded-2xl p-7 h-full hover:border-primary/20 transition-all duration-500 group">
                 <div className="flex items-center gap-3 mb-8">
-                  <span className="text-primary text-lg">{cat.icon}</span>
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary/15 transition-colors">
+                    {cat.icon}
+                  </div>
                   <h3 className="text-foreground font-semibold text-sm uppercase tracking-wider">
                     {cat.category}
                   </h3>

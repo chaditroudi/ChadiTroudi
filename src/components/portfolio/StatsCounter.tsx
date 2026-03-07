@@ -42,17 +42,19 @@ const CountUp = ({ target, suffix }: { target: number; suffix: string }) => {
 const StatsCounter = () => (
   <section className="py-20 relative">
     <div className="container mx-auto px-6 max-w-5xl">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-        {stats.map((stat, i) => (
-          <AnimatedSection key={stat.label} delay={i * 0.1}>
-            <div className="text-center space-y-2">
-              <CountUp target={stat.value} suffix={stat.suffix} />
-              <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
-                {stat.label}
-              </p>
-            </div>
-          </AnimatedSection>
-        ))}
+      <div className="glass rounded-2xl p-8 md:p-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {stats.map((stat, i) => (
+            <AnimatedSection key={stat.label} delay={i * 0.1}>
+              <div className="text-center space-y-2">
+                <CountUp target={stat.value} suffix={stat.suffix} />
+                <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
+                  {stat.label}
+                </p>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
       </div>
     </div>
   </section>
