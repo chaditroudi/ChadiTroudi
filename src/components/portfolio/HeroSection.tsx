@@ -1,8 +1,7 @@
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import profileImg from "@/assets/profile.jpg";
-import bannerImg from "@/assets/banner.jpeg";
 
 const roles = [
   "Full-Stack Developer",
@@ -45,12 +44,12 @@ const useTypewriter = (words: string[], typingSpeed = 80, deletingSpeed = 40, pa
 
 const container = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
 };
 
 const HeroSection = () => {
@@ -58,74 +57,81 @@ const HeroSection = () => {
 
   return (
     <section className="min-h-screen relative overflow-hidden flex items-center" aria-label="Hero">
-      {/* Background image with overlay */}
+      {/* Abstract background shapes */}
       <div className="absolute inset-0">
-        <img
-          src={bannerImg}
-          alt=""
-          className="w-full h-full object-cover opacity-[0.07]"
+        <div className="absolute inset-0 bg-background" />
+        <motion.div
+          animate={{ opacity: [0.03, 0.07, 0.03], scale: [1, 1.1, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[150px]"
+          style={{ background: "hsl(152 68% 46% / 0.15)" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+        <motion.div
+          animate={{ opacity: [0.02, 0.05, 0.02] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full blur-[150px]"
+          style={{ background: "hsl(172 66% 50% / 0.1)" }}
+        />
+        {/* Grid pattern */}
+        <div className="absolute inset-0 dot-pattern opacity-40" />
       </div>
 
-      {/* Warm glow */}
-      <motion.div
-        animate={{ opacity: [0.04, 0.08, 0.04] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-primary rounded-full blur-[200px] pointer-events-none"
-      />
-
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-[1fr_auto] gap-16 items-center max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-[1fr_380px] gap-20 items-center max-w-6xl mx-auto">
           {/* Text content */}
           <motion.div variants={container} initial="hidden" animate="visible">
-            <motion.p variants={item} className="text-primary font-mono text-sm tracking-[0.2em] uppercase mb-6 h-6">
-              {typedRole}
-              <span className="animate-pulse ml-0.5 text-primary">|</span>
-            </motion.p>
+            <motion.div variants={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 mb-8">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-primary font-mono text-xs tracking-wider uppercase">
+                {typedRole}
+                <span className="animate-pulse ml-0.5">|</span>
+              </span>
+            </motion.div>
 
-            <motion.h1 variants={item} className="text-5xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight mb-6">
+            <motion.h1 variants={item} className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight mb-8">
               Chadi
               <br />
               <span className="text-gradient">Troudi</span>
               <span className="text-primary">.</span>
             </motion.h1>
 
-            <motion.p variants={item} className="text-muted-foreground max-w-lg text-lg leading-relaxed mb-8">
+            <motion.p variants={item} className="text-muted-foreground max-w-xl text-lg leading-relaxed mb-10">
               Full-Stack Developer specializing in scalable web applications using{" "}
-              <span className="text-foreground font-medium">Java (Spring Boot)</span>,{" "}
+              <span className="text-foreground font-medium">Java Spring Boot</span>,{" "}
               <span className="text-foreground font-medium">React</span>, and microservices.
-              Experienced in building secure RESTful APIs, optimizing performance, and delivering
-              reliable enterprise solutions in Agile environments. Focused on{" "}
-              <span className="text-foreground">clean architecture and maintainable code</span>.
+              Building secure APIs and delivering enterprise solutions with{" "}
+              <span className="text-foreground font-medium">clean architecture</span>.
             </motion.p>
 
-            <motion.div variants={item} className="flex flex-wrap items-center gap-4 mb-12">
+            <motion.div variants={item} className="flex flex-wrap items-center gap-4 mb-14">
               <a
                 href="#projects"
-                className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-sm px-7 py-3.5 rounded-full hover:shadow-[0_0_40px_-5px_hsl(45_100%_60%/0.5)] transition-all duration-300"
+                className="group inline-flex items-center gap-3 bg-primary text-primary-foreground font-semibold text-sm px-8 py-4 rounded-full hover:shadow-[0_8px_30px_-4px_hsl(152_68%_46%/0.5)] transition-all duration-300"
               >
                 View My Work
-                <ArrowDown size={16} className="group-hover:translate-y-0.5 transition-transform" />
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-sm px-7 py-3.5 rounded-full hover:border-primary/50 hover:text-primary transition-all duration-300"
+                className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-sm px-8 py-4 rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
               >
                 Get In Touch
               </a>
             </motion.div>
 
-            {/* Stats */}
-            <motion.div variants={item} className="flex flex-wrap gap-10">
+            {/* Stats row */}
+            <motion.div variants={item} className="flex items-center gap-8">
               {[
                 { value: "5+", label: "Years" },
                 { value: "6", label: "Companies" },
                 { value: "10+", label: "Projects" },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <p className="text-3xl font-black text-gradient">{stat.value}</p>
-                  <p className="text-muted-foreground text-xs font-mono mt-1 uppercase tracking-wider">{stat.label}</p>
+              ].map((stat, i) => (
+                <div key={stat.label} className="flex items-center gap-8">
+                  <div>
+                    <p className="text-3xl font-bold text-gradient">{stat.value}</p>
+                    <p className="text-muted-foreground text-xs font-mono mt-1 uppercase tracking-wider">{stat.label}</p>
+                  </div>
+                  {i < 2 && <div className="w-px h-10 bg-border" />}
                 </div>
               ))}
             </motion.div>
@@ -133,40 +139,53 @@ const HeroSection = () => {
 
           {/* Profile photo */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="hidden lg:block relative"
           >
-            <div className="w-[340px] h-[420px] rounded-2xl overflow-hidden relative">
-              <img
-                src={profileImg}
-                alt="Chadi Troudi"
-                className="w-full h-full object-cover object-top"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+            <div className="relative">
+              {/* Main image */}
+              <div className="w-[340px] h-[440px] rounded-3xl overflow-hidden relative ring-1 ring-border/50">
+                <img
+                  src={profileImg}
+                  alt="Chadi Troudi"
+                  className="w-full h-full object-cover object-top"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+              </div>
+              
+              {/* Floating accent card */}
+              <motion.div 
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -bottom-6 -left-8 glass rounded-2xl px-5 py-4 shadow-xl"
+              >
+                <p className="text-xs font-mono text-muted-foreground mb-1">Currently at</p>
+                <p className="text-sm font-semibold text-foreground">Bonial Germany 🇩🇪</p>
+              </motion.div>
+
+              {/* Decorative border */}
+              <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border border-primary/15 -z-10" />
             </div>
-            {/* Decorative frame */}
-            <div className="absolute -top-3 -right-3 w-full h-full border-2 border-primary/20 rounded-2xl -z-10" />
-            <div className="absolute -bottom-3 -left-3 w-full h-full border border-primary/10 rounded-2xl -z-10" />
-            
-            {/* Social links floating */}
-            <div className="absolute -left-14 top-1/2 -translate-y-1/2 flex flex-col gap-4">
+
+            {/* Social links */}
+            <div className="absolute -right-16 top-1/2 -translate-y-1/2 flex flex-col gap-3">
               {[
-                { href: "https://www.linkedin.com/in/chaditroudi", icon: <Linkedin size={18} /> },
-                { href: "https://github.com/chaditroudi", icon: <Github size={18} /> },
-                { href: "https://github.com/Chadi7781", icon: <Github size={18} /> },
-                { href: "mailto:chadi.troudi@example.com", icon: <Mail size={18} /> },
+                { href: "https://www.linkedin.com/in/chaditroudi", icon: <Linkedin size={16} /> },
+                { href: "https://github.com/chaditroudi", icon: <Github size={16} /> },
+                { href: "https://github.com/Chadi7781", icon: <Github size={16} /> },
+                { href: "mailto:chadi.troudi@example.com", icon: <Mail size={16} /> },
               ].map((s, i) => (
                 <motion.a
                   key={i}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 + i * 0.1 }}
+                  transition={{ delay: 1 + i * 0.1 }}
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="w-9 h-9 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all duration-300"
                 >
                   {s.icon}
                 </motion.a>
@@ -180,10 +199,14 @@ const HeroSection = () => {
       <motion.div
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2.5, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >
-        <div className="w-5 h-9 rounded-full border-2 border-muted-foreground/20 flex justify-center pt-2">
-          <div className="w-1 h-2 rounded-full bg-primary" />
+        <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/20 flex justify-center pt-2.5">
+          <motion.div
+            animate={{ opacity: [1, 0.3, 1], y: [0, 6, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-1 h-2 rounded-full bg-primary"
+          />
         </div>
       </motion.div>
     </section>

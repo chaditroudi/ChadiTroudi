@@ -1,5 +1,5 @@
 import { SectionHeading } from "./AboutSection";
-import { Briefcase, GraduationCap } from "lucide-react";
+import { GraduationCap, Building2 } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
@@ -23,10 +23,9 @@ const experiences = [
     period: "Oct 2024 – Aug 2025",
     location: "Berlin, Germany · Remote",
     bullets: [
-      "Built CatalogAI — an AI-powered product catalog system with smart categorization, relevance-ranked search, and recommendation engine",
-      "Developed TenderFlow AI — KI-driven tender management software automating RFQ analysis, prioritization, and proposal generation for MedTech & industry",
+      "Built CatalogAI — an AI-powered product catalog system with smart categorization and recommendation engine",
+      "Developed TenderFlow AI — KI-driven tender management automating RFQ analysis and proposal generation",
       "Integrated ERP solutions with Odoo and built custom features tailored to business needs",
-      "Participated in DevOps processes including CI/CD pipeline implementation",
       "Represented team at Web Summit Qatar 2025, showcasing AI innovations",
     ],
   },
@@ -79,40 +78,48 @@ const TimelineItem = ({ exp, index }: { exp: (typeof experiences)[0]; index: num
       initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="relative pl-10 pb-10 last:pb-0 border-l border-border group hover:border-primary/40 transition-colors duration-500"
+      className="relative pl-12 pb-12 last:pb-0 group"
     >
+      {/* Timeline line */}
+      <div className="absolute left-[17px] top-8 bottom-0 w-px bg-border group-last:hidden group-hover:bg-primary/30 transition-colors duration-500" />
+      
       {/* Dot */}
-      <div className="absolute -left-[7px] top-0 w-3.5 h-3.5 rounded-full bg-background border-2 border-muted-foreground/30 group-hover:border-primary group-hover:shadow-[0_0_12px_-2px_hsl(45_100%_60%/0.5)] transition-all duration-300" />
-
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
-        <h3 className="text-foreground font-semibold">
-          {exp.role} <span className="text-primary font-normal">@ {exp.company}</span>
-        </h3>
-        <span className="text-muted-foreground font-mono text-xs shrink-0">{exp.period}</span>
+      <div className="absolute left-2 top-1 w-7 h-7 rounded-lg bg-card border-2 border-border group-hover:border-primary group-hover:bg-primary/10 transition-all duration-300 flex items-center justify-center">
+        <Building2 size={12} className="text-muted-foreground group-hover:text-primary transition-colors" />
       </div>
-      <p className="text-muted-foreground text-xs font-mono mb-3">{exp.location}</p>
-      <ul className="space-y-2">
-        {exp.bullets.map((b, i) => (
-          <li key={i} className="text-muted-foreground text-sm flex items-start gap-2.5">
-            <span className="w-1 h-1 rounded-full bg-primary mt-2 shrink-0" />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
+
+      <div className="glass rounded-2xl p-6 hover:border-primary/15 transition-all duration-500">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-1">
+          <h3 className="text-foreground font-semibold">
+            {exp.role}
+          </h3>
+          <span className="text-muted-foreground font-mono text-xs shrink-0">{exp.period}</span>
+        </div>
+        <p className="text-primary text-sm font-medium mb-1">{exp.company}</p>
+        <p className="text-muted-foreground text-xs font-mono mb-4">{exp.location}</p>
+        <ul className="space-y-2">
+          {exp.bullets.map((b, i) => (
+            <li key={i} className="text-muted-foreground text-sm flex items-start gap-2.5">
+              <span className="w-1 h-1 rounded-full bg-primary mt-2 shrink-0" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </motion.div>
   );
 };
 
 const ExperienceSection = () => {
   return (
-    <section id="experience" className="py-28 relative">
-      <div className="section-divider mb-28" />
+    <section id="experience" className="py-32 relative">
+      <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-4xl">
         <AnimatedSection>
           <SectionHeading number="04" title="Experience" />
         </AnimatedSection>
 
-        <div className="ml-2">
+        <div>
           {experiences.map((exp, i) => (
             <TimelineItem key={exp.company + exp.role} exp={exp} index={i} />
           ))}
@@ -121,14 +128,16 @@ const ExperienceSection = () => {
         <AnimatedSection delay={0.2}>
           <div className="mt-20">
             <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
-              <GraduationCap className="text-primary" size={22} />
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                <GraduationCap className="text-primary" size={18} />
+              </div>
               Education
             </h3>
             <div className="grid sm:grid-cols-2 gap-4">
               {education.map((ed) => (
-                <div key={ed.school} className="glass rounded-xl p-6 hover-lift">
+                <div key={ed.school} className="glass rounded-xl p-6 hover:border-primary/15 hover-lift transition-all">
                   <h4 className="text-foreground font-semibold text-sm">{ed.degree}</h4>
-                  <p className="text-primary text-sm font-mono mt-1">{ed.school}</p>
+                  <p className="text-primary text-sm font-medium mt-1">{ed.school}</p>
                   <p className="text-muted-foreground text-xs font-mono mt-1">{ed.period}</p>
                 </div>
               ))}

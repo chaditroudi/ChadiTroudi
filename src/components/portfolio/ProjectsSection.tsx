@@ -1,4 +1,4 @@
-import { ExternalLink, Github, Folder, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Folder, Layers } from "lucide-react";
 import { SectionHeading } from "./AboutSection";
 import AnimatedSection from "./AnimatedSection";
 import { motion } from "framer-motion";
@@ -8,8 +8,6 @@ interface Project {
   description: string;
   tech: string[];
   company: string;
-  github?: string;
-  live?: string;
   impact?: string;
 }
 
@@ -26,15 +24,15 @@ const projects: Project[] = [
     title: "TenderFlow AI",
     company: "Yanyi",
     description:
-      "KI-driven tender management software that automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade. Turns weeks of work into a few clicks.",
+      "KI-driven tender management software that automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade.",
     tech: ["React", "Spring Boot", "AI/NLP", "PostgreSQL", "REST API"],
-    impact: "Weeks → minutes for tender processing",
+    impact: "Weeks → minutes for tenders",
   },
   {
     title: "Mind Platform – Risk Management",
     company: "AlMergab",
     description:
-      "Municipal risk management system deployed for municipalities in Oman and Doha. Engineered scalable backend services and integrated with modern frontends for real-time dashboards.",
+      "Municipal risk management system deployed for municipalities in Oman and Doha. Scalable backend services with real-time dashboards.",
     tech: ["Java Spring Boot", "React", "Angular", "PostgreSQL", "AWS"],
     impact: "Deployed across Gulf municipalities",
   },
@@ -42,7 +40,7 @@ const projects: Project[] = [
     title: "Kaufda & Bonial Console",
     company: "Bonial Germany",
     description:
-      "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Designed custom ReactJS components for performance.",
+      "Migrated and rebuilt multiple screens from JavaScript to TypeScript across two major retail-tech projects. Custom ReactJS components for performance.",
     tech: ["React", "TypeScript", "Java Spring Boot", "CI/CD"],
     impact: "2 platforms migrated to TS",
   },
@@ -66,44 +64,45 @@ const otherProjects: OtherProject[] = [
 
 const ProjectsSection = () => {
   return (
-    <section id="projects" className="py-28 relative">
-      <div className="section-divider mb-28" />
+    <section id="projects" className="py-32 relative">
+      <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-6xl">
         <AnimatedSection>
           <SectionHeading number="02" title="Featured Work" />
         </AnimatedSection>
 
-        <div className="space-y-6 mb-24">
+        <div className="grid md:grid-cols-2 gap-5 mb-24">
           {projects.map((project, i) => (
-            <AnimatedSection key={project.title} delay={i * 0.1}>
+            <AnimatedSection key={project.title} delay={i * 0.08}>
               <motion.div
                 whileHover={{ y: -4 }}
-                className="group glass rounded-2xl p-8 md:p-10 hover:border-primary/30 transition-all duration-500"
+                className="group glass rounded-2xl p-8 hover:border-primary/25 transition-all duration-500 h-full flex flex-col"
               >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-                  <div className="flex-1">
-                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Folder className="text-primary" size={20} />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{project.title}</h3>
-                        <p className="text-xs font-mono text-muted-foreground">@ {project.company}</p>
-                      </div>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed mb-4 max-w-xl">{project.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {project.tech.map((t) => (
-                        <span key={t} className="text-xs font-mono bg-muted px-2.5 py-1 rounded-full text-muted-foreground">{t}</span>
-                      ))}
-                    </div>
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
+                    <Folder className="text-primary" size={22} />
                   </div>
                   {project.impact && (
-                    <div className="shrink-0 flex items-center gap-2 bg-primary/10 text-primary text-xs font-mono px-4 py-2 rounded-full whitespace-nowrap">
-                      <ArrowUpRight size={14} />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/15">
+                      <ArrowUpRight size={12} />
                       {project.impact}
-                    </div>
+                    </span>
                   )}
+                </div>
+
+                <h3 className="text-lg font-bold group-hover:text-primary transition-colors mb-1">
+                  {project.title}
+                </h3>
+                <p className="text-xs font-mono text-muted-foreground mb-3">@ {project.company}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1 mb-5">
+                  {project.description}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {project.tech.map((t) => (
+                    <span key={t} className="text-xs font-mono px-2.5 py-1 rounded-md bg-muted/50 text-muted-foreground border border-border/50">
+                      {t}
+                    </span>
+                  ))}
                 </div>
               </motion.div>
             </AnimatedSection>
@@ -111,21 +110,24 @@ const ProjectsSection = () => {
         </div>
 
         <AnimatedSection>
-          <h3 className="text-center text-xl font-bold mb-10">Other Projects</h3>
+          <div className="flex items-center gap-3 justify-center mb-10">
+            <Layers size={18} className="text-primary" />
+            <h3 className="text-xl font-bold">Other Projects</h3>
+          </div>
         </AnimatedSection>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {otherProjects.map((p, i) => (
             <AnimatedSection key={p.title} delay={i * 0.05}>
               <motion.div
-                whileHover={{ y: -4 }}
-                className="glass rounded-xl p-6 flex flex-col hover:border-primary/20 transition-all duration-300 group h-full"
+                whileHover={{ y: -3 }}
+                className="glass rounded-xl p-6 flex flex-col hover:border-primary/15 transition-all duration-300 group h-full"
               >
-                <h4 className="text-foreground font-semibold mb-1 group-hover:text-primary transition-colors">{p.title}</h4>
-                <p className="text-xs font-mono text-primary/70 mb-2">@ {p.company}</p>
+                <h4 className="text-foreground font-semibold text-sm mb-1 group-hover:text-primary transition-colors">{p.title}</h4>
+                <p className="text-xs font-mono text-primary/60 mb-3">@ {p.company}</p>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">{p.description}</p>
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap gap-1.5 mt-4">
                   {p.tech.map((t) => (
-                    <span key={t} className="text-xs font-mono bg-muted/50 px-2 py-0.5 rounded-full text-muted-foreground">{t}</span>
+                    <span key={t} className="text-xs font-mono px-2 py-0.5 rounded-md bg-muted/30 text-muted-foreground">{t}</span>
                   ))}
                 </div>
               </motion.div>
