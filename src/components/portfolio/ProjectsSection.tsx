@@ -1,7 +1,8 @@
-import { ArrowUpRight, Folder, Layers } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Folder, Layers } from "lucide-react";
 import { SectionHeading } from "./AboutSection";
 import AnimatedSection from "./AnimatedSection";
 import { motion } from "framer-motion";
+import tenderflowImg from "@/assets/tenderflow-screenshot.png";
 
 interface Project {
   title: string;
@@ -9,6 +10,8 @@ interface Project {
   tech: string[];
   company: string;
   impact?: string;
+  image?: string;
+  url?: string;
 }
 
 const projects: Project[] = [
@@ -22,11 +25,13 @@ const projects: Project[] = [
   },
   {
     title: "TenderFlow AI",
-    company: "Yanyi",
+    company: "Yanyi Deutschland",
     description:
-      "KI-driven tender management software that automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade.",
+      "World's #1 AI Tender Automation Platform — automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade. Save time and win more contracts.",
     tech: ["React", "Spring Boot", "AI/NLP", "PostgreSQL", "REST API"],
     impact: "Weeks → minutes for tenders",
+    image: tenderflowImg,
+    url: "https://www.tender-flow.com/",
   },
   {
     title: "Mind Platform – Risk Management",
@@ -76,33 +81,55 @@ const ProjectsSection = () => {
             <AnimatedSection key={project.title} delay={i * 0.08}>
               <motion.div
                 whileHover={{ y: -4 }}
-                className="group glass rounded-2xl p-8 hover:border-primary/25 transition-all duration-500 h-full flex flex-col"
+                className="group glass rounded-2xl overflow-hidden hover:border-primary/25 transition-all duration-500 h-full flex flex-col"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
-                    <Folder className="text-primary" size={22} />
+                {project.image && (
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={`${project.title} screenshot`}
+                      className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent" />
+                    {project.url && (
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-background/80 backdrop-blur-sm flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                      >
+                        <ExternalLink size={14} />
+                      </a>
+                    )}
                   </div>
-                  {project.impact && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/15">
-                      <ArrowUpRight size={12} />
-                      {project.impact}
-                    </span>
-                  )}
-                </div>
+                )}
+                <div className="p-8 flex flex-col flex-1">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
+                      <Folder className="text-primary" size={22} />
+                    </div>
+                    {project.impact && (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-mono px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/15">
+                        <ArrowUpRight size={12} />
+                        {project.impact}
+                      </span>
+                    )}
+                  </div>
 
-                <h3 className="text-lg font-bold group-hover:text-primary transition-colors mb-1">
-                  {project.title}
-                </h3>
-                <p className="text-xs font-mono text-muted-foreground mb-3">@ {project.company}</p>
-                <p className="text-muted-foreground text-sm leading-relaxed flex-1 mb-5">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.tech.map((t) => (
-                    <span key={t} className="text-xs font-mono px-2.5 py-1 rounded-md bg-muted/50 text-muted-foreground border border-border/50">
-                      {t}
-                    </span>
-                  ))}
+                  <h3 className="text-lg font-bold group-hover:text-primary transition-colors mb-1">
+                    {project.title}
+                  </h3>
+                  <p className="text-xs font-mono text-muted-foreground mb-3">@ {project.company}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed flex-1 mb-5">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {project.tech.map((t) => (
+                      <span key={t} className="text-xs font-mono px-2.5 py-1 rounded-md bg-muted/50 text-muted-foreground border border-border/50">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             </AnimatedSection>
