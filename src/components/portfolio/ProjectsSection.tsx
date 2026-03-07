@@ -25,11 +25,13 @@ const projects: Project[] = [
   },
   {
     title: "TenderFlow AI",
-    company: "Yanyi",
+    company: "Yanyi Deutschland",
     description:
-      "KI-driven tender management software that automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade.",
+      "World's #1 AI Tender Automation Platform — automates RFQ analysis, prioritization, and proposal generation for MedTech, industry & technical trade. Save time and win more contracts.",
     tech: ["React", "Spring Boot", "AI/NLP", "PostgreSQL", "REST API"],
     impact: "Weeks → minutes for tenders",
+    image: tenderflowImg,
+    url: "https://www.tender-flow.com/",
   },
   {
     title: "Mind Platform – Risk Management",
