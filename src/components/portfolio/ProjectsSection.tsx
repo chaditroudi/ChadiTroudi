@@ -1,7 +1,8 @@
-import { ArrowUpRight, Folder, Layers } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Folder, Layers } from "lucide-react";
 import { SectionHeading } from "./AboutSection";
 import AnimatedSection from "./AnimatedSection";
 import { motion } from "framer-motion";
+import tenderflowImg from "@/assets/tenderflow-screenshot.png";
 
 interface Project {
   title: string;
@@ -9,6 +10,8 @@ interface Project {
   tech: string[];
   company: string;
   impact?: string;
+  image?: string;
+  url?: string;
 }
 
 const projects: Project[] = [
