@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect } from "react";
 
 interface AIAvatarProps {
   isSpeaking: boolean;
@@ -7,7 +7,7 @@ interface AIAvatarProps {
   size?: "sm" | "md" | "lg" | "xl" | "full";
 }
 
-const AIAvatar = forwardRef<HTMLDivElement, AIAvatarProps>(({ isSpeaking, isListening, size = "md" }, ref) => {
+const AIAvatar = ({ isSpeaking, isListening, size = "md" }: AIAvatarProps) => {
   const [blink, setBlink] = useState(false);
   const [breathPhase, setBreathPhase] = useState(0);
 
