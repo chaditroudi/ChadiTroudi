@@ -21,12 +21,12 @@ const QUICK_QUESTIONS = [
 ];
 
 // ─── Speech helpers ─────────────────────────────────────────────
-const getSpeechRecognition = (): SpeechRecognition | null => {
+const getSpeechRecognition = (): any | null => {
   const SR =
     (window as any).SpeechRecognition ||
     (window as any).webkitSpeechRecognition;
   if (!SR) return null;
-  const recognition = new SR() as SpeechRecognition;
+  const recognition = new SR();
   recognition.continuous = false;
   recognition.interimResults = true;
   recognition.lang = "en-US";
