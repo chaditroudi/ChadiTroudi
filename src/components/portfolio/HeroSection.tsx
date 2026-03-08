@@ -135,7 +135,7 @@ const HeroSection = () => {
             </motion.p>
 
             {/* CTAs */}
-            <motion.div {...fadeUp(0.55)} className="flex flex-wrap items-center gap-2.5 sm:gap-3 mb-6 sm:mb-8">
+            <motion.div {...fadeUp(0.55)} className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 mb-6 sm:mb-8">
               <a
                 href="#projects"
                 className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:opacity-90 transition-opacity"
