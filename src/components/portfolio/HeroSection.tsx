@@ -192,7 +192,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Socials — inline */}
-            <motion.div {...fadeUp(0.85)} className="flex items-center gap-2 mt-8">
+            <motion.div {...fadeUp(0.85)} className="flex items-center justify-center lg:justify-start gap-2 mt-8">
               {[
                 { href: "https://www.linkedin.com/in/chaditroudi", icon: <Linkedin size={16} />, label: "LinkedIn" },
                 { href: "https://github.com/chaditroudi", icon: <Github size={16} />, label: "GitHub" },
