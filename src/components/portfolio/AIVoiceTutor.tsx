@@ -547,9 +547,8 @@ const AIVoiceTutor = () => {
                         <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                           className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                           {msg.role === "assistant" && (
-                            <div className="w-8 h-8 rounded-xl flex-shrink-0 mt-1 flex items-center justify-center"
-                              style={{ background: "hsl(152 80% 50% / 0.1)", border: "1px solid hsl(152 80% 50% / 0.15)" }}>
-                              <Bot className="w-4 h-4 text-primary" />
+                            <div className="w-8 h-8 rounded-xl flex-shrink-0 mt-1 overflow-hidden ring-1 ring-primary/20">
+                              <img src={tutorAvatar} alt="AI Tutor" className="w-full h-full object-cover" />
                             </div>
                           )}
                           <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
