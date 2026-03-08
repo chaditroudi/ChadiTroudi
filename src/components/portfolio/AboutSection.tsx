@@ -11,7 +11,7 @@ const AboutSection = () => {
       <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-6xl">
         <AnimatedSection>
-          <SectionHeading number="01" title="About Me" />
+          <SectionHeading number="01" title={t.aboutTitle} />
         </AnimatedSection>
 
         <div className="grid lg:grid-cols-2 gap-20 items-center">
