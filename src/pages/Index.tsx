@@ -35,7 +35,7 @@ const Index = () => {
       </main>
       <Footer />
       <BackToTop />
-      <AIChatbot />
+      <AIVoiceTutor />
     </div>
   );
 };

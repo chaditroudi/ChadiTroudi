@@ -428,7 +428,7 @@ const AIVoiceTutor = () => {
                   onClick={toggleListening}
                   className={`w-10 h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                     isListening
-                      ? "bg-red-500 text-white animate-pulse"
+                      ? "bg-destructive text-destructive-foreground animate-pulse"
                       : "bg-muted text-muted-foreground hover:text-foreground hover:bg-accent"
                   }`}
                   title={isListening ? "Stop listening" : "Speak to tutor"}
