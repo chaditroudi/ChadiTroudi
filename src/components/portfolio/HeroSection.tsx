@@ -90,10 +90,8 @@ const HeroSection = () => {
         style={{ background: "hsl(152 68% 46%)" }}
       />
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-20 max-w-6xl mx-auto py-20">
-          {/* Left — Text content */}
-          <div className="flex-1 max-w-xl">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center gap-10 sm:gap-12 lg:gap-20 max-w-6xl mx-auto pt-24 pb-16 sm:py-20">
             {/* Status */}
             <motion.div {...fadeUp(0.1)} className="flex items-center gap-2.5 mb-8">
               <span className="relative flex h-2 w-2">
