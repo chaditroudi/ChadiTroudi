@@ -2,7 +2,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, Send, Mic, MicOff, Volume2, VolumeX,
-  MessageSquareText, AudioLines,
+  MessageSquareText, AudioLines, BookOpen, FolderGit2,
+  Code2, GraduationCap, Compass, MessageCircle,
 } from "lucide-react";
 import AIAvatar from "./AIAvatar";
 import robotImg from "@/assets/robot-avatar.jpg";
@@ -13,13 +14,42 @@ type Mode = "voice" | "text";
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const WELCOME_MESSAGE =
-  "Hello! 👋 Welcome to the coding tutor platform. I'm your AI assistant. I can help you learn programming, explore projects, or guide you through coding courses. What would you like to learn today?";
+  "Hello and welcome! 🚀 I'm your AI Coding Tutor. I can help you discover projects, choose what to learn, and support you step by step in programming. What would you like to do?";
 
-const QUICK_QUESTIONS = [
-  "Explain OOP in Java",
-  "What is Spring Boot?",
-  "Tell me about Chadi's projects",
-  "How do I start learning React?",
+const QUICK_ACTIONS = [
+  { label: "🎓 Start Learning", msg: "I want to start learning programming. Help me find the right path based on my level.", icon: BookOpen },
+  { label: "💼 Explore Projects", msg: "Show me Chadi's coding projects and explain the technologies used.", icon: FolderGit2 },
+  { label: "💻 Ask Coding Question", msg: "I have a coding question. Can you help me?", icon: Code2 },
+  { label: "🗺️ Learning Path", msg: "Recommend a learning path for me. I'll tell you my level and goals.", icon: Compass },
+];
+
+const ONBOARDING_STEPS = [
+  {
+    question: "What's your coding level?",
+    options: [
+      { label: "🌱 Beginner", value: "beginner" },
+      { label: "🔧 Intermediate", value: "intermediate" },
+      { label: "🚀 Advanced", value: "advanced" },
+    ],
+  },
+  {
+    question: "What do you want to learn?",
+    options: [
+      { label: "☕ Java", value: "Java" },
+      { label: "🟨 JavaScript", value: "JavaScript" },
+      { label: "🐍 Python", value: "Python" },
+      { label: "🌐 Web Dev", value: "Web Development" },
+    ],
+  },
+  {
+    question: "How can I help you best?",
+    options: [
+      { label: "📚 Tutoring", value: "tutoring sessions" },
+      { label: "🏋️ Exercises", value: "coding exercises" },
+      { label: "🛠️ Projects", value: "project guidance" },
+      { label: "🗺️ Career", value: "career guidance" },
+    ],
+  },
 ];
 
 // ─── Speech helpers ─────────────────────────────────────────────
@@ -27,9 +57,7 @@ const getSpeechRecognition = (): any | null => {
   const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
   if (!SR) return null;
   const r = new SR();
-  r.continuous = false;
-  r.interimResults = true;
-  r.lang = "en-US";
+  r.continuous = false; r.interimResults = true; r.lang = "en-US";
   return r;
 };
 
@@ -37,20 +65,16 @@ const speak = (text: string, onStart?: () => void, onEnd?: () => void) => {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const clean = text
-    .replace(/```[\s\S]*?```/g, "code block")
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/\*([^*]+)\*/g, "$1")
-    .replace(/#{1,6}\s/g, "")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+    .replace(/```[\s\S]*?```/g, "code block").replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\*([^*]+)\*/g, "$1")
+    .replace(/#{1,6}\s/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[🚀🎓💼💻🗺️☕🟨🐍🌐📚🏋️🛠️🌱🔧]/g, "");
   const u = new SpeechSynthesisUtterance(clean);
   u.rate = 1; u.pitch = 1; u.volume = 1; u.lang = "en-US";
   const voices = window.speechSynthesis.getVoices();
   const pref = voices.find(v => v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Samantha") || v.name.includes("Daniel")));
   if (pref) u.voice = pref;
-  u.onstart = () => onStart?.();
-  u.onend = () => onEnd?.();
-  u.onerror = () => onEnd?.();
+  u.onstart = () => onStart?.(); u.onend = () => onEnd?.(); u.onerror = () => onEnd?.();
   window.speechSynthesis.speak(u);
 };
 
@@ -65,19 +89,21 @@ const AIVoiceTutor = () => {
   const [isListening, setIsListening] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [hasWelcomed, setHasWelcomed] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(-1); // -1 = not started, 0-2 = steps
+  const [studentProfile, setStudentProfile] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  useEffect(() => { scrollRef.current && (scrollRef.current.scrollTop = scrollRef.current.scrollHeight); }, [messages]);
+  useEffect(() => { scrollRef.current && (scrollRef.current.scrollTop = scrollRef.current.scrollHeight); }, [messages, onboardingStep]);
   useEffect(() => { if (open && mode === "text" && inputRef.current) inputRef.current.focus(); }, [open, mode]);
 
-  // Auto welcome with voice on first open
+  // Welcome on first open
   useEffect(() => {
     if (open && !hasWelcomed) {
       setHasWelcomed(true);
-      const msg: Message = { role: "assistant", content: WELCOME_MESSAGE };
-      setMessages([msg]);
+      setMessages([{ role: "assistant", content: WELCOME_MESSAGE }]);
+      setOnboardingStep(0);
       setTimeout(() => {
         speak(WELCOME_MESSAGE, () => setIsSpeaking(true), () => setIsSpeaking(false));
       }, 500);
@@ -87,9 +113,32 @@ const AIVoiceTutor = () => {
   useEffect(() => () => { window.speechSynthesis?.cancel(); recognitionRef.current?.abort(); }, []);
 
   const switchMode = (m: Mode) => {
-    setMode(m);
-    setVoiceEnabled(m === "voice");
+    setMode(m); setVoiceEnabled(m === "voice");
     if (m === "text") { window.speechSynthesis?.cancel(); setIsSpeaking(false); setIsListening(false); }
+  };
+
+  // Handle onboarding selection
+  const handleOnboardingChoice = (value: string) => {
+    const newProfile = [...studentProfile, value];
+    setStudentProfile(newProfile);
+    const step = ONBOARDING_STEPS[onboardingStep];
+    setMessages(prev => [...prev, { role: "user", content: `${step.question} → ${value}` }]);
+
+    if (onboardingStep < ONBOARDING_STEPS.length - 1) {
+      setOnboardingStep(onboardingStep + 1);
+      const nextQ = ONBOARDING_STEPS[onboardingStep + 1].question;
+      setTimeout(() => {
+        setMessages(prev => [...prev, { role: "assistant", content: nextQ }]);
+        if (voiceEnabled) speak(nextQ, () => setIsSpeaking(true), () => setIsSpeaking(false));
+      }, 400);
+    } else {
+      // Onboarding complete — send personalized intro
+      setOnboardingStep(-1);
+      const contextMsg = `The student just completed onboarding. Their profile: Level: ${newProfile[0]}, Wants to learn: ${newProfile[1]}, Goal: ${newProfile[2]}. Give them a personalized welcome and suggest what to do next. Be warm and specific. Mention relevant sections of the platform if applicable.`;
+      const allMsgs: Message[] = [...messages, { role: "user", content: contextMsg }];
+      // Don't show the context message in UI
+      setTimeout(() => streamChat(allMsgs), 300);
+    }
   };
 
   // ─── Stream chat ────────────────────────────────────────────
@@ -140,6 +189,7 @@ const AIVoiceTutor = () => {
     const msg = text || input.trim();
     if (!msg || isLoading) return;
     setInput("");
+    setOnboardingStep(-1); // Exit onboarding if user types freely
     const userMsg: Message = { role: "user", content: msg };
     const all = [...messages, userMsg];
     setMessages(all);
@@ -155,8 +205,7 @@ const AIVoiceTutor = () => {
     recognition.onresult = (e: SpeechRecognitionEvent) => {
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) finalT += e.results[i][0].transcript;
-        else interim += e.results[i][0].transcript;
+        if (e.results[i].isFinal) finalT += e.results[i][0].transcript; else interim += e.results[i][0].transcript;
       }
       setInput(finalT + interim);
     };
@@ -164,18 +213,25 @@ const AIVoiceTutor = () => {
       setIsListening(false);
       if (finalT.trim()) {
         setTimeout(() => {
-          setInput("");
+          setInput(""); setOnboardingStep(-1);
           const userMsg: Message = { role: "user", content: finalT.trim() };
           setMessages(prev => { const all = [...prev, userMsg]; streamChat(all); return all; });
         }, 300);
       }
     };
     recognition.onerror = () => setIsListening(false);
-    recognition.start();
-    setIsListening(true);
+    recognition.start(); setIsListening(true);
   }, [isListening, streamChat]);
 
   const stopSpeaking = () => { window.speechSynthesis?.cancel(); setIsSpeaking(false); };
+
+  // Navigate to section
+  const navigateTo = (hash: string) => {
+    setOpen(false);
+    setTimeout(() => { const el = document.querySelector(hash); el?.scrollIntoView({ behavior: "smooth" }); }, 200);
+  };
+
+  const currentOnboarding = onboardingStep >= 0 && onboardingStep < ONBOARDING_STEPS.length ? ONBOARDING_STEPS[onboardingStep] : null;
 
   return (
     <>
@@ -217,77 +273,122 @@ const AIVoiceTutor = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25 }}
-            className="fixed bottom-24 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[620px] max-h-[80vh] rounded-2xl bg-card shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[420px] max-w-[calc(100vw-2rem)] h-[640px] max-h-[82vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             style={{
-              border: "1px solid hsl(152 80% 50% / 0.2)",
-              boxShadow: "0 0 30px hsl(152 100% 50% / 0.1), 0 25px 50px -12px rgba(0,0,0,0.4)",
+              background: "hsl(210 20% 7% / 0.95)",
+              backdropFilter: "blur(20px)",
+              border: "1px solid hsl(152 80% 50% / 0.15)",
+              boxShadow: "0 0 40px hsl(152 100% 50% / 0.08), 0 25px 60px -12px rgba(0,0,0,0.5)",
             }}
           >
             {/* ═══ VOICE MODE ═══ */}
             {mode === "voice" && (
-              <div className="flex-1 flex flex-col" style={{ background: "linear-gradient(180deg, hsl(210 20% 6%) 0%, hsl(210 15% 10%) 40%, hsl(210 20% 8%) 100%)" }}>
+              <div className="flex-1 flex flex-col" style={{ background: "linear-gradient(180deg, hsl(210 20% 6%) 0%, hsl(210 18% 9%) 40%, hsl(210 20% 7%) 100%)" }}>
                 {/* Top bar */}
                 <div className="flex items-center justify-between px-4 pt-3 pb-2">
-                  <h3 className="font-bold text-sm" style={{ color: "hsl(152 100% 60%)", textShadow: "0 0 12px hsl(152 100% 50% / 0.4)" }}>
-                    🤖 AI Voice Tutor
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <div className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                      style={{ background: "hsl(152 80% 50% / 0.15)", color: "hsl(152 100% 60%)", border: "1px solid hsl(152 80% 50% / 0.2)" }}>
+                      AI Coding Mentor
+                    </div>
+                  </div>
                   <div className="flex items-center gap-1">
                     <button onClick={() => { setVoiceEnabled(!voiceEnabled); if (isSpeaking) stopSpeaking(); }}
                       className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-accent/20 transition-colors text-muted-foreground">
-                      {voiceEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+                      {voiceEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
                     </button>
                     <button onClick={() => switchMode("text")}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
-                      style={{ border: "1px solid hsl(152 80% 50% / 0.25)", color: "hsl(152 100% 60%)" }}>
-                      <MessageSquareText size={12} />
-                      Text Mode
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold transition-all uppercase tracking-wide"
+                      style={{ border: "1px solid hsl(152 80% 50% / 0.2)", color: "hsl(152 100% 60%)" }}>
+                      <MessageSquareText size={11} /> Text
                     </button>
                   </div>
                 </div>
 
-                {/* Robot avatar - big central stage */}
-                <div className="flex-shrink-0 flex flex-col items-center pt-2 pb-3">
+                {/* Robot avatar */}
+                <div className="flex-shrink-0 flex flex-col items-center pt-1 pb-2">
                   <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4 }}>
                     <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="xl" />
                   </motion.div>
-                  <motion.p
-                    className="text-xs font-medium mt-3"
+                  <motion.p className="text-[11px] font-medium mt-3"
                     style={{
-                      color: isSpeaking ? "hsl(152 100% 60%)" : isListening ? "hsl(200 100% 65%)" : isLoading ? "hsl(40 90% 60%)" : "hsl(210 10% 55%)",
-                      textShadow: isSpeaking || isListening ? "0 0 10px currentColor" : "none",
+                      color: isSpeaking ? "hsl(152 100% 60%)" : isListening ? "hsl(200 100% 65%)" : isLoading ? "hsl(40 90% 60%)" : "hsl(210 10% 50%)",
+                      textShadow: (isSpeaking || isListening) ? "0 0 10px currentColor" : "none",
                     }}
-                    animate={isSpeaking || isListening ? { opacity: [0.7, 1, 0.7] } : {}}
+                    animate={(isSpeaking || isListening) ? { opacity: [0.7, 1, 0.7] } : {}}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening to you..." : isLoading ? "💭 Thinking..." : "Tap the mic to talk"}
+                    {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening to you..." : isLoading ? "💭 Thinking..." : "Tap the mic or choose an action"}
                   </motion.p>
                 </div>
 
-                {/* Scrollable voice conversation */}
+                {/* Conversation + onboarding */}
                 <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 space-y-2 min-h-0">
                   {messages.map((msg, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                    <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
                       className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                       {msg.role === "assistant" && (
-                        <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 mt-0.5 ring-1 ring-primary/30">
+                        <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 mt-0.5 ring-1 ring-primary/20">
                           <img src={robotImg} alt="" className="w-full h-full object-cover" />
                         </div>
                       )}
-                      <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
-                        msg.role === "user"
-                          ? "bg-primary/20 text-foreground rounded-br-sm"
-                          : "bg-muted/50 text-foreground rounded-bl-sm"
-                      }`} style={{ borderLeft: msg.role === "assistant" ? "2px solid hsl(152 80% 50% / 0.3)" : undefined }}>
+                      <div className={`max-w-[85%] rounded-xl px-3 py-2 text-[11px] leading-relaxed ${
+                        msg.role === "user" ? "bg-primary/20 text-foreground rounded-br-sm" : "text-foreground rounded-bl-sm"
+                      }`} style={{
+                        background: msg.role === "assistant" ? "hsl(210 15% 13%)" : undefined,
+                        borderLeft: msg.role === "assistant" ? "2px solid hsl(152 80% 50% / 0.25)" : undefined,
+                      }}>
                         {msg.content}
                       </div>
                     </motion.div>
                   ))}
+
+                  {/* Onboarding choices */}
+                  {currentOnboarding && !isLoading && (
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-2 pb-1">
+                      <p className="text-[10px] text-muted-foreground mb-2 text-center">{currentOnboarding.question}</p>
+                      <div className="flex flex-wrap justify-center gap-1.5">
+                        {currentOnboarding.options.map(opt => (
+                          <button key={opt.value} onClick={() => handleOnboardingChoice(opt.value)}
+                            className="px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all hover:scale-105"
+                            style={{
+                              background: "hsl(210 15% 14%)",
+                              border: "1px solid hsl(152 80% 50% / 0.2)",
+                              color: "hsl(152 100% 65%)",
+                            }}>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Quick actions after onboarding */}
+                  {onboardingStep === -1 && messages.length <= 2 && !isLoading && (
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="pt-2 pb-1">
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {QUICK_ACTIONS.map(a => (
+                          <button key={a.label} onClick={() => sendMessage(a.msg)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-[10px] font-medium text-left transition-all hover:scale-[1.02]"
+                            style={{
+                              background: "hsl(210 15% 12%)",
+                              border: "1px solid hsl(210 10% 20%)",
+                              color: "hsl(210 10% 75%)",
+                            }}>
+                            <a.icon size={13} style={{ color: "hsl(152 80% 55%)" }} />
+                            <span>{a.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
                   {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                     <div className="flex gap-2">
-                      <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-primary/30">
+                      <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-primary/20">
                         <img src={robotImg} alt="" className="w-full h-full object-cover" />
                       </div>
-                      <div className="bg-muted/50 rounded-xl px-4 py-2">
+                      <div className="rounded-xl px-4 py-2" style={{ background: "hsl(210 15% 13%)" }}>
                         <div className="flex gap-1">
                           {[0, 150, 300].map(d => <span key={d} className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
                         </div>
@@ -296,46 +397,33 @@ const AIVoiceTutor = () => {
                   )}
                 </div>
 
-                {/* Voice input area */}
-                <div className="p-4 flex flex-col items-center gap-3">
-                  {input && <p className="text-xs text-muted-foreground italic text-center max-w-[280px] truncate">"{input}"</p>}
-                  <div className="flex items-center gap-4">
-                    {/* Quick text input */}
+                {/* Voice input */}
+                <div className="p-3 flex flex-col items-center gap-2">
+                  {input && <p className="text-[10px] text-muted-foreground italic text-center max-w-[280px] truncate">"{input}"</p>}
+                  <div className="flex items-center gap-3">
                     <form onSubmit={e => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
-                      <input
-                        value={input}
-                        onChange={e => setInput(e.target.value)}
-                        placeholder="Or type..."
-                        className="w-[140px] bg-muted/30 rounded-full px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-primary/40 placeholder:text-muted-foreground/50"
-                        style={{ border: "1px solid hsl(210 10% 20%)" }}
-                        disabled={isLoading || isListening}
-                      />
+                      <input value={input} onChange={e => setInput(e.target.value)} placeholder="Or type..."
+                        className="w-[140px] rounded-full px-3 py-2 text-[11px] outline-none focus:ring-1 focus:ring-primary/40 placeholder:text-muted-foreground/40"
+                        style={{ background: "hsl(210 15% 12%)", border: "1px solid hsl(210 10% 20%)", color: "hsl(210 10% 80%)" }}
+                        disabled={isLoading || isListening} />
                       <button type="submit" disabled={isLoading || !input.trim()}
-                        className="w-8 h-8 rounded-full bg-primary/80 text-primary-foreground flex items-center justify-center disabled:opacity-30 text-xs">
+                        className="w-8 h-8 rounded-full bg-primary/80 text-primary-foreground flex items-center justify-center disabled:opacity-30">
                         <Send className="w-3.5 h-3.5" />
                       </button>
                     </form>
-
-                    {/* Big mic button */}
-                    <motion.button
-                      onClick={toggleListening}
+                    <motion.button onClick={toggleListening}
                       className="w-14 h-14 rounded-full flex items-center justify-center"
                       style={{
-                        background: isListening
-                          ? "linear-gradient(135deg, hsl(0 70% 50%), hsl(0 60% 40%))"
-                          : "linear-gradient(135deg, hsl(200 80% 50%), hsl(220 80% 40%))",
-                        boxShadow: isListening
-                          ? "0 0 30px hsl(0 70% 50% / 0.5), 0 0 60px hsl(0 70% 50% / 0.2)"
-                          : "0 0 25px hsl(200 80% 50% / 0.4), 0 0 50px hsl(200 80% 50% / 0.15)",
+                        background: isListening ? "linear-gradient(135deg, hsl(0 70% 50%), hsl(0 60% 40%))" : "linear-gradient(135deg, hsl(200 80% 50%), hsl(220 80% 40%))",
+                        boxShadow: isListening ? "0 0 30px hsl(0 70% 50% / 0.5)" : "0 0 25px hsl(200 80% 50% / 0.35)",
                       }}
                       animate={isListening ? { scale: [1, 1.1, 1] } : { scale: 1 }}
                       transition={{ duration: 0.8, repeat: isListening ? Infinity : 0 }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
+                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       {isListening ? <MicOff className="w-6 h-6 text-white" /> : <Mic className="w-6 h-6 text-white" />}
                     </motion.button>
                   </div>
+                  <p className="text-[8px] text-muted-foreground/40">🔒 Your voice is processed in-browser. No audio is stored.</p>
                 </div>
               </div>
             )}
@@ -343,29 +431,28 @@ const AIVoiceTutor = () => {
             {/* ═══ TEXT MODE ═══ */}
             {mode === "text" && (
               <div className="flex-1 flex flex-col">
-                {/* Header */}
                 <div className="px-4 py-2.5 border-b flex items-center gap-3"
-                  style={{ background: "linear-gradient(180deg, hsl(210 20% 8%) 0%, hsl(210 15% 11%) 100%)", borderColor: "hsl(152 80% 50% / 0.15)" }}>
+                  style={{ background: "linear-gradient(180deg, hsl(210 20% 8%) 0%, hsl(210 15% 11%) 100%)", borderColor: "hsl(152 80% 50% / 0.12)" }}>
                   <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-primary/30 flex-shrink-0">
                     <img src={robotImg} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-xs" style={{ color: "hsl(152 100% 60%)", textShadow: "0 0 8px hsl(152 100% 50% / 0.3)" }}>
-                      AI Coding Tutor
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-xs" style={{ color: "hsl(152 100% 60%)" }}>AI Coding Tutor</h3>
+                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase"
+                        style={{ background: "hsl(152 80% 50% / 0.15)", color: "hsl(152 100% 60%)" }}>Online</span>
+                    </div>
                     <p className="text-[10px] text-muted-foreground truncate">
                       {isLoading ? "💭 Thinking..." : "Text mode • Ask me anything"}
                     </p>
                   </div>
                   <button onClick={() => switchMode("voice")}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
-                    style={{ border: "1px solid hsl(200 80% 55% / 0.25)", color: "hsl(200 100% 65%)" }}>
-                    <AudioLines size={12} />
-                    Voice
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold transition-all uppercase tracking-wide"
+                    style={{ border: "1px solid hsl(200 80% 55% / 0.2)", color: "hsl(200 100% 65%)" }}>
+                    <AudioLines size={11} /> Voice
                   </button>
                 </div>
 
-                {/* Messages */}
                 <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
                   {messages.map((msg, i) => (
                     <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -379,6 +466,31 @@ const AIVoiceTutor = () => {
                       }`}>{msg.content}</div>
                     </div>
                   ))}
+
+                  {/* Onboarding in text mode */}
+                  {currentOnboarding && !isLoading && (
+                    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap gap-1.5 pl-8">
+                      {currentOnboarding.options.map(opt => (
+                        <button key={opt.value} onClick={() => handleOnboardingChoice(opt.value)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 text-foreground transition-colors">
+                          {opt.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+
+                  {/* Quick actions in text mode */}
+                  {onboardingStep === -1 && messages.length <= 2 && !isLoading && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex flex-wrap gap-1.5 pl-8">
+                      {QUICK_ACTIONS.map(a => (
+                        <button key={a.label} onClick={() => sendMessage(a.msg)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors">
+                          {a.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+
                   {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                     <div className="flex gap-2">
                       <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-primary/30">
@@ -393,20 +505,7 @@ const AIVoiceTutor = () => {
                   )}
                 </div>
 
-                {/* Quick questions */}
-                {messages.length <= 1 && (
-                  <div className="px-4 pb-2">
-                    <div className="flex flex-wrap gap-1.5">
-                      {QUICK_QUESTIONS.map(q => (
-                        <button key={q} onClick={() => sendMessage(q)}
-                          className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors">{q}</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Text input */}
-                <div className="p-3 border-t border-border">
+                <div className="p-3 border-t" style={{ borderColor: "hsl(210 10% 15%)" }}>
                   <form onSubmit={e => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
                     <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
                       placeholder="Ask me anything..."

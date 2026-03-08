@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import robotImg from "@/assets/robot-avatar.jpg";
 
 interface AIAvatarProps {
@@ -8,6 +9,18 @@ interface AIAvatarProps {
 }
 
 const AIAvatar = ({ isSpeaking, isListening, size = "md" }: AIAvatarProps) => {
+  const [blink, setBlink] = useState(false);
+
+  // Natural blinking every 3-5 seconds when idle
+  useEffect(() => {
+    if (isSpeaking || isListening) return;
+    const interval = setInterval(() => {
+      setBlink(true);
+      setTimeout(() => setBlink(false), 180);
+    }, 3000 + Math.random() * 2000);
+    return () => clearInterval(interval);
+  }, [isSpeaking, isListening]);
+
   const sizes = {
     sm: "w-10 h-10",
     md: "w-20 h-20",
@@ -15,142 +28,125 @@ const AIAvatar = ({ isSpeaking, isListening, size = "md" }: AIAvatarProps) => {
     xl: "w-44 h-44",
   };
 
+  const isActive = isSpeaking || isListening;
+  const color = isSpeaking ? "152 100% 50%" : isListening ? "200 100% 60%" : "152 80% 50%";
+
   return (
     <div className={`relative ${sizes[size]} flex items-center justify-center`}>
-      {/* Neon glow rings */}
+      {/* Ambient glow */}
       <motion.div
-        className="absolute inset-[-15%] rounded-full"
+        className="absolute inset-[-18%] rounded-full"
         style={{
-          background: isSpeaking
-            ? "radial-gradient(circle, hsl(152 100% 50% / 0.4) 0%, hsl(180 100% 50% / 0.15) 40%, transparent 70%)"
-            : isListening
-            ? "radial-gradient(circle, hsl(200 100% 60% / 0.4) 0%, hsl(220 100% 50% / 0.15) 40%, transparent 70%)"
-            : "radial-gradient(circle, hsl(152 80% 50% / 0.15) 0%, transparent 60%)",
+          background: `radial-gradient(circle, hsl(${color} / ${isActive ? 0.35 : 0.12}) 0%, transparent 70%)`,
         }}
         animate={{
-          scale: isSpeaking ? [1, 1.2, 1] : isListening ? [1, 1.15, 1] : [1, 1.05, 1],
-          opacity: [0.6, 1, 0.6],
+          scale: isActive ? [1, 1.15, 1] : [1, 1.04, 1],
+          opacity: [0.5, 1, 0.5],
         }}
-        transition={{ duration: isSpeaking ? 0.5 : 2, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: isSpeaking ? 0.5 : 2.5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Neon pulse rings */}
-      {(isSpeaking || isListening) && (
-        <>
-          <motion.div
-            className="absolute inset-[-8%] rounded-full"
-            style={{
-              border: `2px solid ${isSpeaking ? "hsl(152 100% 50% / 0.5)" : "hsl(200 100% 60% / 0.5)"}`,
-              boxShadow: isSpeaking
-                ? "0 0 15px hsl(152 100% 50% / 0.3), inset 0 0 15px hsl(152 100% 50% / 0.1)"
-                : "0 0 15px hsl(200 100% 60% / 0.3), inset 0 0 15px hsl(200 100% 60% / 0.1)",
-            }}
-            animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-          <motion.div
-            className="absolute inset-[-8%] rounded-full"
-            style={{
-              border: `1px solid ${isSpeaking ? "hsl(152 100% 50% / 0.3)" : "hsl(200 100% 60% / 0.3)"}`,
-            }}
-            animate={{ scale: [1, 1.7], opacity: [0.4, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-          />
-        </>
-      )}
+      {/* Pulse rings when active */}
+      {isActive && [0, 0.4].map((delay) => (
+        <motion.div
+          key={delay}
+          className="absolute inset-[-8%] rounded-full"
+          style={{
+            border: `${delay === 0 ? 2 : 1}px solid hsl(${color} / ${delay === 0 ? 0.5 : 0.25})`,
+            boxShadow: delay === 0 ? `0 0 15px hsl(${color} / 0.25)` : undefined,
+          }}
+          animate={{ scale: [1, delay === 0 ? 1.4 : 1.7], opacity: [delay === 0 ? 0.6 : 0.3, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay }}
+        />
+      ))}
 
-      {/* Neon border frame */}
+      {/* Neon border */}
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          border: isSpeaking
-            ? "2px solid hsl(152 100% 50% / 0.7)"
-            : isListening
-            ? "2px solid hsl(200 100% 60% / 0.7)"
-            : "2px solid hsl(152 80% 50% / 0.3)",
-          boxShadow: isSpeaking
-            ? "0 0 20px hsl(152 100% 50% / 0.4), 0 0 40px hsl(152 100% 50% / 0.2), inset 0 0 20px hsl(152 100% 50% / 0.1)"
-            : isListening
-            ? "0 0 20px hsl(200 100% 60% / 0.4), 0 0 40px hsl(200 100% 60% / 0.2), inset 0 0 20px hsl(200 100% 60% / 0.1)"
-            : "0 0 10px hsl(152 80% 50% / 0.15)",
+          border: `2px solid hsl(${color} / ${isActive ? 0.7 : 0.25})`,
+          boxShadow: isActive
+            ? `0 0 20px hsl(${color} / 0.4), 0 0 40px hsl(${color} / 0.15), inset 0 0 15px hsl(${color} / 0.08)`
+            : `0 0 8px hsl(${color} / 0.1)`,
         }}
-        animate={{
-          boxShadow: isSpeaking
-            ? [
-                "0 0 20px hsl(152 100% 50% / 0.4), 0 0 40px hsl(152 100% 50% / 0.2)",
-                "0 0 30px hsl(152 100% 50% / 0.6), 0 0 60px hsl(152 100% 50% / 0.3)",
-                "0 0 20px hsl(152 100% 50% / 0.4), 0 0 40px hsl(152 100% 50% / 0.2)",
-              ]
-            : isListening
-            ? [
-                "0 0 20px hsl(200 100% 60% / 0.4), 0 0 40px hsl(200 100% 60% / 0.2)",
-                "0 0 30px hsl(200 100% 60% / 0.6), 0 0 60px hsl(200 100% 60% / 0.3)",
-                "0 0 20px hsl(200 100% 60% / 0.4), 0 0 40px hsl(200 100% 60% / 0.2)",
-              ]
-            : undefined,
-        }}
+        animate={isActive ? {
+          boxShadow: [
+            `0 0 20px hsl(${color} / 0.4), 0 0 40px hsl(${color} / 0.15)`,
+            `0 0 30px hsl(${color} / 0.6), 0 0 60px hsl(${color} / 0.25)`,
+            `0 0 20px hsl(${color} / 0.4), 0 0 40px hsl(${color} / 0.15)`,
+          ],
+        } : {}}
         transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Robot image */}
+      {/* Robot image with blink overlay */}
       <motion.div
         className="relative w-full h-full rounded-full overflow-hidden"
-        animate={{
-          scale: isSpeaking ? [1, 1.02, 1] : 1,
-        }}
+        animate={{ scale: isSpeaking ? [1, 1.02, 1] : 1 }}
         transition={{ duration: 0.6, repeat: Infinity }}
       >
-        <img
-          src={robotImg}
-          alt="AI Tutor Robot"
-          className="w-full h-full object-cover"
-        />
-        {/* Neon overlay when active */}
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: isSpeaking
-              ? "linear-gradient(180deg, hsl(152 100% 50% / 0.05) 0%, hsl(152 100% 50% / 0.15) 100%)"
-              : isListening
-              ? "linear-gradient(180deg, hsl(200 100% 60% / 0.05) 0%, hsl(200 100% 60% / 0.15) 100%)"
-              : "transparent",
-          }}
-          animate={{ opacity: isSpeaking || isListening ? [0.5, 1, 0.5] : 0 }}
-          transition={{ duration: 1, repeat: Infinity }}
-        />
+        <img src={robotImg} alt="AI Tutor Robot" className="w-full h-full object-cover" />
+        
+        {/* Blink overlay - subtle dark flash over eyes area */}
+        <AnimatedBlink blink={blink} />
+
+        {/* Neon color wash when active */}
+        {isActive && (
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(180deg, hsl(${color} / 0.03) 0%, hsl(${color} / 0.12) 100%)`,
+            }}
+            animate={{ opacity: [0.4, 0.8, 0.4] }}
+            transition={{ duration: 1, repeat: Infinity }}
+          />
+        )}
       </motion.div>
 
-      {/* Speaking equalizer overlay at bottom */}
-      {isSpeaking && (
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-[2px]">
+      {/* Status badge */}
+      {isActive && (
+        <motion.div
+          className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex gap-[2px]"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
           {[0, 1, 2, 3, 4, 5, 6].map((i) => (
             <motion.div
               key={i}
               className="w-[3px] rounded-full"
-              style={{ background: "hsl(152 100% 50%)", boxShadow: "0 0 6px hsl(152 100% 50% / 0.6)" }}
-              animate={{ height: [3, 12, 3] }}
-              transition={{ duration: 0.35, repeat: Infinity, delay: i * 0.06 }}
+              style={{
+                background: `hsl(${color})`,
+                boxShadow: `0 0 6px hsl(${color} / 0.6)`,
+              }}
+              animate={{ height: isSpeaking ? [3, 12, 3] : [2, 10, 2] }}
+              transition={{ duration: isSpeaking ? 0.35 : 0.5, repeat: Infinity, delay: i * (isSpeaking ? 0.06 : 0.08) }}
             />
           ))}
-        </div>
+        </motion.div>
       )}
 
-      {/* Listening wave indicator */}
-      {isListening && (
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-[2px]">
-          {[0, 1, 2, 3, 4, 5, 6].map((i) => (
-            <motion.div
-              key={i}
-              className="w-[3px] rounded-full"
-              style={{ background: "hsl(200 100% 60%)", boxShadow: "0 0 6px hsl(200 100% 60% / 0.6)" }}
-              animate={{ height: [2, 10, 2] }}
-              transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.08 }}
-            />
-          ))}
-        </div>
+      {/* Idle breathing glow */}
+      {!isActive && (
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{ boxShadow: "0 0 15px hsl(152 80% 50% / 0.15)" }}
+          animate={{ opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        />
       )}
     </div>
   );
 };
+
+// Subtle blink effect
+const AnimatedBlink = ({ blink }: { blink: boolean }) => (
+  <motion.div
+    className="absolute top-[25%] left-[15%] right-[15%] h-[12%] rounded-full"
+    style={{ background: "rgba(0,0,0,0.3)" }}
+    initial={{ opacity: 0, scaleY: 0 }}
+    animate={{ opacity: blink ? 1 : 0, scaleY: blink ? 1 : 0 }}
+    transition={{ duration: 0.09 }}
+  />
+);
 
 export default AIAvatar;
