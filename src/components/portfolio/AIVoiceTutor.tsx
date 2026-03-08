@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, lazy, Suspense } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -9,7 +9,7 @@ import {
   BarChart3, Map, User, History, Lightbulb, RotateCcw,
   CheckCircle2, Target, TrendingUp, Trash2, Clock,
 } from "lucide-react";
-const HumanAvatar3D = lazy(() => import("./HumanAvatar3D"));
+import HumanAvatar3D from "./HumanAvatar3D";
 
 /* ═══════════════════════════════════════════════════
    TYPES
@@ -459,15 +459,9 @@ const AIVoiceTutor = () => {
                   </p>
                 </div>
 
-                {/* 3D Human Avatar */}
+                {/* Human Avatar */}
                 <div className="flex-1 w-full min-h-0">
-                  <Suspense fallback={
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-                    </div>
-                  }>
-                    <HumanAvatar3D isSpeaking={isSpeaking} isListening={isListening} isThinking={isLoading} />
-                  </Suspense>
+                  <HumanAvatar3D isSpeaking={isSpeaking} isListening={isListening} isThinking={isLoading} />
                 </div>
 
                 {/* Voice controls */}
