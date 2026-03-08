@@ -119,7 +119,7 @@ const HeroSection = () => {
             </motion.h1>
 
             <motion.p variants={item} className="text-muted-foreground max-w-xl text-lg leading-relaxed mb-10">
-              Full-Stack Developer specializing in scalable web applications using{" "}
+              Full-Stack Engineer specializing in scalable web applications using{" "}
               <span className="text-foreground font-medium">Java Spring Boot</span>,{" "}
               <span className="text-foreground font-medium">React</span>, and microservices.
               Building secure APIs and delivering enterprise solutions with{" "}
