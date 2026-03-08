@@ -162,7 +162,7 @@ const Navbar = () => {
                 textShadow: "0 0 8px hsl(152 100% 50% / 0.3)",
               }}
             >
-              <img src={robotImg} alt="" className="w-5 h-5 rounded-full ring-1 ring-primary/40" />
+              <img src={tutorAvatar} alt="" className="w-5 h-5 rounded-full ring-1 ring-primary/40 object-cover" />
               <span className="hidden lg:inline">Talk to AI</span>
               <Bot size={14} className="lg:hidden" />
             </button>

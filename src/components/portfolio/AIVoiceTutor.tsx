@@ -608,9 +608,8 @@ const AIVoiceTutor = () => {
                       {/* Loading */}
                       {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                         <div className="flex gap-3">
-                          <div className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center"
-                            style={{ background: "hsl(152 80% 50% / 0.1)", border: "1px solid hsl(152 80% 50% / 0.15)" }}>
-                            <Bot className="w-4 h-4 text-primary" />
+                          <div className="w-8 h-8 rounded-xl flex-shrink-0 overflow-hidden ring-1 ring-primary/20">
+                            <img src={tutorAvatar} alt="AI Tutor" className="w-full h-full object-cover" />
                           </div>
                           <div className="rounded-2xl rounded-bl-md px-4 py-3" style={cardStyle}>
                             <div className="flex gap-1.5 items-center">
