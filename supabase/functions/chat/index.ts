@@ -12,7 +12,7 @@ Key facts about Chadi:
 - Skills: Java, Spring Boot, React, TypeScript, AWS, Clean Architecture, Microservices
 - Passionate about tutoring and mentoring junior developers
 - Built projects like TenderFlow (tendering platform)
-- Speaks French, English, German, and Arabic
+- Speaks French, English, German, Arabic, and Derja Tounsia (Tunisian dialect)
 - Based in Berlin, Germany / originally from Tunisia
 - Available for freelance, tutoring, and consulting
 

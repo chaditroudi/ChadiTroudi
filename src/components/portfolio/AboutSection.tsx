@@ -62,6 +62,14 @@ const AboutSection = () => {
                 </p>
               </div>
 
+              <div className="pt-4 flex flex-wrap gap-2">
+                {["🇬🇧 English", "🇫🇷 French", "🇩🇪 German", "🇸🇦 Arabic", "🇹🇳 Derja Tounsia"].map((lang) => (
+                  <span key={lang} className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted text-muted-foreground">
+                    {lang}
+                  </span>
+                ))}
+              </div>
+
               <div className="pt-6 grid grid-cols-2 gap-3">
                 {[
                   "React & TypeScript",
