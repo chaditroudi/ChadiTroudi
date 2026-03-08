@@ -1,13 +1,12 @@
 import { ArrowDown, Github, Linkedin, Mail, ArrowRight, GraduationCap, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
-import profileImg from "@/assets/profile.jpg";
+import chadiLounge from "@/assets/chadi-lounge.jpeg";
+import websummitQatar from "@/assets/websummit-qatar.jpg";
+import chadiLaptop from "@/assets/chadi-laptop.jpg";
+import websummitFood from "@/assets/websummit-food.jpeg";
 import bonialPortrait from "@/assets/bonial-portrait.jpeg";
-import websummitOutdoor from "@/assets/websummit-outdoor.jpg";
-import websummitStage from "@/assets/websummit-stage.jpg";
-import workingCafe from "@/assets/working-cafe.jpg";
-import bonialMeeting from "@/assets/bonial-office-meeting.jpeg";
-import banner from "@/assets/banner.jpeg";
+import bonialIncident from "@/assets/bonial-incident.jpeg";
 
 const roles = [
   "Full-Stack Engineer",
@@ -20,12 +19,12 @@ const roles = [
 ];
 
 const heroImages = [
+  { src: chadiLounge, alt: "Chadi relaxing in a lounge" },
+  { src: chadiLaptop, alt: "Chadi working on his laptop" },
+  { src: websummitQatar, alt: "Chadi at Web Summit Qatar" },
+  { src: websummitFood, alt: "Chadi at Web Summit Food Summit" },
   { src: bonialPortrait, alt: "Chadi at Bonial office" },
-  { src: websummitOutdoor, alt: "Chadi at Web Summit" },
-  { src: websummitStage, alt: "Chadi on stage at Web Summit" },
-  { src: workingCafe, alt: "Chadi working from a café" },
-  { src: bonialMeeting, alt: "Chadi in a team meeting" },
-  { src: banner, alt: "Chadi Troudi banner" },
+  { src: bonialIncident, alt: "Chadi in an incident call at Bonial" },
 ];
 
 const useTypewriter = (words: string[], typingSpeed = 70, deletingSpeed = 35, pauseTime = 1800) => {
