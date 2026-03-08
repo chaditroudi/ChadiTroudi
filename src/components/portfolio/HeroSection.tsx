@@ -1,18 +1,34 @@
 import { ArrowDown, Github, Linkedin, Mail, ArrowRight, GraduationCap, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import profileImg from "@/assets/profile.jpg";
 import bonialPortrait from "@/assets/bonial-portrait.jpeg";
+import websummitOutdoor from "@/assets/websummit-outdoor.jpg";
+import websummitStage from "@/assets/websummit-stage.jpg";
+import workingCafe from "@/assets/working-cafe.jpg";
+import bonialMeeting from "@/assets/bonial-office-meeting.jpeg";
+import banner from "@/assets/banner.jpeg";
 
 const roles = [
   "Full-Stack Engineer",
   "Java & Spring Boot Expert",
-  "React Specialist",
-  "API Architect",
-  "Java Tutor",
+  "React & TypeScript Specialist",
+  "AWS Cloud Architect",
+  "API & Microservices Designer",
+  "Java Tutor & Mentor",
+  "Clean Architecture Advocate",
 ];
 
-const useTypewriter = (words: string[], typingSpeed = 80, deletingSpeed = 40, pauseTime = 2000) => {
+const heroImages = [
+  { src: bonialPortrait, alt: "Chadi at Bonial office" },
+  { src: websummitOutdoor, alt: "Chadi at Web Summit" },
+  { src: websummitStage, alt: "Chadi on stage at Web Summit" },
+  { src: workingCafe, alt: "Chadi working from a café" },
+  { src: bonialMeeting, alt: "Chadi in a team meeting" },
+  { src: banner, alt: "Chadi Troudi banner" },
+];
+
+const useTypewriter = (words: string[], typingSpeed = 70, deletingSpeed = 35, pauseTime = 1800) => {
   const [text, setText] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -56,67 +72,98 @@ const item = {
 
 const HeroSection = () => {
   const typedRole = useTypewriter(roles);
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="min-h-screen relative overflow-hidden flex items-center" aria-label="Hero">
-      {/* Enhanced background */}
+      {/* Background image carousel */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-background" />
-        {/* Large ambient glow */}
-        <motion.div
-          animate={{ opacity: [0.04, 0.1, 0.04], scale: [1, 1.15, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[10%] left-[10%] w-[600px] h-[600px] rounded-full blur-[180px]"
-          style={{ background: "hsl(152 68% 46% / 0.18)" }}
-        />
-        <motion.div
-          animate={{ opacity: [0.03, 0.08, 0.03] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-          className="absolute bottom-[5%] right-[5%] w-[500px] h-[500px] rounded-full blur-[180px]"
-          style={{ background: "hsl(172 66% 50% / 0.12)" }}
-        />
-        {/* Secondary accent */}
-        <motion.div
-          animate={{ opacity: [0.02, 0.06, 0.02], x: [0, 30, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 5 }}
-          className="absolute top-[50%] right-[30%] w-[300px] h-[300px] rounded-full blur-[120px]"
-          style={{ background: "hsl(200 70% 50% / 0.08)" }}
-        />
-        {/* Grid pattern */}
-        <div className="absolute inset-0 dot-pattern opacity-40" />
-        {/* Gradient fade at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentImage}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="absolute inset-0"
+          >
+            <img
+              src={heroImages[currentImage].src}
+              alt={heroImages[currentImage].alt}
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-background/75 dark:bg-background/80 backdrop-blur-[2px]" />
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </div>
 
+      {/* Ambient glows */}
+      <motion.div
+        animate={{ opacity: [0.06, 0.15, 0.06], scale: [1, 1.15, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] left-[10%] w-[600px] h-[600px] rounded-full blur-[180px]"
+        style={{ background: "hsl(152 68% 46% / 0.2)" }}
+      />
+      <motion.div
+        animate={{ opacity: [0.04, 0.1, 0.04] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+        className="absolute bottom-[5%] right-[5%] w-[500px] h-[500px] rounded-full blur-[180px]"
+        style={{ background: "hsl(172 66% 50% / 0.15)" }}
+      />
+
+      {/* Grid pattern */}
+      <div className="absolute inset-0 dot-pattern opacity-20" />
+
       {/* Floating particles */}
-      {[...Array(5)].map((_, i) => (
+      {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1.5 h-1.5 bg-primary/15 rounded-full"
-          style={{ left: `${20 + i * 15}%`, top: `${15 + (i % 3) * 25}%` }}
-          animate={{ y: [0, -40, 0], opacity: [0.1, 0.4, 0.1] }}
+          className="absolute w-1.5 h-1.5 bg-primary/20 rounded-full"
+          style={{ left: `${15 + i * 14}%`, top: `${10 + (i % 3) * 28}%` }}
+          animate={{ y: [0, -40, 0], opacity: [0.1, 0.5, 0.1] }}
           transition={{ duration: 4 + i * 0.8, repeat: Infinity, delay: i * 0.7 }}
         />
       ))}
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-[1fr_400px] gap-16 items-center max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-[1fr_420px] gap-16 items-center max-w-6xl mx-auto">
           {/* Text content */}
           <motion.div variants={container} initial="hidden" animate="visible">
-            <motion.div variants={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 mb-8">
+            <motion.div variants={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm mb-8">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <span className="text-primary font-mono text-xs tracking-wider uppercase">
-                {typedRole}
-                <span className="animate-pulse ml-0.5">|</span>
+                Available for hire
               </span>
             </motion.div>
 
-            <motion.h1 variants={item} className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight mb-8">
+            <motion.h1 variants={item} className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight mb-6">
               Chadi
               <br />
               <span className="text-gradient">Troudi</span>
               <span className="text-primary">.</span>
             </motion.h1>
+
+            {/* Typewriter role */}
+            <motion.div variants={item} className="mb-8">
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-px bg-primary" />
+                <span className="text-lg md:text-xl font-mono text-primary font-semibold">
+                  {typedRole}
+                  <span className="animate-pulse text-primary">|</span>
+                </span>
+              </div>
+            </motion.div>
 
             <motion.p variants={item} className="text-muted-foreground max-w-xl text-lg leading-relaxed mb-10">
               Full-Stack Engineer specializing in scalable web applications using{" "}
@@ -136,7 +183,7 @@ const HeroSection = () => {
               </a>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-sm px-8 py-4 rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
+                className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-sm px-8 py-4 rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 backdrop-blur-sm"
               >
                 Get In Touch
               </a>
@@ -146,7 +193,7 @@ const HeroSection = () => {
             <motion.div variants={item}>
               <a
                 href="#tutoring"
-                className="group relative inline-flex items-center gap-3 px-6 py-3 rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent hover:from-primary/15 hover:via-primary/10 hover:border-primary/40 transition-all duration-500"
+                className="group relative inline-flex items-center gap-3 px-6 py-3 rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent hover:from-primary/15 hover:via-primary/10 hover:border-primary/40 transition-all duration-500 backdrop-blur-sm"
               >
                 <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors">
                   <GraduationCap className="w-5 h-5 text-primary" />
@@ -161,7 +208,6 @@ const HeroSection = () => {
                   <span className="text-xs text-muted-foreground">10-day intensive • Java + SQL + Project</span>
                 </div>
                 <ArrowRight size={14} className="text-primary group-hover:translate-x-1 transition-transform ml-auto" />
-                {/* Sparkle animation */}
                 <motion.div
                   animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 1] }}
                   transition={{ duration: 3, repeat: Infinity }}
@@ -184,13 +230,13 @@ const HeroSection = () => {
                     <p className="text-3xl font-bold text-gradient">{stat.value}</p>
                     <p className="text-muted-foreground text-xs font-mono mt-1 uppercase tracking-wider">{stat.label}</p>
                   </div>
-                  {i < 2 && <div className="w-px h-10 bg-border" />}
+                  {i < 2 && <div className="w-px h-10 bg-border/50" />}
                 </div>
               ))}
             </motion.div>
           </motion.div>
 
-          {/* Profile photo — enhanced */}
+          {/* Profile photo with carousel thumbnails */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -199,26 +245,54 @@ const HeroSection = () => {
           >
             <div className="relative">
               {/* Glow behind photo */}
-              <div className="absolute -inset-8 bg-primary/5 rounded-[40px] blur-2xl" />
-              
-              {/* Main image */}
-              <div className="relative w-[360px] h-[460px] rounded-3xl overflow-hidden ring-1 ring-border/50 shadow-2xl">
-                <img
-                  src={bonialPortrait}
-                  alt="Chadi Troudi"
-                  className="w-full h-full object-cover object-top"
-                />
+              <div className="absolute -inset-8 bg-primary/8 rounded-[40px] blur-2xl" />
+
+              {/* Main image carousel */}
+              <div className="relative w-[380px] h-[480px] rounded-3xl overflow-hidden ring-1 ring-border/50 shadow-2xl">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentImage}
+                    src={heroImages[currentImage].src}
+                    alt={heroImages[currentImage].alt}
+                    initial={{ opacity: 0, scale: 1.05 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.8 }}
+                    className="w-full h-full object-cover object-top"
+                  />
+                </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-                
+
                 {/* Name overlay at bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <p className="text-foreground font-bold text-lg">Chadi Troudi</p>
                   <p className="text-muted-foreground text-sm">Senior Full-Stack Engineer</p>
                 </div>
+
+                {/* Image counter */}
+                <div className="absolute top-4 right-4 bg-background/60 backdrop-blur-md rounded-full px-3 py-1 text-xs font-mono text-foreground/80">
+                  {currentImage + 1}/{heroImages.length}
+                </div>
               </div>
-              
+
+              {/* Thumbnail dots */}
+              <div className="flex items-center justify-center gap-2 mt-4">
+                {heroImages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentImage(i)}
+                    className={`transition-all duration-300 rounded-full ${
+                      i === currentImage
+                        ? "w-8 h-2 bg-primary"
+                        : "w-2 h-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    }`}
+                    aria-label={`Go to image ${i + 1}`}
+                  />
+                ))}
+              </div>
+
               {/* Floating accent card */}
-              <motion.div 
+              <motion.div
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -bottom-6 -left-10 glass rounded-2xl px-5 py-4 shadow-xl border border-border/30"
@@ -243,7 +317,7 @@ const HeroSection = () => {
                 </div>
               </motion.a>
 
-              {/* Decorative border */}
+              {/* Decorative borders */}
               <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border border-primary/10 -z-10" />
               <div className="absolute -top-8 -right-8 w-full h-full rounded-3xl border border-primary/5 -z-20" />
             </div>
