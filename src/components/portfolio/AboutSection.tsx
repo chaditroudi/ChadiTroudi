@@ -2,8 +2,10 @@ import AnimatedSection from "./AnimatedSection";
 import websummitStage from "@/assets/websummit-stage.jpg";
 import workingCafe from "@/assets/working-cafe.jpg";
 import { MapPin, Calendar, Zap } from "lucide-react";
+import { useLang } from "@/hooks/use-lang";
 
 const AboutSection = () => {
+  const { t } = useLang();
   return (
     <section id="about" className="py-32 relative">
       <div className="section-divider mb-32" />
