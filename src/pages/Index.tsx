@@ -8,6 +8,7 @@ import SkillsSection from "@/components/portfolio/SkillsSection";
 import ExperienceSection from "@/components/portfolio/ExperienceSection";
 import TestimonialsSection from "@/components/portfolio/TestimonialsSection";
 import TutoringSection from "@/components/portfolio/TutoringSection";
+import BlogSection from "@/components/portfolio/BlogSection";
 import ContactSection from "@/components/portfolio/ContactSection";
 import Footer from "@/components/portfolio/Footer";
 import ScrollProgress from "@/components/portfolio/ScrollProgress";
