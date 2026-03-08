@@ -51,16 +51,12 @@ const AboutSection = () => {
               </p>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  I'm a Full-Stack Engineer at{" "}
-                  <span className="text-foreground font-medium">Bonial Germany</span>, building retail tech
-                  with React/TypeScript and Java Spring Boot. With 5+ years of experience, I've shipped
-                  products across banking, health, mobility, e-commerce, and education.
+                  {t.aboutP1}{" "}
+                  <span className="text-foreground font-medium">Bonial Germany</span>{t.aboutP1b}
                 </p>
                 <p>
-                  At <span className="text-foreground font-medium">Yanyi</span>, I represented the team at{" "}
-                  <span className="text-foreground font-medium">Web Summit Qatar 2025</span>, showcasing our
-                  AI work. I've led JS→TS migrations, created reusable React component libraries, and scaled
-                  backend services on AWS/Docker with CI/CD.
+                  {t.aboutP2} <span className="text-foreground font-medium">Yanyi</span>{t.aboutP2b}{" "}
+                  <span className="text-foreground font-medium">Web Summit Qatar 2025</span>{t.aboutP2c}
                 </p>
               </div>
 
