@@ -221,9 +221,9 @@ const HeroSection = () => {
             {/* Stats row */}
             <motion.div variants={item} className="flex items-center gap-8 mt-12">
               {[
-                { value: "5+", label: "Years" },
-                { value: "6", label: "Companies" },
-                { value: "10+", label: "Projects" },
+                { value: "5+", label: t.years },
+                { value: "6", label: t.companies },
+                { value: "10+", label: t.projectsCount },
               ].map((stat, i) => (
                 <div key={stat.label} className="flex items-center gap-8">
                   <div>
