@@ -321,31 +321,36 @@ const AIVoiceTutor = () => {
             transition={{ duration: 0.25 }}
             className="fixed bottom-24 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[75vh] rounded-2xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden"
           >
-            {/* Header with avatar */}
-            <div className="bg-primary text-primary-foreground px-4 py-3 flex items-center gap-3">
-              <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="sm" />
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm">AI Coding Tutor</h3>
-                <p className="text-xs opacity-80 truncate">
-                  {isSpeaking
-                    ? "🔊 Speaking..."
-                    : isListening
-                    ? "🎤 Listening..."
-                    : isLoading
-                    ? "💭 Thinking..."
-                    : "Ask me anything about coding!"}
-                </p>
+            {/* Header with robot avatar - theatrical presentation */}
+            <div className="bg-gradient-to-b from-background to-muted/50 px-4 pt-3 pb-2 border-b border-border">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-bold text-sm text-foreground">🤖 AI Coding Tutor</h3>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => {
+                      setVoiceEnabled(!voiceEnabled);
+                      if (isSpeaking) stopSpeaking();
+                    }}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-accent transition-colors text-muted-foreground"
+                    title={voiceEnabled ? "Mute voice" : "Enable voice"}
+                  >
+                    {voiceEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => {
-                  setVoiceEnabled(!voiceEnabled);
-                  if (isSpeaking) stopSpeaking();
-                }}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-primary-foreground/20 transition-colors"
-                title={voiceEnabled ? "Mute voice" : "Enable voice"}
-              >
-                {voiceEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-              </button>
+              {/* Robot stage */}
+              <div className="flex justify-center">
+                <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="lg" />
+              </div>
+              <p className="text-center text-xs text-muted-foreground mt-1">
+                {isSpeaking
+                  ? "🔊 Speaking to you..."
+                  : isListening
+                  ? "🎤 I'm listening..."
+                  : isLoading
+                  ? "💭 Thinking..."
+                  : "Your friendly coding mentor"}
+              </p>
             </div>
 
             {/* Messages */}
