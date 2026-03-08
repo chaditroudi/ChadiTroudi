@@ -13,6 +13,7 @@ import ContactSection from "@/components/portfolio/ContactSection";
 import Footer from "@/components/portfolio/Footer";
 import ScrollProgress from "@/components/portfolio/ScrollProgress";
 import BackToTop from "@/components/portfolio/BackToTop";
+import AIChatbot from "@/components/portfolio/AIChatbot";
 
 const Index = () => {
   return (
@@ -34,6 +35,7 @@ const Index = () => {
       </main>
       <Footer />
       <BackToTop />
+      <AIChatbot />
     </div>
   );
 };
