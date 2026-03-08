@@ -210,15 +210,15 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right — Single clean profile photo */}
+          {/* Right — Profile photo slider */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="hidden lg:block shrink-0"
+            className="w-full lg:w-auto shrink-0"
           >
-            <div className="relative">
-              <div className="w-[360px] h-[440px] rounded-3xl overflow-hidden ring-1 ring-border/50">
+            <div className="relative mx-auto lg:mx-0">
+              <div className="w-full max-w-sm sm:max-w-md lg:w-[360px] h-[300px] sm:h-[380px] lg:h-[440px] rounded-2xl sm:rounded-3xl overflow-hidden ring-1 ring-border/50 mx-auto lg:mx-0">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentImage}
