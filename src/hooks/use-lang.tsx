@@ -162,7 +162,8 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
   const handleSetLang = (l: Lang) => {
     setLang(l);
     localStorage.setItem("lang", l);
-    document.documentElement.dir = l === "tn" ? "rtl" : "ltr";
+    // Keep LTR layout — the site is a portfolio, not a full RTL app
+    document.documentElement.dir = "ltr";
   };
 
   return (
