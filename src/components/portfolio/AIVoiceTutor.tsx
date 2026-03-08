@@ -4,6 +4,7 @@ import {
   X, Send, Mic, MicOff, Volume2, VolumeX, GraduationCap,
 } from "lucide-react";
 import AIAvatar from "./AIAvatar";
+import robotImg from "@/assets/robot-avatar.jpg";
 
 type Message = { role: "user" | "assistant"; content: string };
 
