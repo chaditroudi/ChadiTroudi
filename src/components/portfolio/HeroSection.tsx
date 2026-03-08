@@ -173,18 +173,18 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Stats */}
-            <motion.div {...fadeUp(0.75)} className="flex items-center gap-8 mt-12">
+            <motion.div {...fadeUp(0.75)} className="flex items-center gap-5 sm:gap-8 mt-8 sm:mt-12">
               {[
                 { value: "5+", label: t.years },
                 { value: "6", label: t.companies },
                 { value: "10+", label: t.projectsCount },
               ].map((stat, i) => (
-                <div key={stat.label} className="flex items-center gap-8">
+                <div key={stat.label} className="flex items-center gap-5 sm:gap-8">
                   <div>
-                    <p className="text-3xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-muted-foreground text-xs font-mono mt-1 uppercase tracking-wider">{stat.label}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</p>
+                    <p className="text-muted-foreground text-[10px] sm:text-xs font-mono mt-1 uppercase tracking-wider">{stat.label}</p>
                   </div>
-                  {i < 2 && <div className="w-px h-8 bg-border" />}
+                  {i < 2 && <div className="w-px h-6 sm:h-8 bg-border" />}
                 </div>
               ))}
             </motion.div>
