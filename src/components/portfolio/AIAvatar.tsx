@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect } from "react";
 
 interface AIAvatarProps {
   isSpeaking: boolean;
@@ -7,7 +7,7 @@ interface AIAvatarProps {
   size?: "sm" | "md" | "lg" | "xl" | "full";
 }
 
-const AIAvatar = forwardRef<HTMLDivElement, AIAvatarProps>(({ isSpeaking, isListening, size = "md" }, ref) => {
+const AIAvatar = ({ isSpeaking, isListening, size = "md" }: AIAvatarProps) => {
   const [blink, setBlink] = useState(false);
   const [breathPhase, setBreathPhase] = useState(0);
 
@@ -31,7 +31,7 @@ const AIAvatar = forwardRef<HTMLDivElement, AIAvatarProps>(({ isSpeaking, isList
 
   if (size === "full") {
     return (
-      <div ref={ref} className="relative w-full h-full flex items-center justify-center select-none">
+      <div className="relative w-full h-full flex items-center justify-center select-none">
         <svg viewBox="0 0 260 440" className="w-full h-full max-w-[240px] max-h-[400px]" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
@@ -362,7 +362,7 @@ const AIAvatar = forwardRef<HTMLDivElement, AIAvatarProps>(({ isSpeaking, isList
   const sizes: Record<string, string> = { sm: "w-10 h-10", md: "w-20 h-20", lg: "w-32 h-32", xl: "w-44 h-44" };
 
   return (
-    <div ref={ref} className={`relative ${sizes[size] || sizes.md} flex items-center justify-center`}>
+    <div className={`relative ${sizes[size] || sizes.md} flex items-center justify-center`}>
       <motion.div className="absolute inset-[-12%] rounded-full"
         style={{ background: `radial-gradient(circle, ${accentColor}${isActive ? "40" : "15"} 0%, transparent 70%)` }}
         animate={{ scale: isActive ? [1, 1.12, 1] : [1, 1.03, 1], opacity: [0.5, 1, 0.5] }}
@@ -406,8 +406,6 @@ const AIAvatar = forwardRef<HTMLDivElement, AIAvatarProps>(({ isSpeaking, isList
       )}
     </div>
   );
-});
-
-AIAvatar.displayName = "AIAvatar";
+};
 
 export default AIAvatar;
