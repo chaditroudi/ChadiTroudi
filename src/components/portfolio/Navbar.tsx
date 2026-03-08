@@ -152,7 +152,7 @@ const Navbar = () => {
           >
             <button
               onClick={() => {
-                const btn = document.querySelector('[aria-label="Open AI Tutor"]') as HTMLButtonElement;
+                const btn = document.querySelector('[aria-label="Chat with AI Tutor"]') as HTMLButtonElement;
                 btn?.click();
               }}
               className="inline-flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg transition-all duration-300 ml-1 group"
