@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X, Send, Mic, MicOff, Volume2, VolumeX, GraduationCap,
+  X, Send, Mic, MicOff, Volume2, VolumeX,
   MessageSquareText, AudioLines,
 } from "lucide-react";
 import AIAvatar from "./AIAvatar";
 import robotImg from "@/assets/robot-avatar.jpg";
 
 type Message = { role: "user" | "assistant"; content: string };
-type Mode = "welcome" | "text" | "voice";
+type Mode = "voice" | "text";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
@@ -20,20 +20,17 @@ const QUICK_QUESTIONS = [
   "What is Spring Boot?",
   "Tell me about Chadi's projects",
   "How do I start learning React?",
-  "What's the Java Bootcamp?",
 ];
 
 // ─── Speech helpers ─────────────────────────────────────────────
 const getSpeechRecognition = (): any | null => {
-  const SR =
-    (window as any).SpeechRecognition ||
-    (window as any).webkitSpeechRecognition;
+  const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
   if (!SR) return null;
-  const recognition = new SR();
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.lang = "en-US";
-  return recognition;
+  const r = new SR();
+  r.continuous = false;
+  r.interimResults = true;
+  r.lang = "en-US";
+  return r;
 };
 
 const speak = (text: string, onStart?: () => void, onEnd?: () => void) => {
@@ -46,241 +43,145 @@ const speak = (text: string, onStart?: () => void, onEnd?: () => void) => {
     .replace(/\*([^*]+)\*/g, "$1")
     .replace(/#{1,6}\s/g, "")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
-
-  const utterance = new SpeechSynthesisUtterance(clean);
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
-  utterance.lang = "en-US";
-
+  const u = new SpeechSynthesisUtterance(clean);
+  u.rate = 1; u.pitch = 1; u.volume = 1; u.lang = "en-US";
   const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(
-    (v) =>
-      v.lang.startsWith("en") &&
-      (v.name.includes("Google") || v.name.includes("Samantha") || v.name.includes("Daniel"))
-  );
-  if (preferred) utterance.voice = preferred;
-
-  utterance.onstart = () => onStart?.();
-  utterance.onend = () => onEnd?.();
-  utterance.onerror = () => onEnd?.();
-  window.speechSynthesis.speak(utterance);
+  const pref = voices.find(v => v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Samantha") || v.name.includes("Daniel")));
+  if (pref) u.voice = pref;
+  u.onstart = () => onStart?.();
+  u.onend = () => onEnd?.();
+  u.onerror = () => onEnd?.();
+  window.speechSynthesis.speak(u);
 };
 
 // ─── Component ──────────────────────────────────────────────────
 const AIVoiceTutor = () => {
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>("welcome");
+  const [mode, setMode] = useState<Mode>("voice");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [hasWelcomed, setHasWelcomed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [messages]);
+  useEffect(() => { scrollRef.current && (scrollRef.current.scrollTop = scrollRef.current.scrollHeight); }, [messages]);
+  useEffect(() => { if (open && mode === "text" && inputRef.current) inputRef.current.focus(); }, [open, mode]);
 
-  useEffect(() => {
-    if (open && mode === "text" && inputRef.current) inputRef.current.focus();
-  }, [open, mode]);
-
-  // Welcome speech when opening
+  // Auto welcome with voice on first open
   useEffect(() => {
     if (open && !hasWelcomed) {
       setHasWelcomed(true);
-      // Speak welcome on the welcome screen
+      const msg: Message = { role: "assistant", content: WELCOME_MESSAGE };
+      setMessages([msg]);
       setTimeout(() => {
-        speak(
-          "Hello! Welcome to the coding tutor platform. I'm your AI assistant. Choose how you'd like to interact with me.",
-          () => setIsSpeaking(true),
-          () => setIsSpeaking(false)
-        );
-      }, 600);
+        speak(WELCOME_MESSAGE, () => setIsSpeaking(true), () => setIsSpeaking(false));
+      }, 500);
     }
   }, [open, hasWelcomed]);
 
-  useEffect(() => {
-    return () => {
-      window.speechSynthesis?.cancel();
-      recognitionRef.current?.abort();
-    };
-  }, []);
+  useEffect(() => () => { window.speechSynthesis?.cancel(); recognitionRef.current?.abort(); }, []);
 
-  // When selecting a mode
-  const selectMode = (m: "text" | "voice") => {
+  const switchMode = (m: Mode) => {
     setMode(m);
     setVoiceEnabled(m === "voice");
-    window.speechSynthesis?.cancel();
-    setIsSpeaking(false);
-
-    if (messages.length === 0) {
-      const welcomeMsg: Message = { role: "assistant", content: WELCOME_MESSAGE };
-      setMessages([welcomeMsg]);
-      if (m === "voice") {
-        setTimeout(() => {
-          speak(WELCOME_MESSAGE, () => setIsSpeaking(true), () => setIsSpeaking(false));
-        }, 300);
-      }
-    }
+    if (m === "text") { window.speechSynthesis?.cancel(); setIsSpeaking(false); setIsListening(false); }
   };
 
   // ─── Stream chat ────────────────────────────────────────────
-  const streamChat = useCallback(
-    async (allMessages: Message[]) => {
-      setIsLoading(true);
-      let assistantSoFar = "";
-
-      const upsert = (chunk: string) => {
-        assistantSoFar += chunk;
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.role === "assistant" && last.content !== WELCOME_MESSAGE || (prev.length > 1 && last?.role === "assistant")) {
-            const isStreaming = prev.length >= 2;
-            if (isStreaming && last?.role === "assistant") {
-              return prev.map((m, i) =>
-                i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
-              );
-            }
-          }
-          return [...prev, { role: "assistant", content: assistantSoFar }];
-        });
-      };
-
-      try {
-        const resp = await fetch(CHAT_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ messages: allMessages }),
-        });
-
-        if (!resp.ok || !resp.body) throw new Error("Stream failed");
-
-        const reader = resp.body.getReader();
-        const decoder = new TextDecoder();
-        let buf = "";
-        let done = false;
-
-        while (!done) {
-          const { done: rd, value } = await reader.read();
-          if (rd) break;
-          buf += decoder.decode(value, { stream: true });
-
-          let nl: number;
-          while ((nl = buf.indexOf("\n")) !== -1) {
-            let line = buf.slice(0, nl);
-            buf = buf.slice(nl + 1);
-            if (line.endsWith("\r")) line = line.slice(0, -1);
-            if (line.startsWith(":") || line.trim() === "") continue;
-            if (!line.startsWith("data: ")) continue;
-            const json = line.slice(6).trim();
-            if (json === "[DONE]") {
-              done = true;
-              break;
-            }
-            try {
-              const parsed = JSON.parse(json);
-              const c = parsed.choices?.[0]?.delta?.content as string | undefined;
-              if (c) upsert(c);
-            } catch {
-              buf = line + "\n" + buf;
-              break;
-            }
-          }
+  const streamChat = useCallback(async (allMessages: Message[]) => {
+    setIsLoading(true);
+    let assistantSoFar = "";
+    const upsert = (chunk: string) => {
+      assistantSoFar += chunk;
+      setMessages(prev => {
+        const last = prev[prev.length - 1];
+        if (prev.length >= 2 && last?.role === "assistant") {
+          return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
         }
-
-        if (voiceEnabled && assistantSoFar) {
-          speak(assistantSoFar, () => setIsSpeaking(true), () => setIsSpeaking(false));
+        return [...prev, { role: "assistant", content: assistantSoFar }];
+      });
+    };
+    try {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        body: JSON.stringify({ messages: allMessages }),
+      });
+      if (!resp.ok || !resp.body) throw new Error("Stream failed");
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = "", done = false;
+      while (!done) {
+        const { done: rd, value } = await reader.read();
+        if (rd) break;
+        buf += decoder.decode(value, { stream: true });
+        let nl: number;
+        while ((nl = buf.indexOf("\n")) !== -1) {
+          let line = buf.slice(0, nl); buf = buf.slice(nl + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || !line.trim() || !line.startsWith("data: ")) continue;
+          const json = line.slice(6).trim();
+          if (json === "[DONE]") { done = true; break; }
+          try { const p = JSON.parse(json); const c = p.choices?.[0]?.delta?.content; if (c) upsert(c); }
+          catch { buf = line + "\n" + buf; break; }
         }
-      } catch (err) {
-        console.error("Chat error:", err);
-        upsert("Sorry, I'm having trouble right now. Please try again.");
-      } finally {
-        setIsLoading(false);
       }
-    },
-    [voiceEnabled]
-  );
+      if (voiceEnabled && assistantSoFar) speak(assistantSoFar, () => setIsSpeaking(true), () => setIsSpeaking(false));
+    } catch { upsert("Sorry, I'm having trouble right now. Please try again."); }
+    finally { setIsLoading(false); }
+  }, [voiceEnabled]);
 
-  const sendMessage = useCallback(
-    async (text?: string) => {
-      const msg = text || input.trim();
-      if (!msg || isLoading) return;
-      setInput("");
-      const userMsg: Message = { role: "user", content: msg };
-      const allMessages = [...messages, userMsg];
-      setMessages(allMessages);
-      await streamChat(allMessages);
-    },
-    [input, isLoading, messages, streamChat]
-  );
+  const sendMessage = useCallback(async (text?: string) => {
+    const msg = text || input.trim();
+    if (!msg || isLoading) return;
+    setInput("");
+    const userMsg: Message = { role: "user", content: msg };
+    const all = [...messages, userMsg];
+    setMessages(all);
+    await streamChat(all);
+  }, [input, isLoading, messages, streamChat]);
 
   const toggleListening = useCallback(() => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
-    }
-
+    if (isListening) { recognitionRef.current?.stop(); setIsListening(false); return; }
     const recognition = getSpeechRecognition();
-    if (!recognition) {
-      alert("Your browser does not support speech recognition. Try Chrome.");
-      return;
-    }
-
+    if (!recognition) { alert("Speech recognition not supported. Try Chrome."); return; }
     recognitionRef.current = recognition;
-    let finalTranscript = "";
-
+    let finalT = "";
     recognition.onresult = (e: SpeechRecognitionEvent) => {
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) {
-          finalTranscript += e.results[i][0].transcript;
-        } else {
-          interim += e.results[i][0].transcript;
-        }
+        if (e.results[i].isFinal) finalT += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
       }
-      setInput(finalTranscript + interim);
+      setInput(finalT + interim);
     };
-
     recognition.onend = () => {
       setIsListening(false);
-      if (finalTranscript.trim()) {
+      if (finalT.trim()) {
         setTimeout(() => {
           setInput("");
-          const userMsg: Message = { role: "user", content: finalTranscript.trim() };
-          setMessages((prev) => {
-            const all = [...prev, userMsg];
-            streamChat(all);
-            return all;
-          });
+          const userMsg: Message = { role: "user", content: finalT.trim() };
+          setMessages(prev => { const all = [...prev, userMsg]; streamChat(all); return all; });
         }, 300);
       }
     };
-
     recognition.onerror = () => setIsListening(false);
     recognition.start();
     setIsListening(true);
   }, [isListening, streamChat]);
 
-  const stopSpeaking = () => {
-    window.speechSynthesis?.cancel();
-    setIsSpeaking(false);
-  };
+  const stopSpeaking = () => { window.speechSynthesis?.cancel(); setIsSpeaking(false); };
 
   return (
     <>
-      {/* Floating button */}
+      {/* Floating robot button */}
       <motion.button
-        onClick={() => { setOpen(!open); if (open) { setMode("welcome"); } }}
+        onClick={() => setOpen(!open)}
         className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg flex items-center justify-center overflow-hidden"
         style={{
           border: "2px solid hsl(152 100% 50% / 0.6)",
@@ -296,17 +197,12 @@ const AIVoiceTutor = () => {
               <X className="w-6 h-6 text-primary-foreground" />
             </motion.div>
           ) : (
-            <motion.div key="tutor" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="relative w-full h-full">
+            <motion.div key="open" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="relative w-full h-full">
               <img src={robotImg} alt="AI Tutor" className="w-full h-full object-cover" />
               {!hasWelcomed && (
-                <motion.span
-                  className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold text-primary-foreground"
+                <motion.span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold text-primary-foreground"
                   style={{ background: "hsl(0 80% 55%)", boxShadow: "0 0 8px hsl(0 80% 55% / 0.6)" }}
-                  animate={{ scale: [1, 1.3, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  !
-                </motion.span>
+                  animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>!</motion.span>
               )}
             </motion.div>
           )}
@@ -321,349 +217,209 @@ const AIVoiceTutor = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25 }}
-            className="fixed bottom-24 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[75vh] rounded-2xl bg-card shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[620px] max-h-[80vh] rounded-2xl bg-card shadow-2xl flex flex-col overflow-hidden"
             style={{
               border: "1px solid hsl(152 80% 50% / 0.2)",
               boxShadow: "0 0 30px hsl(152 100% 50% / 0.1), 0 25px 50px -12px rgba(0,0,0,0.4)",
             }}
           >
-            <AnimatePresence mode="wait">
-              {/* ═══════ WELCOME SCREEN ═══════ */}
-              {mode === "welcome" && (
-                <motion.div
-                  key="welcome"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="flex-1 flex flex-col items-center justify-center px-6"
-                  style={{
-                    background: "linear-gradient(180deg, hsl(210 20% 6%) 0%, hsl(210 15% 10%) 50%, hsl(210 20% 6%) 100%)",
-                  }}
-                >
-                  {/* Robot avatar - big theatrical presentation */}
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
-                  >
-                    <AIAvatar isSpeaking={isSpeaking} isListening={false} size="xl" />
-                  </motion.div>
-
-                  {/* Welcome text */}
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-center mt-4 mb-8"
-                  >
-                    <h3
-                      className="text-lg font-bold mb-2"
-                      style={{
-                        color: "hsl(152 100% 60%)",
-                        textShadow: "0 0 15px hsl(152 100% 50% / 0.4)",
-                      }}
-                    >
-                      Hello! I'm your AI Tutor 🤖
-                    </h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed max-w-[280px]">
-                      I can help you learn programming, explore projects, or guide you through coding courses.
-                    </p>
-                  </motion.div>
-
-                  {/* Mode selection buttons */}
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="flex gap-4 w-full max-w-[300px]"
-                  >
-                    {/* Text mode */}
-                    <button
-                      onClick={() => selectMode("text")}
-                      className="flex-1 flex flex-col items-center gap-3 py-5 px-4 rounded-xl transition-all duration-300 group"
-                      style={{
-                        background: "hsl(210 15% 12%)",
-                        border: "1px solid hsl(152 80% 50% / 0.2)",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "hsl(152 100% 50% / 0.6)";
-                        e.currentTarget.style.boxShadow = "0 0 20px hsl(152 100% 50% / 0.2)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "hsl(152 80% 50% / 0.2)";
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
-                    >
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center"
-                        style={{
-                          background: "hsl(152 80% 50% / 0.1)",
-                          border: "1px solid hsl(152 80% 50% / 0.3)",
-                        }}
-                      >
-                        <MessageSquareText size={22} style={{ color: "hsl(152 100% 60%)" }} />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-semibold text-foreground">Text Chat</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">Type your questions</p>
-                      </div>
+            {/* ═══ VOICE MODE ═══ */}
+            {mode === "voice" && (
+              <div className="flex-1 flex flex-col" style={{ background: "linear-gradient(180deg, hsl(210 20% 6%) 0%, hsl(210 15% 10%) 40%, hsl(210 20% 8%) 100%)" }}>
+                {/* Top bar */}
+                <div className="flex items-center justify-between px-4 pt-3 pb-2">
+                  <h3 className="font-bold text-sm" style={{ color: "hsl(152 100% 60%)", textShadow: "0 0 12px hsl(152 100% 50% / 0.4)" }}>
+                    🤖 AI Voice Tutor
+                  </h3>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => { setVoiceEnabled(!voiceEnabled); if (isSpeaking) stopSpeaking(); }}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-accent/20 transition-colors text-muted-foreground">
+                      {voiceEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
                     </button>
-
-                    {/* Voice mode */}
-                    <button
-                      onClick={() => selectMode("voice")}
-                      className="flex-1 flex flex-col items-center gap-3 py-5 px-4 rounded-xl transition-all duration-300 group"
-                      style={{
-                        background: "hsl(210 15% 12%)",
-                        border: "1px solid hsl(200 80% 55% / 0.2)",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "hsl(200 100% 60% / 0.6)";
-                        e.currentTarget.style.boxShadow = "0 0 20px hsl(200 100% 60% / 0.2)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "hsl(200 80% 55% / 0.2)";
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
-                    >
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center"
-                        style={{
-                          background: "hsl(200 80% 55% / 0.1)",
-                          border: "1px solid hsl(200 80% 55% / 0.3)",
-                        }}
-                      >
-                        <AudioLines size={22} style={{ color: "hsl(200 100% 65%)" }} />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-semibold text-foreground">Voice Chat</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">Speak with AI</p>
-                      </div>
+                    <button onClick={() => switchMode("text")}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
+                      style={{ border: "1px solid hsl(152 80% 50% / 0.25)", color: "hsl(152 100% 60%)" }}>
+                      <MessageSquareText size={12} />
+                      Text Mode
                     </button>
-                  </motion.div>
-                </motion.div>
-              )}
-
-              {/* ═══════ CHAT SCREEN (text or voice) ═══════ */}
-              {(mode === "text" || mode === "voice") && (
-                <motion.div
-                  key="chat"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="flex-1 flex flex-col"
-                >
-                  {/* Header */}
-                  <div
-                    className="px-4 py-2.5 border-b flex items-center gap-3"
-                    style={{
-                      background: "linear-gradient(180deg, hsl(210 20% 8%) 0%, hsl(210 15% 11%) 100%)",
-                      borderColor: "hsl(152 80% 50% / 0.15)",
-                    }}
-                  >
-                    {/* Back to welcome */}
-                    <button
-                      onClick={() => { setMode("welcome"); window.speechSynthesis?.cancel(); setIsSpeaking(false); setIsListening(false); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-accent/20 transition-colors text-muted-foreground"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                    </button>
-
-                    {/* Mini avatar */}
-                    <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="sm" />
-
-                    <div className="flex-1 min-w-0">
-                      <h3
-                        className="font-bold text-xs"
-                        style={{ color: "hsl(152 100% 60%)", textShadow: "0 0 8px hsl(152 100% 50% / 0.3)" }}
-                      >
-                        AI Coding Tutor
-                      </h3>
-                      <p className="text-[10px] text-muted-foreground truncate">
-                        {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening..." : isLoading ? "💭 Thinking..." : mode === "voice" ? "Voice mode" : "Text mode"}
-                      </p>
-                    </div>
-
-                    {/* Mode switch */}
-                    <div
-                      className="flex rounded-lg overflow-hidden"
-                      style={{ border: "1px solid hsl(210 10% 25%)" }}
-                    >
-                      <button
-                        onClick={() => { setMode("text"); setVoiceEnabled(false); stopSpeaking(); }}
-                        className="px-2 py-1.5 transition-all"
-                        style={{
-                          background: mode === "text" ? "hsl(152 80% 50% / 0.2)" : "transparent",
-                          color: mode === "text" ? "hsl(152 100% 60%)" : "hsl(210 10% 50%)",
-                        }}
-                        title="Text mode"
-                      >
-                        <MessageSquareText size={13} />
-                      </button>
-                      <button
-                        onClick={() => { setMode("voice"); setVoiceEnabled(true); }}
-                        className="px-2 py-1.5 transition-all"
-                        style={{
-                          background: mode === "voice" ? "hsl(200 80% 55% / 0.2)" : "transparent",
-                          color: mode === "voice" ? "hsl(200 100% 65%)" : "hsl(210 10% 50%)",
-                        }}
-                        title="Voice mode"
-                      >
-                        <AudioLines size={13} />
-                      </button>
-                    </div>
-
-                    {/* Mute/unmute in voice mode */}
-                    {mode === "voice" && (
-                      <button
-                        onClick={() => { setVoiceEnabled(!voiceEnabled); if (isSpeaking) stopSpeaking(); }}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-accent/20 transition-colors text-muted-foreground"
-                      >
-                        {voiceEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
-                      </button>
-                    )}
                   </div>
+                </div>
 
-                  {/* Messages */}
-                  <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
-                    {messages.length === 0 && (
-                      <div className="text-center text-muted-foreground text-sm mt-4 space-y-2">
-                        <p className="font-medium text-foreground">Hi! I'm your AI Coding Tutor 👋</p>
-                        <p className="text-xs">Ask me about programming, Chadi's projects, or start learning something new.</p>
-                      </div>
-                    )}
+                {/* Robot avatar - big central stage */}
+                <div className="flex-shrink-0 flex flex-col items-center pt-2 pb-3">
+                  <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4 }}>
+                    <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="xl" />
+                  </motion.div>
+                  <motion.p
+                    className="text-xs font-medium mt-3"
+                    style={{
+                      color: isSpeaking ? "hsl(152 100% 60%)" : isListening ? "hsl(200 100% 65%)" : isLoading ? "hsl(40 90% 60%)" : "hsl(210 10% 55%)",
+                      textShadow: isSpeaking || isListening ? "0 0 10px currentColor" : "none",
+                    }}
+                    animate={isSpeaking || isListening ? { opacity: [0.7, 1, 0.7] } : {}}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening to you..." : isLoading ? "💭 Thinking..." : "Tap the mic to talk"}
+                  </motion.p>
+                </div>
 
-                    {messages.map((msg, i) => (
-                      <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                        {msg.role === "assistant" && (
-                          <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 mt-1 ring-1 ring-primary/30">
-                            <img src={robotImg} alt="" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <div
-                          className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
-                            msg.role === "user"
-                              ? "bg-primary text-primary-foreground rounded-br-md"
-                              : "bg-muted text-foreground rounded-bl-md"
-                          }`}
-                        >
-                          {msg.content}
-                        </div>
-                      </div>
-                    ))}
-
-                    {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-                      <div className="flex gap-2">
-                        <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-primary/30">
+                {/* Scrollable voice conversation */}
+                <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 space-y-2 min-h-0">
+                  {messages.map((msg, i) => (
+                    <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                      className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                      {msg.role === "assistant" && (
+                        <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 mt-0.5 ring-1 ring-primary/30">
                           <img src={robotImg} alt="" className="w-full h-full object-cover" />
                         </div>
-                        <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                          <div className="flex gap-1">
-                            <span className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                            <span className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                            <span className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                          </div>
-                        </div>
+                      )}
+                      <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
+                        msg.role === "user"
+                          ? "bg-primary/20 text-foreground rounded-br-sm"
+                          : "bg-muted/50 text-foreground rounded-bl-sm"
+                      }`} style={{ borderLeft: msg.role === "assistant" ? "2px solid hsl(152 80% 50% / 0.3)" : undefined }}>
+                        {msg.content}
                       </div>
-                    )}
-                  </div>
-
-                  {/* Quick questions */}
-                  {messages.length <= 1 && (
-                    <div className="px-4 pb-2">
-                      <div className="flex flex-wrap gap-1.5">
-                        {QUICK_QUESTIONS.map((q) => (
-                          <button
-                            key={q}
-                            onClick={() => sendMessage(q)}
-                            className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors"
-                          >
-                            {q}
-                          </button>
-                        ))}
+                    </motion.div>
+                  ))}
+                  {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+                    <div className="flex gap-2">
+                      <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-primary/30">
+                        <img src={robotImg} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="bg-muted/50 rounded-xl px-4 py-2">
+                        <div className="flex gap-1">
+                          {[0, 150, 300].map(d => <span key={d} className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+                        </div>
                       </div>
                     </div>
                   )}
+                </div>
 
-                  {/* Input area */}
-                  <div className="p-3 border-t border-border">
-                    {mode === "voice" ? (
-                      /* Voice mode: big mic button */
-                      <div className="flex flex-col items-center gap-2">
-                        {input && (
-                          <p className="text-xs text-muted-foreground italic text-center">{input}</p>
-                        )}
-                        <div className="flex items-center gap-3">
-                          <motion.button
-                            onClick={toggleListening}
-                            className="w-14 h-14 rounded-full flex items-center justify-center transition-all"
-                            style={{
-                              background: isListening
-                                ? "hsl(0 70% 50%)"
-                                : "linear-gradient(135deg, hsl(200 80% 50%), hsl(200 90% 40%))",
-                              boxShadow: isListening
-                                ? "0 0 25px hsl(0 70% 50% / 0.5)"
-                                : "0 0 20px hsl(200 80% 50% / 0.3)",
-                            }}
-                            animate={isListening ? { scale: [1, 1.08, 1] } : {}}
-                            transition={{ duration: 1, repeat: Infinity }}
-                          >
-                            {isListening ? (
-                              <MicOff className="w-6 h-6 text-white" />
-                            ) : (
-                              <Mic className="w-6 h-6 text-white" />
-                            )}
-                          </motion.button>
-                          {/* Also allow typing in voice mode */}
-                          <form
-                            onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
-                            className="flex gap-2 flex-1"
-                          >
-                            <input
-                              ref={inputRef}
-                              value={input}
-                              onChange={(e) => setInput(e.target.value)}
-                              placeholder="Or type here..."
-                              className="flex-1 bg-muted rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                              disabled={isLoading || isListening}
-                            />
-                            <button
-                              type="submit"
-                              disabled={isLoading || !input.trim()}
-                              className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 hover:opacity-90 transition-opacity flex-shrink-0"
-                            >
-                              <Send className="w-4 h-4" />
-                            </button>
-                          </form>
+                {/* Voice input area */}
+                <div className="p-4 flex flex-col items-center gap-3">
+                  {input && <p className="text-xs text-muted-foreground italic text-center max-w-[280px] truncate">"{input}"</p>}
+                  <div className="flex items-center gap-4">
+                    {/* Quick text input */}
+                    <form onSubmit={e => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
+                      <input
+                        value={input}
+                        onChange={e => setInput(e.target.value)}
+                        placeholder="Or type..."
+                        className="w-[140px] bg-muted/30 rounded-full px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-primary/40 placeholder:text-muted-foreground/50"
+                        style={{ border: "1px solid hsl(210 10% 20%)" }}
+                        disabled={isLoading || isListening}
+                      />
+                      <button type="submit" disabled={isLoading || !input.trim()}
+                        className="w-8 h-8 rounded-full bg-primary/80 text-primary-foreground flex items-center justify-center disabled:opacity-30 text-xs">
+                        <Send className="w-3.5 h-3.5" />
+                      </button>
+                    </form>
+
+                    {/* Big mic button */}
+                    <motion.button
+                      onClick={toggleListening}
+                      className="w-14 h-14 rounded-full flex items-center justify-center"
+                      style={{
+                        background: isListening
+                          ? "linear-gradient(135deg, hsl(0 70% 50%), hsl(0 60% 40%))"
+                          : "linear-gradient(135deg, hsl(200 80% 50%), hsl(220 80% 40%))",
+                        boxShadow: isListening
+                          ? "0 0 30px hsl(0 70% 50% / 0.5), 0 0 60px hsl(0 70% 50% / 0.2)"
+                          : "0 0 25px hsl(200 80% 50% / 0.4), 0 0 50px hsl(200 80% 50% / 0.15)",
+                      }}
+                      animate={isListening ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+                      transition={{ duration: 0.8, repeat: isListening ? Infinity : 0 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {isListening ? <MicOff className="w-6 h-6 text-white" /> : <Mic className="w-6 h-6 text-white" />}
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ TEXT MODE ═══ */}
+            {mode === "text" && (
+              <div className="flex-1 flex flex-col">
+                {/* Header */}
+                <div className="px-4 py-2.5 border-b flex items-center gap-3"
+                  style={{ background: "linear-gradient(180deg, hsl(210 20% 8%) 0%, hsl(210 15% 11%) 100%)", borderColor: "hsl(152 80% 50% / 0.15)" }}>
+                  <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-primary/30 flex-shrink-0">
+                    <img src={robotImg} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-xs" style={{ color: "hsl(152 100% 60%)", textShadow: "0 0 8px hsl(152 100% 50% / 0.3)" }}>
+                      AI Coding Tutor
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground truncate">
+                      {isLoading ? "💭 Thinking..." : "Text mode • Ask me anything"}
+                    </p>
+                  </div>
+                  <button onClick={() => switchMode("voice")}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
+                    style={{ border: "1px solid hsl(200 80% 55% / 0.25)", color: "hsl(200 100% 65%)" }}>
+                    <AudioLines size={12} />
+                    Voice
+                  </button>
+                </div>
+
+                {/* Messages */}
+                <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {messages.map((msg, i) => (
+                    <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                      {msg.role === "assistant" && (
+                        <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 mt-1 ring-1 ring-primary/30">
+                          <img src={robotImg} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
+                        msg.role === "user" ? "bg-primary text-primary-foreground rounded-br-md" : "bg-muted text-foreground rounded-bl-md"
+                      }`}>{msg.content}</div>
+                    </div>
+                  ))}
+                  {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+                    <div className="flex gap-2">
+                      <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-primary/30">
+                        <img src={robotImg} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                        <div className="flex gap-1">
+                          {[0, 150, 300].map(d => <span key={d} className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
                         </div>
                       </div>
-                    ) : (
-                      /* Text mode */
-                      <form
-                        onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
-                        className="flex gap-2"
-                      >
-                        <input
-                          ref={inputRef}
-                          value={input}
-                          onChange={(e) => setInput(e.target.value)}
-                          placeholder="Ask me anything..."
-                          className="flex-1 bg-muted rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                          disabled={isLoading}
-                        />
-                        <button
-                          type="submit"
-                          disabled={isLoading || !input.trim()}
-                          className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 hover:opacity-90 transition-opacity flex-shrink-0"
-                        >
-                          <Send className="w-4 h-4" />
-                        </button>
-                      </form>
-                    )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Quick questions */}
+                {messages.length <= 1 && (
+                  <div className="px-4 pb-2">
+                    <div className="flex flex-wrap gap-1.5">
+                      {QUICK_QUESTIONS.map(q => (
+                        <button key={q} onClick={() => sendMessage(q)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors">{q}</button>
+                      ))}
+                    </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+
+                {/* Text input */}
+                <div className="p-3 border-t border-border">
+                  <form onSubmit={e => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
+                    <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
+                      placeholder="Ask me anything..."
+                      className="flex-1 bg-muted rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
+                      disabled={isLoading} />
+                    <button type="submit" disabled={isLoading || !input.trim()}
+                      className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 hover:opacity-90 transition-opacity flex-shrink-0">
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
