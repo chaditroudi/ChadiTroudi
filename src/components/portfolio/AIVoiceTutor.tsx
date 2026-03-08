@@ -9,7 +9,8 @@ import {
   BarChart3, Map, User, History, Lightbulb, RotateCcw,
   CheckCircle2, Target, TrendingUp, Trash2, Clock,
 } from "lucide-react";
-import AIAvatar from "./AIAvatar";
+import { lazy, Suspense } from "react";
+const HumanAvatar3D = lazy(() => import("./HumanAvatar3D"));
 
 /* ═══════════════════════════════════════════════════
    TYPES
