@@ -5,7 +5,7 @@ import profileImg from "@/assets/profile.jpg";
 import bonialPortrait from "@/assets/bonial-portrait.jpeg";
 
 const roles = [
-  "Full-Stack Developer",
+  "Full-Stack Engineer",
   "Java & Spring Boot Expert",
   "React Specialist",
   "API Architect",
@@ -119,7 +119,7 @@ const HeroSection = () => {
             </motion.h1>
 
             <motion.p variants={item} className="text-muted-foreground max-w-xl text-lg leading-relaxed mb-10">
-              Full-Stack Developer specializing in scalable web applications using{" "}
+              Full-Stack Engineer specializing in scalable web applications using{" "}
               <span className="text-foreground font-medium">Java Spring Boot</span>,{" "}
               <span className="text-foreground font-medium">React</span>, and microservices.
               Building secure APIs and delivering enterprise solutions with{" "}
@@ -213,7 +213,7 @@ const HeroSection = () => {
                 {/* Name overlay at bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <p className="text-foreground font-bold text-lg">Chadi Troudi</p>
-                  <p className="text-muted-foreground text-sm">Senior Full-Stack Developer</p>
+                  <p className="text-muted-foreground text-sm">Senior Full-Stack Engineer</p>
                 </div>
               </div>
               
