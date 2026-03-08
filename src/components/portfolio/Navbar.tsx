@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Download, Sun, Moon, Globe } from "lucide-react";
+import { Menu, X, Download, Sun, Moon, Globe, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/hooks/use-lang";
+import robotImg from "@/assets/robot-avatar.jpg";
 
 const Navbar = () => {
   const { lang, setLang, t } = useLang();
@@ -140,6 +141,30 @@ const Navbar = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </button>
+          </motion.li>
+
+          {/* Talk to AI bot */}
+          <motion.li
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38 }}
+          >
+            <button
+              onClick={() => {
+                const btn = document.querySelector('[aria-label="Open AI Tutor"]') as HTMLButtonElement;
+                btn?.click();
+              }}
+              className="inline-flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg transition-all duration-300 ml-1 group"
+              style={{
+                border: "1px solid hsl(152 100% 50% / 0.3)",
+                color: "hsl(152 100% 60%)",
+                textShadow: "0 0 8px hsl(152 100% 50% / 0.3)",
+              }}
+            >
+              <img src={robotImg} alt="" className="w-5 h-5 rounded-full ring-1 ring-primary/40" />
+              <span className="hidden lg:inline">Talk to AI</span>
+              <Bot size={14} className="lg:hidden" />
             </button>
           </motion.li>
 

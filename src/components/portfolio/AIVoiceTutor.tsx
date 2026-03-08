@@ -4,6 +4,7 @@ import {
   X, Send, Mic, MicOff, Volume2, VolumeX, GraduationCap,
 } from "lucide-react";
 import AIAvatar from "./AIAvatar";
+import robotImg from "@/assets/robot-avatar.jpg";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -283,35 +284,42 @@ const AIVoiceTutor = () => {
 
   return (
     <>
-      {/* Floating button */}
+      {/* Floating button - neon robot */}
       <motion.button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg flex items-center justify-center overflow-hidden"
+        style={{
+          border: "2px solid hsl(152 100% 50% / 0.6)",
+          boxShadow: "0 0 20px hsl(152 100% 50% / 0.3), 0 0 40px hsl(152 100% 50% / 0.15)",
+        }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         aria-label="Open AI Tutor"
       >
         <AnimatePresence mode="wait">
           {open ? (
-            <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-              <X className="w-6 h-6" />
+            <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} className="w-full h-full bg-primary flex items-center justify-center">
+              <X className="w-6 h-6 text-primary-foreground" />
             </motion.div>
           ) : (
-            <motion.div key="tutor" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="relative">
-              <GraduationCap className="w-7 h-7" />
+            <motion.div key="tutor" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="relative w-full h-full">
+              <img src={robotImg} alt="AI Tutor" className="w-full h-full object-cover" />
               {!hasWelcomed && (
                 <motion.span
-                  className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
+                  className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold text-primary-foreground"
+                  style={{ background: "hsl(0 80% 55%)", boxShadow: "0 0 8px hsl(0 80% 55% / 0.6)" }}
                   animate={{ scale: [1, 1.3, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                />
+                >
+                  !
+                </motion.span>
               )}
             </motion.div>
           )}
         </AnimatePresence>
       </motion.button>
 
-      {/* Chat panel */}
+      {/* Chat panel - neon theme */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -319,12 +327,30 @@ const AIVoiceTutor = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25 }}
-            className="fixed bottom-24 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[75vh] rounded-2xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[75vh] rounded-2xl bg-card shadow-2xl flex flex-col overflow-hidden"
+            style={{
+              border: "1px solid hsl(152 80% 50% / 0.2)",
+              boxShadow: "0 0 30px hsl(152 100% 50% / 0.1), 0 25px 50px -12px rgba(0,0,0,0.4)",
+            }}
           >
-            {/* Header with robot avatar - theatrical presentation */}
-            <div className="bg-gradient-to-b from-background to-muted/50 px-4 pt-3 pb-2 border-b border-border">
+            {/* Header with robot avatar - neon theatrical */}
+            <div
+              className="px-4 pt-3 pb-2 border-b"
+              style={{
+                background: "linear-gradient(180deg, hsl(210 20% 8%) 0%, hsl(210 15% 12%) 100%)",
+                borderColor: "hsl(152 80% 50% / 0.15)",
+              }}
+            >
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-sm text-foreground">🤖 AI Coding Tutor</h3>
+                <h3
+                  className="font-bold text-sm"
+                  style={{
+                    color: "hsl(152 100% 60%)",
+                    textShadow: "0 0 10px hsl(152 100% 50% / 0.4)",
+                  }}
+                >
+                  🤖 AI Coding Tutor
+                </h3>
                 <div className="flex gap-1">
                   <button
                     onClick={() => {
@@ -338,11 +364,21 @@ const AIVoiceTutor = () => {
                   </button>
                 </div>
               </div>
-              {/* Robot stage */}
-              <div className="flex justify-center">
+              {/* Robot stage with neon backdrop */}
+              <div className="flex justify-center py-1">
                 <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="lg" />
               </div>
-              <p className="text-center text-xs text-muted-foreground mt-1">
+              <p
+                className="text-center text-xs mt-2 pb-1 font-medium"
+                style={{
+                  color: isSpeaking
+                    ? "hsl(152 100% 60%)"
+                    : isListening
+                    ? "hsl(200 100% 65%)"
+                    : "hsl(210 10% 55%)",
+                  textShadow: isSpeaking || isListening ? "0 0 8px currentColor" : "none",
+                }}
+              >
                 {isSpeaking
                   ? "🔊 Speaking to you..."
                   : isListening
