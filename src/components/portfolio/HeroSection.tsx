@@ -104,7 +104,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Name */}
-            <motion.h1 {...fadeUp(0.2)} className="text-5xl md:text-7xl font-bold leading-[0.9] tracking-tight mb-6">
+            <motion.h1 {...fadeUp(0.2)} className="text-4xl sm:text-5xl md:text-7xl font-bold leading-[0.9] tracking-tight mb-5 sm:mb-6">
               Chadi
               <br />
               <span className="text-gradient">Troudi</span>
