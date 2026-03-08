@@ -1,7 +1,7 @@
 {
   "name": "vite_react_shadcn_ts",
   "private": true,
-  "homepage": "https://chaditroudi.github.io/ChadiTroudi",
+  "homepage": "https://chaditroudi.github.io",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
