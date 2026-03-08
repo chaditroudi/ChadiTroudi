@@ -362,7 +362,7 @@ const AIAvatar = ({ isSpeaking, isListening, size = "md" }: AIAvatarProps) => {
   const sizes: Record<string, string> = { sm: "w-10 h-10", md: "w-20 h-20", lg: "w-32 h-32", xl: "w-44 h-44" };
 
   return (
-    <div ref={ref} className={`relative ${sizes[size] || sizes.md} flex items-center justify-center`}>
+    <div className={`relative ${sizes[size] || sizes.md} flex items-center justify-center`}>
       <motion.div className="absolute inset-[-12%] rounded-full"
         style={{ background: `radial-gradient(circle, ${accentColor}${isActive ? "40" : "15"} 0%, transparent 70%)` }}
         animate={{ scale: isActive ? [1, 1.12, 1] : [1, 1.03, 1], opacity: [0.5, 1, 0.5] }}
