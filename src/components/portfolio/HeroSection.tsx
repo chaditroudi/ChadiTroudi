@@ -200,12 +200,12 @@ const HeroSection = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-foreground">Join My Java Bootcamp</span>
+                    <span className="text-sm font-semibold text-foreground">{t.joinBootcamp}</span>
                     <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider">
-                      New
+                      {t.newBadge}
                     </span>
                   </div>
-                  <span className="text-xs text-muted-foreground">10-day intensive • Java + SQL + Project</span>
+                  <span className="text-xs text-muted-foreground">{t.bootcampDesc}</span>
                 </div>
                 <ArrowRight size={14} className="text-primary group-hover:translate-x-1 transition-transform ml-auto" />
                 <motion.div
