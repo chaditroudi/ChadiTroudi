@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, lazy, Suspense } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -9,7 +9,7 @@ import {
   BarChart3, Map, User, History, Lightbulb, RotateCcw,
   CheckCircle2, Target, TrendingUp, Trash2, Clock,
 } from "lucide-react";
-const HumanAvatar3D = lazy(() => import("./HumanAvatar3D"));
+import HumanAvatar3D from "./HumanAvatar3D";
 
 /* ═══════════════════════════════════════════════════
    TYPES
