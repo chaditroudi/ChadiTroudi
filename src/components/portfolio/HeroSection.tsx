@@ -125,7 +125,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Description */}
-            <motion.p {...fadeUp(0.45)} className="text-muted-foreground text-base leading-relaxed mb-10">
+            <motion.p {...fadeUp(0.45)} className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-8 sm:mb-10">
               {t.heroDesc}{" "}
               <span className="text-foreground font-medium">{t.javaSpring}</span>,{" "}
               <span className="text-foreground font-medium">{t.react}</span>{t.andMicroservices}{" "}
