@@ -87,7 +87,7 @@ const faqs = [
   { q: "What happens after I register?", a: "You'll join our WhatsApp group immediately, get the full schedule, and receive preparation materials to get a head start." },
 ];
 
-const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/your-group-link";
+const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/GByjpxkbpkeABu5BKjQoxa";
 
 // Floating code snippet decoration
 const CodeSnippet = () => (
