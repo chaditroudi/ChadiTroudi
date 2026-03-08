@@ -1,27 +1,67 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import {
   X, Send, Mic, MicOff, Volume2, VolumeX,
-  MessageSquareText, AudioLines, BookOpen, FolderGit2,
+  MessageSquareText, BookOpen, FolderGit2,
   Code2, GraduationCap, Compass, Zap, Trophy, Brain,
   ChevronRight, Play, Pause, Square, Bot, Sparkles,
-  BarChart3, Map, User,
+  BarChart3, Map, User, History, Lightbulb, RotateCcw,
+  CheckCircle2, Target, TrendingUp, Trash2, Clock,
 } from "lucide-react";
 import AIAvatar from "./AIAvatar";
 
+/* ═══════════════════════════════════════════════════
+   TYPES
+   ═══════════════════════════════════════════════════ */
 type Message = { role: "user" | "assistant"; content: string };
-type Tab = "chat" | "challenges" | "learning" | "portfolio";
+type Tab = "chat" | "challenges" | "learning" | "portfolio" | "progress" | "memory";
 
+interface LearningMemory {
+  lessonsCompleted: string[];
+  topicsStudied: string[];
+  challengesFinished: number;
+  weakTopics: string[];
+  frequentMistakes: string[];
+  preferredLanguage: string;
+  difficultyLevel: string;
+  history: { date: string; topic: string; type: string }[];
+  lastSession: { topic: string; date: string } | null;
+}
+
+const DEFAULT_MEMORY: LearningMemory = {
+  lessonsCompleted: [],
+  topicsStudied: [],
+  challengesFinished: 0,
+  weakTopics: [],
+  frequentMistakes: [],
+  preferredLanguage: "",
+  difficultyLevel: "",
+  history: [],
+  lastSession: null,
+};
+
+/* ═══════════════════════════════════════════════════
+   CONSTANTS
+   ═══════════════════════════════════════════════════ */
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const WELCOME_MESSAGE =
-  "Hello and welcome! 🚀 I'm your AI Coding Tutor. I can help you discover projects, choose what to learn, and support you step by step in programming. What would you like to do?";
+  "Hello and welcome! 🚀 I'm your AI Coding Tutor. I can help you learn programming, practice coding challenges, review your progress, and guide you through the platform. What would you like to do?";
+
+const RETURNING_WELCOME = (mem: LearningMemory) => {
+  const last = mem.lastSession;
+  if (!last) return WELCOME_MESSAGE;
+  return `Welcome back! 🎉 Last time you studied **${last.topic}** and completed **${mem.challengesFinished}** challenges. Would you like to continue where you left off or explore something new?`;
+};
 
 const QUICK_ACTIONS = [
   { label: "🎓 Start Learning", msg: "I want to start learning programming. Help me find the right path based on my level.", icon: BookOpen },
   { label: "💼 Explore Projects", msg: "Show me Chadi's coding projects and explain the technologies used.", icon: FolderGit2 },
-  { label: "💻 Ask Coding Question", msg: "I have a coding question. Can you help me?", icon: Code2 },
+  { label: "💻 Coding Question", msg: "I have a coding question. Can you help me?", icon: Code2 },
   { label: "🗺️ Learning Path", msg: "Recommend a learning path for me. I'll tell you my level and goals.", icon: Compass },
+  { label: "⚡ Challenge Me", msg: "Give me a coding challenge! Something fun and educational.", icon: Zap },
+  { label: "🧠 Review Progress", msg: "Show me what I've learned so far and suggest what to study next.", icon: Brain },
 ];
 
 const SUGGESTED_PROMPTS = [
@@ -30,6 +70,7 @@ const SUGGESTED_PROMPTS = [
   "Explain Python basics",
   "Show me your projects",
   "Help me debug code",
+  "Recommend a learning path",
 ];
 
 const ONBOARDING_STEPS = [
@@ -62,18 +103,18 @@ const ONBOARDING_STEPS = [
 ];
 
 const CHALLENGE_LEVELS = [
-  { label: "Beginner", icon: "🌱", color: "152 80% 50%" },
-  { label: "Intermediate", icon: "🔧", color: "40 90% 55%" },
-  { label: "Advanced", icon: "🚀", color: "0 70% 55%" },
+  { label: "Beginner", icon: "🌱", desc: "Variables, loops, basic logic" },
+  { label: "Intermediate", icon: "🔧", desc: "Data structures, algorithms, OOP" },
+  { label: "Advanced", icon: "🚀", desc: "System design, optimization, advanced patterns" },
 ];
 
 const PORTFOLIO_SECTIONS = [
-  { label: "About Me", hash: "#about", icon: User },
-  { label: "My Projects", hash: "#projects", icon: FolderGit2 },
-  { label: "Skills", hash: "#skills", icon: BarChart3 },
-  { label: "Experience", hash: "#experience", icon: Trophy },
-  { label: "Tutoring", hash: "#tutoring", icon: GraduationCap },
-  { label: "Contact", hash: "#contact", icon: Send },
+  { label: "About Me", hash: "#about", icon: User, desc: "Background and story" },
+  { label: "My Projects", hash: "#projects", icon: FolderGit2, desc: "TenderFlow, CatalogAI, Bonial apps" },
+  { label: "Skills", hash: "#skills", icon: BarChart3, desc: "Technical stack" },
+  { label: "Experience", hash: "#experience", icon: Trophy, desc: "Professional timeline" },
+  { label: "Tutoring", hash: "#tutoring", icon: GraduationCap, desc: "Java Bootcamp & services" },
+  { label: "Contact", hash: "#contact", icon: Send, desc: "Get in touch" },
 ];
 
 // Speech helpers
@@ -89,8 +130,25 @@ const cleanTextForSpeech = (text: string) =>
   text.replace(/```[\s\S]*?```/g, "code block").replace(/`([^`]+)`/g, "$1")
     .replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\*([^*]+)\*/g, "$1")
     .replace(/#{1,6}\s/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/[🚀🎓💼💻🗺️☕🟨🐍🌐📚🏋️🛠️🌱🔧⚡🏆🧠✨]/g, "");
+    .replace(/[🚀🎓💼💻🗺️☕🟨🐍🌐📚🏋️🛠️🌱🔧⚡🏆🧠✨🎉]/g, "");
 
+/* ═══════════════════════════════════════════════════
+   MEMORY PERSISTENCE
+   ═══════════════════════════════════════════════════ */
+const MEMORY_KEY = "ai-tutor-memory";
+const loadMemory = (): LearningMemory => {
+  try {
+    const raw = localStorage.getItem(MEMORY_KEY);
+    return raw ? { ...DEFAULT_MEMORY, ...JSON.parse(raw) } : DEFAULT_MEMORY;
+  } catch { return DEFAULT_MEMORY; }
+};
+const saveMemory = (mem: LearningMemory) => {
+  localStorage.setItem(MEMORY_KEY, JSON.stringify(mem));
+};
+
+/* ═══════════════════════════════════════════════════
+   COMPONENT
+   ═══════════════════════════════════════════════════ */
 const AIVoiceTutor = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("chat");
@@ -104,10 +162,14 @@ const AIVoiceTutor = () => {
   const [hasWelcomed, setHasWelcomed] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(-1);
   const [studentProfile, setStudentProfile] = useState<string[]>([]);
-  const [challengesCompleted, setChallengesCompleted] = useState(0);
+  const [memory, setMemory] = useState<LearningMemory>(loadMemory);
+  const [codeInput, setCodeInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
+
+  // Persist memory
+  useEffect(() => { saveMemory(memory); }, [memory]);
 
   useEffect(() => { scrollRef.current && (scrollRef.current.scrollTop = scrollRef.current.scrollHeight); }, [messages, onboardingStep]);
   useEffect(() => { if (open && inputRef.current) inputRef.current.focus(); }, [open, activeTab]);
@@ -116,11 +178,11 @@ const AIVoiceTutor = () => {
   useEffect(() => {
     if (open && !hasWelcomed) {
       setHasWelcomed(true);
-      setMessages([{ role: "assistant", content: WELCOME_MESSAGE }]);
-      setOnboardingStep(0);
-      setTimeout(() => {
-        if (voiceEnabled) speakText(WELCOME_MESSAGE);
-      }, 600);
+      const isReturning = memory.lastSession !== null;
+      const welcomeMsg = isReturning ? RETURNING_WELCOME(memory) : WELCOME_MESSAGE;
+      setMessages([{ role: "assistant", content: welcomeMsg }]);
+      if (!isReturning) setOnboardingStep(0);
+      setTimeout(() => { if (voiceEnabled) speakText(welcomeMsg); }, 600);
     }
   }, [open, hasWelcomed]);
 
@@ -145,6 +207,20 @@ const AIVoiceTutor = () => {
   const pauseSpeaking = () => { window.speechSynthesis?.pause(); setIsPaused(true); };
   const resumeSpeaking = () => { window.speechSynthesis?.resume(); setIsPaused(false); };
 
+  // Update memory helper
+  const updateMemory = useCallback((update: Partial<LearningMemory>) => {
+    setMemory(prev => ({ ...prev, ...update }));
+  }, []);
+
+  const trackTopic = useCallback((topic: string, type: string) => {
+    setMemory(prev => ({
+      ...prev,
+      topicsStudied: [...new Set([...prev.topicsStudied, topic])],
+      history: [...prev.history, { date: new Date().toISOString(), topic, type }].slice(-50),
+      lastSession: { topic, date: new Date().toISOString() },
+    }));
+  }, []);
+
   const handleOnboardingChoice = (value: string) => {
     const newProfile = [...studentProfile, value];
     setStudentProfile(newProfile);
@@ -160,7 +236,11 @@ const AIVoiceTutor = () => {
       }, 400);
     } else {
       setOnboardingStep(-1);
-      const contextMsg = `The student just completed onboarding. Their profile: Level: ${newProfile[0]}, Wants to learn: ${newProfile[1]}, Goal: ${newProfile[2]}. Give them a personalized welcome and suggest what to do next. Be warm and specific.`;
+      updateMemory({
+        difficultyLevel: newProfile[0],
+        preferredLanguage: newProfile[1],
+      });
+      const contextMsg = `The student completed onboarding. Profile: Level: ${newProfile[0]}, Wants to learn: ${newProfile[1]}, Goal: ${newProfile[2]}. Give a personalized welcome and suggest what to do next.`;
       const allMsgs: Message[] = [...messages, { role: "user", content: contextMsg }];
       setTimeout(() => streamChat(allMsgs), 300);
     }
@@ -180,12 +260,26 @@ const AIVoiceTutor = () => {
       });
     };
     try {
+      // Include memory context in system
+      const memoryContext = memory.topicsStudied.length > 0
+        ? `\n\n[Student Memory: Topics studied: ${memory.topicsStudied.join(", ")}. Challenges completed: ${memory.challengesFinished}. Level: ${memory.difficultyLevel}. Language: ${memory.preferredLanguage}. Weak topics: ${memory.weakTopics.join(", ") || "none identified yet"}.]`
+        : "";
+
       const resp = await fetch(CHAT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({
+          messages: [
+            ...(memoryContext ? [{ role: "system" as const, content: memoryContext }] : []),
+            ...allMessages,
+          ]
+        }),
       });
-      if (!resp.ok || !resp.body) throw new Error("Stream failed");
+      if (!resp.ok || !resp.body) {
+        if (resp.status === 429) { upsert("I'm getting a lot of requests right now. Please try again in a moment! 🙏"); return; }
+        if (resp.status === 402) { upsert("Service is temporarily unavailable. Please try again later."); return; }
+        throw new Error("Stream failed");
+      }
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let buf = "";
@@ -208,7 +302,7 @@ const AIVoiceTutor = () => {
       if (voiceEnabled && assistantSoFar) speakText(assistantSoFar);
     } catch { upsert("Sorry, I'm having trouble right now. Please try again."); }
     finally { setIsLoading(false); }
-  }, [voiceEnabled, speakText]);
+  }, [voiceEnabled, speakText, memory]);
 
   const sendMessage = useCallback(async (text?: string) => {
     const msg = text || input.trim();
@@ -219,8 +313,20 @@ const AIVoiceTutor = () => {
     const userMsg: Message = { role: "user", content: msg };
     const all = [...messages, userMsg];
     setMessages(all);
+
+    // Track topic
+    const lowerMsg = msg.toLowerCase();
+    if (lowerMsg.includes("challenge") || lowerMsg.includes("exercise")) {
+      trackTopic(msg.slice(0, 40), "challenge");
+      updateMemory({ challengesFinished: memory.challengesFinished + 1 });
+    } else if (lowerMsg.includes("learn") || lowerMsg.includes("explain") || lowerMsg.includes("teach")) {
+      trackTopic(msg.slice(0, 40), "lesson");
+    } else {
+      trackTopic(msg.slice(0, 40), "chat");
+    }
+
     await streamChat(all);
-  }, [input, isLoading, messages, streamChat]);
+  }, [input, isLoading, messages, streamChat, trackTopic, updateMemory, memory]);
 
   const toggleListening = useCallback(() => {
     if (isListening) { recognitionRef.current?.stop(); setIsListening(false); return; }
@@ -259,18 +365,32 @@ const AIVoiceTutor = () => {
     sendMessage(`Give me a ${level.toLowerCase()} coding challenge. Include a clear problem statement, expected input/output, and hints. Make it educational and fun.`);
   };
 
+  const clearMemory = () => {
+    setMemory(DEFAULT_MEMORY);
+    localStorage.removeItem(MEMORY_KEY);
+  };
+
   const currentOnboarding = onboardingStep >= 0 && onboardingStep < ONBOARDING_STEPS.length ? ONBOARDING_STEPS[onboardingStep] : null;
 
   const TABS: { id: Tab; label: string; icon: any }[] = [
     { id: "chat", label: "Chat", icon: MessageSquareText },
     { id: "challenges", label: "Challenges", icon: Zap },
-    { id: "learning", label: "Learning", icon: Map },
+    { id: "learning", label: "Path", icon: Map },
     { id: "portfolio", label: "Portfolio", icon: FolderGit2 },
+    { id: "progress", label: "Progress", icon: TrendingUp },
+    { id: "memory", label: "Memory", icon: History },
   ];
+
+  /* ═══════════════════════════════════════════════════
+     STYLES
+     ═══════════════════════════════════════════════════ */
+  const cardStyle = { background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" };
+  const accentCardStyle = { background: "hsl(152 80% 50% / 0.06)", border: "1px solid hsl(152 80% 50% / 0.12)" };
+  const scrollStyle = { scrollbarWidth: "thin" as const, scrollbarColor: "hsl(210 10% 20%) transparent" };
 
   return (
     <>
-      {/* "Chat with AI Tutor" floating button */}
+      {/* ═══ Floating CTA Button ═══ */}
       <motion.button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl font-semibold text-sm shadow-2xl"
@@ -279,7 +399,7 @@ const AIVoiceTutor = () => {
           color: "hsl(222 22% 5%)",
           boxShadow: "0 0 30px hsl(152 100% 50% / 0.25), 0 8px 32px -4px rgba(0,0,0,0.4)",
         }}
-        whileHover={{ scale: 1.05, boxShadow: "0 0 40px hsl(152 100% 50% / 0.4), 0 12px 40px -4px rgba(0,0,0,0.5)" }}
+        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -290,7 +410,7 @@ const AIVoiceTutor = () => {
         <Sparkles className="w-4 h-4 opacity-70" />
       </motion.button>
 
-      {/* Modal overlay */}
+      {/* ═══ Modal ═══ */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -298,57 +418,54 @@ const AIVoiceTutor = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-3 md:p-6"
             onClick={(e) => e.target === e.currentTarget && setOpen(false)}
           >
-            {/* Dark overlay */}
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" />
 
-            {/* Modal */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              initial={{ opacity: 0, scale: 0.92, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 40 }}
+              exit={{ opacity: 0, scale: 0.92, y: 30 }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-5xl h-[90vh] max-h-[700px] rounded-3xl overflow-hidden flex flex-col md:flex-row"
+              className="relative w-full max-w-6xl h-[92vh] max-h-[780px] rounded-3xl overflow-hidden flex flex-col md:flex-row"
               style={{
                 background: "hsl(222 22% 7%)",
                 border: "1px solid hsl(152 80% 50% / 0.12)",
                 boxShadow: "0 0 80px hsl(152 100% 50% / 0.08), 0 40px 80px -20px rgba(0,0,0,0.6)",
               }}
             >
-              {/* Close button */}
+              {/* Close */}
               <button onClick={() => { setOpen(false); stopSpeaking(); }}
                 className="absolute top-4 right-4 z-20 w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110"
                 style={{ background: "hsl(210 15% 15%)", border: "1px solid hsl(210 10% 22%)" }}>
                 <X className="w-4 h-4 text-muted-foreground" />
               </button>
 
-              {/* ═══ LEFT SIDE: Robot Character ═══ */}
-              <div className="hidden md:flex w-[280px] flex-col items-center justify-between flex-shrink-0 relative overflow-hidden"
+              {/* ═══ LEFT: Robot + Controls ═══ */}
+              <div className="hidden md:flex w-[260px] flex-col items-center justify-between flex-shrink-0 relative overflow-hidden"
                 style={{
                   background: "linear-gradient(180deg, hsl(222 22% 6%) 0%, hsl(210 20% 8%) 50%, hsl(222 22% 5%) 100%)",
                   borderRight: "1px solid hsl(152 80% 50% / 0.08)",
                 }}>
-                {/* Top badge */}
+                {/* Status badge */}
                 <div className="pt-5 pb-2 flex flex-col items-center gap-2 z-10">
                   <div className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
                     style={{ background: "hsl(152 80% 50% / 0.12)", color: "hsl(152 100% 60%)", border: "1px solid hsl(152 80% 50% / 0.2)" }}>
                     <Bot className="w-3 h-3 inline mr-1" />AI Coding Mentor
                   </div>
                   <p className="text-[11px] text-muted-foreground text-center px-4">
-                    {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening..." : isLoading ? "💭 Thinking..." : "Ready to help you learn"}
+                    {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening..." : isLoading ? "💭 Thinking..." : "Ready to help"}
                   </p>
                 </div>
 
-                {/* Robot avatar */}
+                {/* Robot */}
                 <div className="flex-1 flex items-center justify-center w-full px-4">
                   <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="full" />
                 </div>
 
                 {/* Voice controls */}
-                <div className="pb-5 pt-2 flex flex-col items-center gap-3 z-10 w-full px-4">
-                  {/* Play/Pause/Stop controls */}
+                <div className="pb-4 pt-2 flex flex-col items-center gap-3 z-10 w-full px-4">
                   {isSpeaking && (
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                       className="flex items-center gap-2">
@@ -364,9 +481,7 @@ const AIVoiceTutor = () => {
                       </button>
                     </motion.div>
                   )}
-
                   <div className="flex items-center gap-2">
-                    {/* Mic button */}
                     <motion.button onClick={toggleListening}
                       className="w-12 h-12 rounded-2xl flex items-center justify-center"
                       style={{
@@ -378,35 +493,31 @@ const AIVoiceTutor = () => {
                       whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       {isListening ? <MicOff className="w-5 h-5 text-white" /> : <Mic className="w-5 h-5 text-white" />}
                     </motion.button>
-
-                    {/* Mute/unmute */}
                     <button onClick={() => { setVoiceEnabled(!voiceEnabled); if (isSpeaking) stopSpeaking(); }}
                       className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-105"
                       style={{ background: "hsl(210 15% 14%)", border: "1px solid hsl(210 10% 22%)" }}>
                       {voiceEnabled ? <Volume2 className="w-4 h-4 text-primary" /> : <VolumeX className="w-4 h-4 text-muted-foreground" />}
                     </button>
                   </div>
-
                   <p className="text-[8px] text-muted-foreground/50 text-center">🔒 Voice processed in-browser</p>
                 </div>
 
-                {/* Background decoration */}
-                <div className="absolute inset-0 dot-pattern opacity-5" />
-                <motion.div className="absolute top-[20%] left-[10%] w-40 h-40 rounded-full blur-[80px]"
+                {/* Bg decoration */}
+                <motion.div className="absolute top-[20%] left-[10%] w-40 h-40 rounded-full blur-[80px] pointer-events-none"
                   style={{ background: "hsl(152 68% 46% / 0.06)" }}
                   animate={{ opacity: [0.3, 0.6, 0.3] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 />
               </div>
 
-              {/* ═══ RIGHT SIDE: Chat & Tools ═══ */}
+              {/* ═══ RIGHT: Tabs + Content ═══ */}
               <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {/* Tab bar */}
-                <div className="flex items-center border-b px-3 pt-3 pb-0 gap-1 flex-shrink-0"
-                  style={{ borderColor: "hsl(210 10% 14%)", background: "hsl(222 22% 7%)" }}>
+                <div className="flex items-center border-b px-2 pt-3 pb-0 gap-0.5 flex-shrink-0 overflow-x-auto"
+                  style={{ borderColor: "hsl(210 10% 14%)", background: "hsl(222 22% 7%)", scrollbarWidth: "none" }}>
                   {TABS.map(tab => (
                     <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-1.5 px-3 py-2.5 rounded-t-xl text-xs font-semibold transition-all relative ${
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-semibold transition-all relative whitespace-nowrap ${
                         activeTab === tab.id ? "text-primary" : "text-muted-foreground hover:text-foreground"
                       }`}
                       style={activeTab === tab.id ? {
@@ -419,9 +530,8 @@ const AIVoiceTutor = () => {
                       <span className="hidden sm:inline">{tab.label}</span>
                     </button>
                   ))}
-
-                  {/* Mobile mic button */}
-                  <div className="md:hidden ml-auto flex items-center gap-1 pb-2">
+                  {/* Mobile voice controls */}
+                  <div className="md:hidden ml-auto flex items-center gap-1 pb-2 pl-2">
                     <button onClick={toggleListening}
                       className="w-8 h-8 rounded-lg flex items-center justify-center"
                       style={{ background: isListening ? "hsl(0 70% 50%)" : "hsl(200 80% 50%)" }}>
@@ -435,15 +545,10 @@ const AIVoiceTutor = () => {
                   </div>
                 </div>
 
-                {/* ═══ CHAT TAB ═══ */}
+                {/* ═══════════ CHAT TAB ═══════════ */}
                 {activeTab === "chat" && (
                   <div className="flex-1 flex flex-col min-h-0">
-                    {/* Messages */}
-                    <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4"
-                      style={{
-                        scrollbarWidth: "thin",
-                        scrollbarColor: "hsl(210 10% 20%) transparent",
-                      }}>
+                    <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4" style={scrollStyle}>
                       {messages.map((msg, i) => (
                         <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                           className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -453,16 +558,18 @@ const AIVoiceTutor = () => {
                               <Bot className="w-4 h-4 text-primary" />
                             </div>
                           )}
-                          <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                            msg.role === "user"
-                              ? "rounded-br-md"
-                              : "rounded-bl-md"
+                          <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                            msg.role === "user" ? "rounded-br-md" : "rounded-bl-md"
                           }`} style={{
                             background: msg.role === "user" ? "hsl(152 68% 46% / 0.15)" : "hsl(210 15% 12%)",
                             border: msg.role === "user" ? "1px solid hsl(152 68% 46% / 0.2)" : "1px solid hsl(210 10% 16%)",
                             color: "hsl(210 20% 88%)",
                           }}>
-                            {msg.content}
+                            {msg.role === "assistant" ? (
+                              <div className="prose prose-sm prose-invert max-w-none [&_pre]:bg-[hsl(210_15%_8%)] [&_pre]:rounded-lg [&_pre]:p-3 [&_pre]:text-xs [&_pre]:overflow-x-auto [&_code]:text-primary [&_code]:text-xs [&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:mb-2 [&_ol]:mb-2 [&_li]:mb-0.5 [&_h1]:text-base [&_h2]:text-sm [&_h3]:text-sm [&_a]:text-primary">
+                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                              </div>
+                            ) : msg.content}
                           </div>
                           {msg.role === "user" && (
                             <div className="w-8 h-8 rounded-xl flex-shrink-0 mt-1 flex items-center justify-center"
@@ -473,7 +580,7 @@ const AIVoiceTutor = () => {
                         </motion.div>
                       ))}
 
-                      {/* Onboarding choices */}
+                      {/* Onboarding */}
                       {currentOnboarding && !isLoading && (
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pl-11">
                           <p className="text-xs text-muted-foreground mb-2">{currentOnboarding.question}</p>
@@ -481,11 +588,7 @@ const AIVoiceTutor = () => {
                             {currentOnboarding.options.map(opt => (
                               <button key={opt.value} onClick={() => handleOnboardingChoice(opt.value)}
                                 className="px-4 py-2 rounded-xl text-xs font-medium transition-all hover:scale-105"
-                                style={{
-                                  background: "hsl(210 15% 13%)",
-                                  border: "1px solid hsl(152 80% 50% / 0.2)",
-                                  color: "hsl(152 100% 65%)",
-                                }}>
+                                style={{ background: "hsl(210 15% 13%)", border: "1px solid hsl(152 80% 50% / 0.2)", color: "hsl(152 100% 65%)" }}>
                                 {opt.label}
                               </button>
                             ))}
@@ -493,35 +596,30 @@ const AIVoiceTutor = () => {
                         </motion.div>
                       )}
 
-                      {/* Quick actions */}
+                      {/* Quick actions on start */}
                       {onboardingStep === -1 && messages.length <= 2 && !isLoading && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="pl-11 space-y-3">
                           <div className="grid grid-cols-2 gap-2">
                             {QUICK_ACTIONS.map(a => (
                               <button key={a.label} onClick={() => sendMessage(a.msg)}
                                 className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium text-left transition-all hover:scale-[1.02]"
-                                style={{
-                                  background: "hsl(210 15% 11%)",
-                                  border: "1px solid hsl(210 10% 18%)",
-                                  color: "hsl(210 10% 75%)",
-                                }}>
+                                style={cardStyle}>
                                 <a.icon size={14} className="text-primary flex-shrink-0" />
-                                <span>{a.label}</span>
+                                <span style={{ color: "hsl(210 10% 75%)" }}>{a.label}</span>
                               </button>
                             ))}
                           </div>
                         </motion.div>
                       )}
 
-                      {/* Loading indicator */}
+                      {/* Loading */}
                       {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                         <div className="flex gap-3">
                           <div className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center"
                             style={{ background: "hsl(152 80% 50% / 0.1)", border: "1px solid hsl(152 80% 50% / 0.15)" }}>
                             <Bot className="w-4 h-4 text-primary" />
                           </div>
-                          <div className="rounded-2xl rounded-bl-md px-4 py-3"
-                            style={{ background: "hsl(210 15% 12%)", border: "1px solid hsl(210 10% 16%)" }}>
+                          <div className="rounded-2xl rounded-bl-md px-4 py-3" style={cardStyle}>
                             <div className="flex gap-1.5 items-center">
                               {[0, 150, 300].map(d => (
                                 <span key={d} className="w-2 h-2 rounded-full animate-bounce" style={{ animationDelay: `${d}ms`, background: "hsl(152 68% 46% / 0.5)" }} />
@@ -532,7 +630,7 @@ const AIVoiceTutor = () => {
                         </div>
                       )}
 
-                      {/* Voice speaking feedback with controls */}
+                      {/* Voice wave */}
                       {isSpeaking && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                           className="flex items-center gap-2 pl-11">
@@ -560,10 +658,10 @@ const AIVoiceTutor = () => {
                       )}
                     </div>
 
-                    {/* Suggested prompts */}
-                    {messages.length > 2 && messages.length < 8 && !isLoading && (
+                    {/* Suggestions */}
+                    {messages.length > 2 && messages.length < 10 && !isLoading && (
                       <div className="px-4 pb-2 flex flex-wrap gap-1.5">
-                        {SUGGESTED_PROMPTS.slice(0, 3).map(prompt => (
+                        {SUGGESTED_PROMPTS.slice(0, 4).map(prompt => (
                           <button key={prompt} onClick={() => sendMessage(prompt)}
                             className="text-[10px] px-3 py-1.5 rounded-full transition-all hover:scale-105"
                             style={{ background: "hsl(210 15% 12%)", border: "1px solid hsl(210 10% 18%)", color: "hsl(210 10% 65%)" }}>
@@ -573,7 +671,7 @@ const AIVoiceTutor = () => {
                       </div>
                     )}
 
-                    {/* Input area */}
+                    {/* Input */}
                     <div className="p-3 flex-shrink-0" style={{ borderTop: "1px solid hsl(210 10% 14%)" }}>
                       {input && isListening && (
                         <p className="text-[10px] text-muted-foreground italic text-center mb-2 truncate">🎤 "{input}"</p>
@@ -582,11 +680,7 @@ const AIVoiceTutor = () => {
                         <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
                           placeholder="Ask me anything about coding..."
                           className="flex-1 rounded-xl px-4 py-3 text-sm outline-none transition-all placeholder:text-muted-foreground/50"
-                          style={{
-                            background: "hsl(210 15% 10%)",
-                            border: "1px solid hsl(210 10% 18%)",
-                            color: "hsl(210 20% 88%)",
-                          }}
+                          style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 18%)", color: "hsl(210 20% 88%)" }}
                           disabled={isLoading} />
                         <button type="submit" disabled={isLoading || !input.trim()}
                           className="w-11 h-11 rounded-xl flex items-center justify-center disabled:opacity-30 transition-all hover:scale-105 flex-shrink-0"
@@ -598,45 +692,38 @@ const AIVoiceTutor = () => {
                   </div>
                 )}
 
-                {/* ═══ CHALLENGES TAB ═══ */}
+                {/* ═══════════ CHALLENGES TAB ═══════════ */}
                 {activeTab === "challenges" && (
-                  <div className="flex-1 overflow-y-auto p-5 space-y-5" style={{ scrollbarWidth: "thin", scrollbarColor: "hsl(210 10% 20%) transparent" }}>
+                  <div className="flex-1 overflow-y-auto p-5 space-y-4" style={scrollStyle}>
                     <div className="text-center">
                       <h3 className="text-lg font-bold text-foreground mb-1">⚡ Coding Challenges</h3>
                       <p className="text-xs text-muted-foreground">Pick a difficulty and sharpen your skills</p>
                     </div>
 
-                    {/* Progress */}
-                    <div className="rounded-2xl p-4" style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" }}>
+                    {/* Progress bar */}
+                    <div className="rounded-2xl p-4" style={cardStyle}>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs text-muted-foreground">Challenges Completed</span>
-                        <span className="text-sm font-bold text-primary">{challengesCompleted}</span>
+                        <span className="text-sm font-bold text-primary">{memory.challengesFinished}</span>
                       </div>
                       <div className="w-full h-2 rounded-full" style={{ background: "hsl(210 15% 15%)" }}>
                         <motion.div className="h-full rounded-full" style={{ background: "linear-gradient(90deg, hsl(152 68% 46%), hsl(172 66% 50%))" }}
-                          animate={{ width: `${Math.min((challengesCompleted / 10) * 100, 100)}%` }}
+                          animate={{ width: `${Math.min((memory.challengesFinished / 20) * 100, 100)}%` }}
                         />
                       </div>
                     </div>
 
-                    {/* Difficulty selection */}
+                    {/* Difficulty */}
                     <div className="space-y-2">
                       {CHALLENGE_LEVELS.map(level => (
-                        <button key={level.label} onClick={() => { requestChallenge(level.label); setChallengesCompleted(p => p + 1); }}
+                        <button key={level.label} onClick={() => requestChallenge(level.label)}
                           className="w-full flex items-center justify-between rounded-2xl p-4 transition-all hover:scale-[1.01]"
-                          style={{
-                            background: "hsl(210 15% 10%)",
-                            border: `1px solid hsl(${level.color} / 0.2)`,
-                          }}>
+                          style={cardStyle}>
                           <div className="flex items-center gap-3">
                             <span className="text-xl">{level.icon}</span>
                             <div className="text-left">
                               <p className="text-sm font-semibold text-foreground">{level.label}</p>
-                              <p className="text-[10px] text-muted-foreground">{
-                                level.label === "Beginner" ? "Variables, loops, basic logic" :
-                                level.label === "Intermediate" ? "Data structures, algorithms, OOP" :
-                                "System design, optimization, advanced patterns"
-                              }</p>
+                              <p className="text-[10px] text-muted-foreground">{level.desc}</p>
                             </div>
                           </div>
                           <ChevronRight className="w-4 h-4 text-muted-foreground" />
@@ -646,34 +733,51 @@ const AIVoiceTutor = () => {
 
                     {/* Quick challenge buttons */}
                     <div className="grid grid-cols-2 gap-2">
-                      <button onClick={() => sendMessage("Give me a quick debugging challenge. Show me buggy code and let me find the error.")}
-                        className="rounded-xl p-3 text-left transition-all hover:scale-[1.02]"
-                        style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" }}>
-                        <Brain className="w-5 h-5 text-primary mb-1" />
-                        <p className="text-xs font-semibold text-foreground">Debug Challenge</p>
-                        <p className="text-[10px] text-muted-foreground">Find the bug</p>
-                      </button>
-                      <button onClick={() => sendMessage("Give me a logic puzzle / algorithm exercise. Include examples and expected output.")}
-                        className="rounded-xl p-3 text-left transition-all hover:scale-[1.02]"
-                        style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" }}>
-                        <Zap className="w-5 h-5 text-primary mb-1" />
-                        <p className="text-xs font-semibold text-foreground">Logic Puzzle</p>
-                        <p className="text-[10px] text-muted-foreground">Test your thinking</p>
-                      </button>
-                      <button onClick={() => sendMessage("Give me a quick quiz with 3 multiple-choice coding questions. Wait for my answers before showing solutions.")}
-                        className="rounded-xl p-3 text-left transition-all hover:scale-[1.02]"
-                        style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" }}>
-                        <Trophy className="w-5 h-5 text-primary mb-1" />
-                        <p className="text-xs font-semibold text-foreground">Quick Quiz</p>
-                        <p className="text-[10px] text-muted-foreground">3 questions</p>
-                      </button>
-                      <button onClick={() => sendMessage("Explain the solution to the last coding challenge you gave me. Be detailed and educational.")}
-                        className="rounded-xl p-3 text-left transition-all hover:scale-[1.02]"
-                        style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" }}>
-                        <BookOpen className="w-5 h-5 text-primary mb-1" />
-                        <p className="text-xs font-semibold text-foreground">Explain Solution</p>
-                        <p className="text-[10px] text-muted-foreground">Learn why</p>
-                      </button>
+                      {[
+                        { icon: Brain, label: "Debug Challenge", desc: "Find the bug", msg: "Give me a quick debugging challenge. Show me buggy code and let me find the error." },
+                        { icon: Zap, label: "Logic Puzzle", desc: "Test your thinking", msg: "Give me a logic puzzle / algorithm exercise. Include examples." },
+                        { icon: Trophy, label: "Quick Quiz", desc: "3 questions", msg: "Give me a quiz with 3 multiple-choice coding questions. Wait for my answers." },
+                        { icon: Lightbulb, label: "Show Hint", desc: "Get help", msg: "Give me a hint for the last challenge without revealing the full solution." },
+                        { icon: BookOpen, label: "Explain Solution", desc: "Learn why", msg: "Explain the solution to the last coding challenge you gave me. Be detailed." },
+                        { icon: RotateCcw, label: "New Challenge", desc: "Try another", msg: "Generate a new coding challenge, different from the previous one." },
+                      ].map(btn => (
+                        <button key={btn.label} onClick={() => sendMessage(btn.msg)}
+                          className="rounded-xl p-3 text-left transition-all hover:scale-[1.02]"
+                          style={cardStyle}>
+                          <btn.icon className="w-5 h-5 text-primary mb-1" />
+                          <p className="text-xs font-semibold text-foreground">{btn.label}</p>
+                          <p className="text-[10px] text-muted-foreground">{btn.desc}</p>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Code Practice Area */}
+                    <div className="rounded-2xl p-4 space-y-3" style={cardStyle}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Code2 className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-bold text-foreground">Code Practice</span>
+                      </div>
+                      <textarea
+                        value={codeInput}
+                        onChange={e => setCodeInput(e.target.value)}
+                        placeholder="// Paste or write your code here..."
+                        className="w-full h-32 rounded-xl px-4 py-3 text-xs font-mono outline-none resize-none"
+                        style={{ background: "hsl(210 15% 8%)", border: "1px solid hsl(210 10% 14%)", color: "hsl(152 100% 70%)" }}
+                      />
+                      <div className="flex gap-2">
+                        <button onClick={() => sendMessage(`Please review and explain this code:\n\`\`\`\n${codeInput}\n\`\`\``)}
+                          disabled={!codeInput.trim()}
+                          className="flex-1 px-3 py-2 rounded-xl text-xs font-semibold disabled:opacity-30 transition-all hover:scale-[1.02]"
+                          style={{ background: "linear-gradient(135deg, hsl(152 68% 46% / 0.2), hsl(172 66% 50% / 0.15))", border: "1px solid hsl(152 80% 50% / 0.2)", color: "hsl(152 100% 65%)" }}>
+                          Explain Code
+                        </button>
+                        <button onClick={() => sendMessage(`Find bugs and suggest improvements for this code:\n\`\`\`\n${codeInput}\n\`\`\``)}
+                          disabled={!codeInput.trim()}
+                          className="flex-1 px-3 py-2 rounded-xl text-xs font-semibold disabled:opacity-30 transition-all hover:scale-[1.02]"
+                          style={{ background: "hsl(210 15% 12%)", border: "1px solid hsl(210 10% 18%)", color: "hsl(210 10% 75%)" }}>
+                          Debug Code
+                        </button>
+                      </div>
                     </div>
 
                     {/* Daily tip */}
@@ -683,22 +787,22 @@ const AIVoiceTutor = () => {
                         <span className="text-xs font-bold text-primary">Daily Coding Tip</span>
                       </div>
                       <p className="text-xs text-foreground/80 leading-relaxed">
-                        "Always name your variables descriptively. <code className="px-1 py-0.5 rounded text-primary" style={{ background: "hsl(210 15% 14%)" }}>userAge</code> is better than <code className="px-1 py-0.5 rounded text-primary" style={{ background: "hsl(210 15% 14%)" }}>x</code>. Your future self will thank you!"
+                        "Always name your variables descriptively. <code className="px-1 py-0.5 rounded text-primary" style={{ background: "hsl(210 15% 14%)" }}>userAge</code> is better than <code className="px-1 py-0.5 rounded text-primary" style={{ background: "hsl(210 15% 14%)" }}>x</code>."
                       </p>
                     </div>
                   </div>
                 )}
 
-                {/* ═══ LEARNING PATH TAB ═══ */}
+                {/* ═══════════ LEARNING PATH TAB ═══════════ */}
                 {activeTab === "learning" && (
-                  <div className="flex-1 overflow-y-auto p-5 space-y-5" style={{ scrollbarWidth: "thin", scrollbarColor: "hsl(210 10% 20%) transparent" }}>
+                  <div className="flex-1 overflow-y-auto p-5 space-y-4" style={scrollStyle}>
                     <div className="text-center">
                       <h3 className="text-lg font-bold text-foreground mb-1">🗺️ Learning Path</h3>
                       <p className="text-xs text-muted-foreground">Choose your journey</p>
                     </div>
 
                     {studentProfile.length > 0 && (
-                      <div className="rounded-2xl p-4" style={{ background: "hsl(152 80% 50% / 0.06)", border: "1px solid hsl(152 80% 50% / 0.12)" }}>
+                      <div className="rounded-2xl p-4" style={accentCardStyle}>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Your Profile</p>
                         <div className="flex flex-wrap gap-2">
                           {studentProfile.map((p, i) => (
@@ -711,7 +815,6 @@ const AIVoiceTutor = () => {
                       </div>
                     )}
 
-                    {/* Learning paths */}
                     {[
                       { title: "Java Bootcamp", desc: "10-day intensive: Java + SQL + Project", icon: "☕", msg: "Tell me about Chadi's Java Bootcamp. What will I learn and how can I join?" },
                       { title: "Web Development", desc: "HTML, CSS, JavaScript, React", icon: "🌐", msg: "Create a learning path for web development from scratch to building full apps." },
@@ -720,7 +823,7 @@ const AIVoiceTutor = () => {
                     ].map(path => (
                       <button key={path.title} onClick={() => sendMessage(path.msg)}
                         className="w-full flex items-center gap-4 rounded-2xl p-4 text-left transition-all hover:scale-[1.01]"
-                        style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" }}>
+                        style={cardStyle}>
                         <span className="text-2xl">{path.icon}</span>
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-foreground">{path.title}</p>
@@ -730,13 +833,9 @@ const AIVoiceTutor = () => {
                       </button>
                     ))}
 
-                    {/* Start Learning CTA */}
-                    <button onClick={() => sendMessage("I want to start learning programming right now. Help me pick the best starting point based on what I know.")}
+                    <button onClick={() => sendMessage("I want to start learning right now. Help me pick the best starting point based on my level.")}
                       className="w-full rounded-2xl p-4 text-center transition-all hover:scale-[1.01]"
-                      style={{
-                        background: "linear-gradient(135deg, hsl(152 68% 46% / 0.15), hsl(172 66% 50% / 0.1))",
-                        border: "1px solid hsl(152 80% 50% / 0.2)",
-                      }}>
+                      style={{ background: "linear-gradient(135deg, hsl(152 68% 46% / 0.15), hsl(172 66% 50% / 0.1))", border: "1px solid hsl(152 80% 50% / 0.2)" }}>
                       <GraduationCap className="w-6 h-6 text-primary mx-auto mb-2" />
                       <p className="text-sm font-bold text-primary">🚀 Start Learning Now</p>
                       <p className="text-[10px] text-muted-foreground mt-1">Get a personalized recommendation</p>
@@ -744,52 +843,202 @@ const AIVoiceTutor = () => {
                   </div>
                 )}
 
-                {/* ═══ PORTFOLIO GUIDE TAB ═══ */}
+                {/* ═══════════ PORTFOLIO TAB ═══════════ */}
                 {activeTab === "portfolio" && (
-                  <div className="flex-1 overflow-y-auto p-5 space-y-4" style={{ scrollbarWidth: "thin", scrollbarColor: "hsl(210 10% 20%) transparent" }}>
+                  <div className="flex-1 overflow-y-auto p-5 space-y-4" style={scrollStyle}>
                     <div className="text-center">
                       <h3 className="text-lg font-bold text-foreground mb-1">💼 Portfolio Guide</h3>
-                      <p className="text-xs text-muted-foreground">Let me show you around Chadi's platform</p>
+                      <p className="text-xs text-muted-foreground">Let me show you around</p>
                     </div>
 
-                    {/* Navigate to sections */}
                     <div className="space-y-2">
                       {PORTFOLIO_SECTIONS.map(section => (
                         <button key={section.hash} onClick={() => navigateTo(section.hash)}
                           className="w-full flex items-center gap-3 rounded-2xl p-4 text-left transition-all hover:scale-[1.01]"
-                          style={{ background: "hsl(210 15% 10%)", border: "1px solid hsl(210 10% 16%)" }}>
+                          style={cardStyle}>
                           <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                             style={{ background: "hsl(152 80% 50% / 0.1)" }}>
                             <section.icon className="w-5 h-5 text-primary" />
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-semibold text-foreground">{section.label}</p>
-                            <p className="text-[10px] text-muted-foreground">Navigate to {section.label.toLowerCase()}</p>
+                            <p className="text-[10px] text-muted-foreground">{section.desc}</p>
                           </div>
                           <ChevronRight className="w-4 h-4 text-muted-foreground" />
                         </button>
                       ))}
                     </div>
 
-                    {/* Ask about projects */}
                     <div className="space-y-2">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ask the AI about:</p>
                       {[
-                        { label: "Explain TenderFlow Project", msg: "Tell me about the TenderFlow project. What technologies were used and what problem does it solve?" },
-                        { label: "What makes Chadi unique?", msg: "What makes Chadi Troudi stand out as a developer and tutor? Present his profile professionally." },
-                        { label: "Tutoring & Bootcamp info", msg: "Tell me about Chadi's tutoring services and the Java Bootcamp. How can I enroll?" },
+                        { label: "Explain TenderFlow Project", msg: "Tell me about the TenderFlow project. What technologies were used?" },
+                        { label: "What makes Chadi unique?", msg: "What makes Chadi Troudi stand out as a developer and tutor?" },
+                        { label: "Tutoring & Bootcamp info", msg: "Tell me about Chadi's tutoring services and the Java Bootcamp." },
                       ].map(item => (
                         <button key={item.label} onClick={() => sendMessage(item.msg)}
                           className="w-full text-left px-4 py-3 rounded-xl text-xs font-medium transition-all hover:scale-[1.01]"
-                          style={{
-                            background: "hsl(152 80% 50% / 0.06)",
-                            border: "1px solid hsl(152 80% 50% / 0.12)",
-                            color: "hsl(152 100% 65%)",
-                          }}>
+                          style={{ ...accentCardStyle, color: "hsl(152 100% 65%)" }}>
                           {item.label} →
                         </button>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* ═══════════ PROGRESS TAB ═══════════ */}
+                {activeTab === "progress" && (
+                  <div className="flex-1 overflow-y-auto p-5 space-y-4" style={scrollStyle}>
+                    <div className="text-center">
+                      <h3 className="text-lg font-bold text-foreground mb-1">📊 My Progress</h3>
+                      <p className="text-xs text-muted-foreground">Track your learning journey</p>
+                    </div>
+
+                    {/* Stats grid */}
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { label: "Topics Studied", value: memory.topicsStudied.length, icon: BookOpen, color: "152" },
+                        { label: "Challenges Done", value: memory.challengesFinished, icon: Zap, color: "40" },
+                        { label: "Sessions", value: memory.history.length, icon: Clock, color: "200" },
+                        { label: "Level", value: memory.difficultyLevel || "Not set", icon: Target, color: "280" },
+                      ].map(stat => (
+                        <div key={stat.label} className="rounded-2xl p-4" style={cardStyle}>
+                          <stat.icon className="w-5 h-5 text-primary mb-2" />
+                          <p className="text-xl font-bold text-foreground">{stat.value}</p>
+                          <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Topics studied */}
+                    {memory.topicsStudied.length > 0 && (
+                      <div className="rounded-2xl p-4" style={cardStyle}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <CheckCircle2 className="w-4 h-4 text-primary" />
+                          <span className="text-xs font-bold text-foreground">Topics Explored</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {memory.topicsStudied.slice(-10).map((topic, i) => (
+                            <span key={i} className="px-3 py-1 rounded-full text-[10px] font-medium truncate max-w-[180px]"
+                              style={{ background: "hsl(152 80% 50% / 0.1)", color: "hsl(152 100% 65%)", border: "1px solid hsl(152 80% 50% / 0.15)" }}>
+                              {topic}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Preferred language */}
+                    {memory.preferredLanguage && (
+                      <div className="rounded-2xl p-4" style={accentCardStyle}>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Preferred Language</p>
+                        <p className="text-sm font-semibold text-primary">{memory.preferredLanguage}</p>
+                      </div>
+                    )}
+
+                    {/* Suggested actions */}
+                    <div className="space-y-2">
+                      <button onClick={() => sendMessage("Based on what I've learned so far, what should I study next? Give me personalized suggestions.")}
+                        className="w-full rounded-2xl p-4 text-center transition-all hover:scale-[1.01]"
+                        style={{ background: "linear-gradient(135deg, hsl(152 68% 46% / 0.12), hsl(172 66% 50% / 0.08))", border: "1px solid hsl(152 80% 50% / 0.2)" }}>
+                        <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
+                        <p className="text-xs font-bold text-primary">Get Next Step Recommendation</p>
+                      </button>
+                      <button onClick={() => sendMessage("Review my weakest areas and create a focused practice plan for me.")}
+                        className="w-full rounded-2xl p-4 text-center transition-all hover:scale-[1.01]"
+                        style={cardStyle}>
+                        <Target className="w-5 h-5 text-primary mx-auto mb-1" />
+                        <p className="text-xs font-bold text-foreground">Practice Weak Topics</p>
+                      </button>
+                    </div>
+
+                    {memory.topicsStudied.length === 0 && (
+                      <div className="text-center py-8">
+                        <Brain className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                        <p className="text-sm text-muted-foreground">No progress yet. Start chatting to track your learning!</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* ═══════════ MEMORY TAB ═══════════ */}
+                {activeTab === "memory" && (
+                  <div className="flex-1 overflow-y-auto p-5 space-y-4" style={scrollStyle}>
+                    <div className="text-center">
+                      <h3 className="text-lg font-bold text-foreground mb-1">🧠 Learning Memory</h3>
+                      <p className="text-xs text-muted-foreground">Your tutor remembers your journey</p>
+                    </div>
+
+                    {/* Memory stats */}
+                    <div className="rounded-2xl p-4 space-y-3" style={cardStyle}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Last Session</span>
+                        <span className="text-xs text-foreground">{memory.lastSession ? new Date(memory.lastSession.date).toLocaleDateString() : "None"}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Last Topic</span>
+                        <span className="text-xs text-primary truncate max-w-[150px]">{memory.lastSession?.topic || "None"}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Total Topics</span>
+                        <span className="text-xs font-bold text-foreground">{memory.topicsStudied.length}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Challenges Done</span>
+                        <span className="text-xs font-bold text-foreground">{memory.challengesFinished}</span>
+                      </div>
+                    </div>
+
+                    {/* Recent history */}
+                    {memory.history.length > 0 && (
+                      <div className="rounded-2xl p-4" style={cardStyle}>
+                        <p className="text-xs font-bold text-foreground mb-3">Recent Activity</p>
+                        <div className="space-y-2 max-h-48 overflow-y-auto" style={scrollStyle}>
+                          {[...memory.history].reverse().slice(0, 15).map((entry, i) => (
+                            <div key={i} className="flex items-center gap-3 text-[11px]">
+                              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                entry.type === "challenge" ? "bg-yellow-400" :
+                                entry.type === "lesson" ? "bg-green-400" : "bg-blue-400"
+                              }`} />
+                              <span className="text-muted-foreground truncate flex-1">{entry.topic}</span>
+                              <span className="text-muted-foreground/50 flex-shrink-0">{new Date(entry.date).toLocaleDateString()}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action buttons */}
+                    <div className="space-y-2">
+                      <button onClick={() => sendMessage("Welcome me back and summarize what I've been learning. Suggest what to do next based on my history.")}
+                        className="w-full rounded-2xl p-3 text-xs font-semibold transition-all hover:scale-[1.01]"
+                        style={{ ...accentCardStyle, color: "hsl(152 100% 65%)" }}>
+                        📚 Resume Last Lesson
+                      </button>
+                      <button onClick={() => sendMessage("Review everything I've studied and give me a summary of my strengths and areas for improvement.")}
+                        className="w-full rounded-2xl p-3 text-xs font-semibold transition-all hover:scale-[1.01]"
+                        style={{ ...cardStyle, color: "hsl(210 10% 75%)" }}>
+                        📝 What Did I Learn?
+                      </button>
+                      <button onClick={() => sendMessage("Show me my overall progress. What am I good at? What should I focus on improving?")}
+                        className="w-full rounded-2xl p-3 text-xs font-semibold transition-all hover:scale-[1.01]"
+                        style={{ ...cardStyle, color: "hsl(210 10% 75%)" }}>
+                        📊 Show My Progress
+                      </button>
+                      <button onClick={clearMemory}
+                        className="w-full rounded-2xl p-3 text-xs font-semibold transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+                        style={{ background: "hsl(0 70% 50% / 0.08)", border: "1px solid hsl(0 70% 50% / 0.15)", color: "hsl(0 70% 60%)" }}>
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Clear Learning Memory
+                      </button>
+                    </div>
+
+                    {memory.history.length === 0 && (
+                      <div className="text-center py-6">
+                        <History className="w-10 h-10 text-muted-foreground/30 mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">No memory yet. Start learning and I'll remember everything!</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
