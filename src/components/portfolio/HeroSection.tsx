@@ -266,7 +266,7 @@ const HeroSection = () => {
                 {/* Name overlay at bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <p className="text-foreground font-bold text-lg">Chadi Troudi</p>
-                  <p className="text-muted-foreground text-sm">Senior Full-Stack Engineer</p>
+                  <p className="text-muted-foreground text-sm">{t.seniorEngineer}</p>
                 </div>
 
                 {/* Image counter */}
