@@ -112,9 +112,9 @@ const HeroSection = () => {
             </motion.h1>
 
             {/* Role */}
-            <motion.div {...fadeUp(0.35)} className="flex items-center gap-3 mb-8">
-              <span className="w-8 h-px bg-primary/50" />
-              <span className="text-lg font-mono text-primary font-medium">
+            <motion.div {...fadeUp(0.35)} className="flex items-center gap-3 mb-6 sm:mb-8">
+              <span className="w-6 sm:w-8 h-px bg-primary/50" />
+              <span className="text-sm sm:text-lg font-mono text-primary font-medium">
                 {typedRole}
                 <motion.span
                   animate={{ opacity: [1, 0] }}
