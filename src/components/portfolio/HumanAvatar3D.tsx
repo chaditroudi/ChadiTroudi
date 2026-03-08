@@ -430,8 +430,6 @@ function HumanBody({
   );
 }
 
-// Need to import useState for blinkState
-import { useState } from "react";
 
 /* ═══════════════════════════════════════════════════
    EXPORTED CANVAS COMPONENT
