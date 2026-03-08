@@ -346,7 +346,7 @@ const AIVoiceTutor = () => {
                 {/* Header */}
                 <div className="px-4 py-2.5 border-b flex items-center gap-3"
                   style={{ background: "linear-gradient(180deg, hsl(210 20% 8%) 0%, hsl(210 15% 11%) 100%)", borderColor: "hsl(152 80% 50% / 0.15)" }}>
-                  <div className="w-8 h-8 rounded-full overflow-hidden ring-1 flex-shrink-0" style={{ ringColor: "hsl(152 80% 50% / 0.3)" }}>
+                  <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-primary/30 flex-shrink-0">
                     <img src={robotImg} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
