@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      formation_registrations: {
+        Row: {
+          created_at: string
+          email: string
+          experience_level: string
+          full_name: string
+          id: string
+          motivation: string | null
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          experience_level?: string
+          full_name: string
+          id?: string
+          motivation?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          experience_level?: string
+          full_name?: string
+          id?: string
+          motivation?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           company: string | null
