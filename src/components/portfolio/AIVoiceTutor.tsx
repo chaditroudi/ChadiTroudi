@@ -451,9 +451,10 @@ const AIVoiceTutor = () => {
                 }}>
                 {/* Status badge */}
                 <div className="pt-4 pb-1 flex flex-col items-center gap-2 z-10">
-                  <div className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                  <div className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5"
                     style={{ background: "hsl(152 80% 50% / 0.12)", color: "hsl(152 100% 60%)", border: "1px solid hsl(152 80% 50% / 0.2)" }}>
-                    👨‍🏫 AI Coding Mentor
+                    <img src={tutorAvatar} alt="" className="w-4 h-4 rounded-full object-cover" />
+                    AI Coding Mentor
                   </div>
                   <p className="text-[11px] text-muted-foreground text-center px-4">
                     {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening..." : isLoading ? "💭 Thinking..." : "Ready to help"}
