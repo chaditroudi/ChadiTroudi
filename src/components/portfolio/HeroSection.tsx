@@ -1,6 +1,7 @@
 import { ArrowDown, Github, Linkedin, Mail, ArrowRight, GraduationCap, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
+import { useLang } from "@/hooks/use-lang";
 import chadiLounge from "@/assets/chadi-lounge.jpeg";
 import websummitQatar from "@/assets/websummit-qatar.jpg";
 import chadiLaptop from "@/assets/chadi-laptop.jpg";
@@ -70,6 +71,7 @@ const item = {
 };
 
 const HeroSection = () => {
+  const { t } = useLang();
   const typedRole = useTypewriter(roles);
   const [currentImage, setCurrentImage] = useState(0);
 
@@ -142,7 +144,7 @@ const HeroSection = () => {
             <motion.div variants={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm mb-8">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <span className="text-primary font-mono text-xs tracking-wider uppercase">
-                Available for hire
+                {t.availableForHire}
               </span>
             </motion.div>
 
@@ -165,11 +167,10 @@ const HeroSection = () => {
             </motion.div>
 
             <motion.p variants={item} className="text-muted-foreground max-w-xl text-lg leading-relaxed mb-10">
-              Full-Stack Engineer specializing in scalable web applications using{" "}
-              <span className="text-foreground font-medium">Java Spring Boot</span>,{" "}
-              <span className="text-foreground font-medium">React</span>, and microservices.
-              Building secure APIs and delivering enterprise solutions with{" "}
-              <span className="text-foreground font-medium">clean architecture</span>.
+              {t.heroDesc}{" "}
+              <span className="text-foreground font-medium">{t.javaSpring}</span>,{" "}
+              <span className="text-foreground font-medium">{t.react}</span>{t.andMicroservices}{" "}
+              <span className="text-foreground font-medium">{t.cleanArch}</span>.
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap items-center gap-3 mb-6">
@@ -177,14 +178,14 @@ const HeroSection = () => {
                 href="#projects"
                 className="group inline-flex items-center gap-3 bg-primary text-primary-foreground font-semibold text-sm px-8 py-4 rounded-full hover:shadow-[0_8px_30px_-4px_hsl(152_68%_46%/0.5)] transition-all duration-300"
               >
-                View My Work
+                {t.viewMyWork}
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="#contact"
                 className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-sm px-8 py-4 rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 backdrop-blur-sm"
               >
-                Get In Touch
+                {t.getInTouch}
               </a>
             </motion.div>
 
@@ -199,12 +200,12 @@ const HeroSection = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-foreground">Join My Java Bootcamp</span>
+                    <span className="text-sm font-semibold text-foreground">{t.joinBootcamp}</span>
                     <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider">
-                      New
+                      {t.newBadge}
                     </span>
                   </div>
-                  <span className="text-xs text-muted-foreground">10-day intensive • Java + SQL + Project</span>
+                  <span className="text-xs text-muted-foreground">{t.bootcampDesc}</span>
                 </div>
                 <ArrowRight size={14} className="text-primary group-hover:translate-x-1 transition-transform ml-auto" />
                 <motion.div
@@ -220,9 +221,9 @@ const HeroSection = () => {
             {/* Stats row */}
             <motion.div variants={item} className="flex items-center gap-8 mt-12">
               {[
-                { value: "5+", label: "Years" },
-                { value: "6", label: "Companies" },
-                { value: "10+", label: "Projects" },
+                { value: "5+", label: t.years },
+                { value: "6", label: t.companies },
+                { value: "10+", label: t.projectsCount },
               ].map((stat, i) => (
                 <div key={stat.label} className="flex items-center gap-8">
                   <div>
@@ -265,7 +266,7 @@ const HeroSection = () => {
                 {/* Name overlay at bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <p className="text-foreground font-bold text-lg">Chadi Troudi</p>
-                  <p className="text-muted-foreground text-sm">Senior Full-Stack Engineer</p>
+                  <p className="text-muted-foreground text-sm">{t.seniorEngineer}</p>
                 </div>
 
                 {/* Image counter */}
@@ -296,7 +297,7 @@ const HeroSection = () => {
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -bottom-6 -left-10 glass rounded-2xl px-5 py-4 shadow-xl border border-border/30"
               >
-                <p className="text-xs font-mono text-muted-foreground mb-1">Currently at</p>
+                <p className="text-xs font-mono text-muted-foreground mb-1">{t.currentlyAt}</p>
                 <p className="text-sm font-semibold text-foreground">Bonial Germany 🇩🇪</p>
               </motion.div>
 
