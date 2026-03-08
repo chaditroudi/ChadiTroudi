@@ -175,7 +175,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Stats */}
-            <motion.div {...fadeUp(0.75)} className="flex items-center gap-5 sm:gap-8 mt-8 sm:mt-12">
+            <motion.div {...fadeUp(0.75)} className="flex items-center justify-center lg:justify-start gap-5 sm:gap-8 mt-8 sm:mt-12">
               {[
                 { value: "5+", label: t.years },
                 { value: "6", label: t.companies },
