@@ -68,6 +68,14 @@ const fadeUp = (delay = 0) => ({
 const HeroSection = () => {
   const { t } = useLang();
   const typedRole = useTypewriter(roles);
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % heroImages.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="min-h-screen relative flex items-center overflow-hidden" aria-label="Hero">
