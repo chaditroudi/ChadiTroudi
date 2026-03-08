@@ -1,8 +1,22 @@
 import { ArrowRight, Github, Linkedin, Mail, GraduationCap, Download } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import { useLang } from "@/hooks/use-lang";
-import profileImg from "@/assets/profile.jpg";
+import chadiLounge from "@/assets/chadi-lounge.jpeg";
+import websummitQatar from "@/assets/websummit-qatar.jpg";
+import chadiLaptop from "@/assets/chadi-laptop.jpg";
+import websummitFood from "@/assets/websummit-food.jpeg";
+import bonialPortrait from "@/assets/bonial-portrait.jpeg";
+import bonialIncident from "@/assets/bonial-incident.jpeg";
+
+const heroImages = [
+  { src: bonialPortrait, alt: "Chadi at Bonial office" },
+  { src: chadiLaptop, alt: "Chadi working on his laptop" },
+  { src: websummitQatar, alt: "Chadi at Web Summit Qatar" },
+  { src: chadiLounge, alt: "Chadi relaxing" },
+  { src: websummitFood, alt: "Chadi at Web Summit" },
+  { src: bonialIncident, alt: "Chadi in incident call" },
+];
 
 const roles = [
   "Full-Stack Engineer",
