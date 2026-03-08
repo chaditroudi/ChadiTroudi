@@ -356,8 +356,7 @@ const AIVoiceTutor = () => {
             {/* Messages */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.length === 0 && (
-                <div className="text-center text-muted-foreground text-sm mt-8 space-y-3">
-                  <AIAvatar isSpeaking={false} isListening={false} size="lg" />
+                <div className="text-center text-muted-foreground text-sm mt-4 space-y-2">
                   <p className="font-medium text-foreground">Hi! I'm your AI Coding Tutor 👋</p>
                   <p className="text-xs">Ask me about programming, Chadi's projects, or start learning something new.</p>
                 </div>
