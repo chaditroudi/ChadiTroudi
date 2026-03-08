@@ -1,6 +1,7 @@
 import { ArrowDown, Github, Linkedin, Mail, ArrowRight, GraduationCap, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
+import { useLang } from "@/hooks/use-lang";
 import chadiLounge from "@/assets/chadi-lounge.jpeg";
 import websummitQatar from "@/assets/websummit-qatar.jpg";
 import chadiLaptop from "@/assets/chadi-laptop.jpg";
