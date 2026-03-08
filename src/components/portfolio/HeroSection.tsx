@@ -262,7 +262,7 @@ const HeroSection = () => {
               <motion.div
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-4 -left-6 px-4 py-3 rounded-xl bg-card border border-border/60 shadow-lg"
+                className="absolute -bottom-4 left-2 sm:-left-6 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-card border border-border/60 shadow-lg"
               >
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{t.currentlyAt}</p>
                 <p className="text-sm font-semibold text-foreground">Bonial Germany 🇩🇪</p>
