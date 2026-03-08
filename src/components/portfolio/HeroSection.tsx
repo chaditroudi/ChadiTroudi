@@ -144,7 +144,7 @@ const HeroSection = () => {
             <motion.div variants={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm mb-8">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <span className="text-primary font-mono text-xs tracking-wider uppercase">
-                Available for hire
+                {t.availableForHire}
               </span>
             </motion.div>
 
