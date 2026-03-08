@@ -10,6 +10,7 @@ import {
   CheckCircle2, Target, TrendingUp, Trash2, Clock,
 } from "lucide-react";
 import HumanAvatar3D from "./HumanAvatar3D";
+import tutorAvatar from "@/assets/tutor-avatar.png";
 
 /* ═══════════════════════════════════════════════════
    TYPES
