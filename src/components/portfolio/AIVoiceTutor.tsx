@@ -78,7 +78,7 @@ const AIVoiceTutor = () => {
   const [hasWelcomed, setHasWelcomed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   // Auto-scroll
   useEffect(() => {
