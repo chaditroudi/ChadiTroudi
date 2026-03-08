@@ -406,8 +406,6 @@ const AIAvatar = ({ isSpeaking, isListening, size = "md" }: AIAvatarProps) => {
       )}
     </div>
   );
-});
-
-AIAvatar.displayName = "AIAvatar";
+};
 
 export default AIAvatar;
