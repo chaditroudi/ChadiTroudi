@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Download, Sun, Moon, Globe, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/hooks/use-lang";
-import robotImg from "@/assets/robot-avatar.jpg";
+import tutorAvatar from "@/assets/tutor-avatar.png";
 
 const Navbar = () => {
   const { lang, setLang, t } = useLang();
