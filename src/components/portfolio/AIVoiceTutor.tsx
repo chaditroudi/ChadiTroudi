@@ -406,7 +406,7 @@ const AIVoiceTutor = () => {
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         aria-label="Chat with AI Tutor"
       >
-        <Bot className="w-5 h-5" />
+        <img src={tutorAvatar} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-white/20" />
         <span>Chat with AI Tutor</span>
         <Sparkles className="w-4 h-4 opacity-70" />
       </motion.button>
