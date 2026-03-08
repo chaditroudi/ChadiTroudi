@@ -42,7 +42,7 @@ const experiences = [
     ],
   },
   {
-    role: "FullStack Developer",
+    role: "FullStack Engineer",
     company: "Dwaya",
     period: "Jun 2022 – Nov 2022",
     location: "Ariana, Tunisia · Hybrid",
