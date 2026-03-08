@@ -167,11 +167,10 @@ const HeroSection = () => {
             </motion.div>
 
             <motion.p variants={item} className="text-muted-foreground max-w-xl text-lg leading-relaxed mb-10">
-              Full-Stack Engineer specializing in scalable web applications using{" "}
-              <span className="text-foreground font-medium">Java Spring Boot</span>,{" "}
-              <span className="text-foreground font-medium">React</span>, and microservices.
-              Building secure APIs and delivering enterprise solutions with{" "}
-              <span className="text-foreground font-medium">clean architecture</span>.
+              {t.heroDesc}{" "}
+              <span className="text-foreground font-medium">{t.javaSpring}</span>,{" "}
+              <span className="text-foreground font-medium">{t.react}</span>{t.andMicroservices}{" "}
+              <span className="text-foreground font-medium">{t.cleanArch}</span>.
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap items-center gap-3 mb-6">
