@@ -5,7 +5,7 @@ import profileImg from "@/assets/profile.jpg";
 import bonialPortrait from "@/assets/bonial-portrait.jpeg";
 
 const roles = [
-  "Full-Stack Developer",
+  "Full-Stack Engineer",
   "Java & Spring Boot Expert",
   "React Specialist",
   "API Architect",
