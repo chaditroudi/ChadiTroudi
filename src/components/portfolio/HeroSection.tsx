@@ -178,14 +178,14 @@ const HeroSection = () => {
                 href="#projects"
                 className="group inline-flex items-center gap-3 bg-primary text-primary-foreground font-semibold text-sm px-8 py-4 rounded-full hover:shadow-[0_8px_30px_-4px_hsl(152_68%_46%/0.5)] transition-all duration-300"
               >
-                View My Work
+                {t.viewMyWork}
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="#contact"
                 className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-sm px-8 py-4 rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 backdrop-blur-sm"
               >
-                Get In Touch
+                {t.getInTouch}
               </a>
             </motion.div>
 
