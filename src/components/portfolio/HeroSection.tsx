@@ -297,7 +297,7 @@ const HeroSection = () => {
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -bottom-6 -left-10 glass rounded-2xl px-5 py-4 shadow-xl border border-border/30"
               >
-                <p className="text-xs font-mono text-muted-foreground mb-1">Currently at</p>
+                <p className="text-xs font-mono text-muted-foreground mb-1">{t.currentlyAt}</p>
                 <p className="text-sm font-semibold text-foreground">Bonial Germany 🇩🇪</p>
               </motion.div>
 
