@@ -71,6 +71,7 @@ const item = {
 };
 
 const HeroSection = () => {
+  const { t } = useLang();
   const typedRole = useTypewriter(roles);
   const [currentImage, setCurrentImage] = useState(0);
 
