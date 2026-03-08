@@ -10,6 +10,7 @@ import {
   CheckCircle2, Target, TrendingUp, Trash2, Clock,
 } from "lucide-react";
 import HumanAvatar3D from "./HumanAvatar3D";
+import tutorAvatar from "@/assets/tutor-avatar.png";
 
 /* ═══════════════════════════════════════════════════
    TYPES
@@ -405,7 +406,7 @@ const AIVoiceTutor = () => {
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         aria-label="Chat with AI Tutor"
       >
-        <Bot className="w-5 h-5" />
+        <img src={tutorAvatar} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-white/20" />
         <span>Chat with AI Tutor</span>
         <Sparkles className="w-4 h-4 opacity-70" />
       </motion.button>
@@ -450,9 +451,10 @@ const AIVoiceTutor = () => {
                 }}>
                 {/* Status badge */}
                 <div className="pt-4 pb-1 flex flex-col items-center gap-2 z-10">
-                  <div className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                  <div className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5"
                     style={{ background: "hsl(152 80% 50% / 0.12)", color: "hsl(152 100% 60%)", border: "1px solid hsl(152 80% 50% / 0.2)" }}>
-                    👨‍🏫 AI Coding Mentor
+                    <img src={tutorAvatar} alt="" className="w-4 h-4 rounded-full object-cover" />
+                    AI Coding Mentor
                   </div>
                   <p className="text-[11px] text-muted-foreground text-center px-4">
                     {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening..." : isLoading ? "💭 Thinking..." : "Ready to help"}
@@ -546,9 +548,8 @@ const AIVoiceTutor = () => {
                         <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                           className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                           {msg.role === "assistant" && (
-                            <div className="w-8 h-8 rounded-xl flex-shrink-0 mt-1 flex items-center justify-center"
-                              style={{ background: "hsl(152 80% 50% / 0.1)", border: "1px solid hsl(152 80% 50% / 0.15)" }}>
-                              <Bot className="w-4 h-4 text-primary" />
+                            <div className="w-8 h-8 rounded-xl flex-shrink-0 mt-1 overflow-hidden ring-1 ring-primary/20">
+                              <img src={tutorAvatar} alt="AI Tutor" className="w-full h-full object-cover" />
                             </div>
                           )}
                           <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
@@ -608,9 +609,8 @@ const AIVoiceTutor = () => {
                       {/* Loading */}
                       {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                         <div className="flex gap-3">
-                          <div className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center"
-                            style={{ background: "hsl(152 80% 50% / 0.1)", border: "1px solid hsl(152 80% 50% / 0.15)" }}>
-                            <Bot className="w-4 h-4 text-primary" />
+                          <div className="w-8 h-8 rounded-xl flex-shrink-0 overflow-hidden ring-1 ring-primary/20">
+                            <img src={tutorAvatar} alt="AI Tutor" className="w-full h-full object-cover" />
                           </div>
                           <div className="rounded-2xl rounded-bl-md px-4 py-3" style={cardStyle}>
                             <div className="flex gap-1.5 items-center">
