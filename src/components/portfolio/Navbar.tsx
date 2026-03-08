@@ -1,18 +1,10 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Download, Sun, Moon } from "lucide-react";
+import { Menu, X, Download, Sun, Moon, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
-  { label: "Experience", href: "#experience" },
-  { label: "Tutoring", href: "#tutoring" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
-];
+import { useLang } from "@/hooks/use-lang";
 
 const Navbar = () => {
+  const { lang, setLang, t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -24,6 +16,16 @@ const Navbar = () => {
     }
     return true;
   });
+
+  const navLinks = [
+    { label: t.about, href: "#about" },
+    { label: t.projects, href: "#projects" },
+    { label: t.skills, href: "#skills" },
+    { label: t.experience, href: "#experience" },
+    { label: t.tutoring, href: "#tutoring" },
+    { label: t.blog, href: "#blog" },
+    { label: t.contact, href: "#contact" },
+  ];
 
   useEffect(() => {
     const root = document.documentElement;
@@ -37,9 +39,9 @@ const Navbar = () => {
   }, [isDark]);
 
   useEffect(() => {
+    const sections = ["about", "projects", "skills", "experience", "tutoring", "blog", "contact"];
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
-      const sections = navLinks.map((l) => l.href.slice(1));
       for (const id of [...sections].reverse()) {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= 120) {
@@ -51,6 +53,8 @@ const Navbar = () => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const toggleLang = () => setLang(lang === "en" ? "tn" : "en");
 
   return (
     <motion.nav
@@ -95,6 +99,25 @@ const Navbar = () => {
             </motion.li>
           ))}
 
+          {/* Language toggle */}
+          <motion.li
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.33 }}
+          >
+            <button
+              onClick={toggleLang}
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-all duration-300 ml-1 relative group"
+              aria-label="Toggle language"
+              title={lang === "en" ? "بدّل للدارجة التونسية" : "Switch to English"}
+            >
+              <Globe size={16} />
+              <span className="absolute -bottom-1 -right-1 text-[9px] font-bold bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center">
+                {lang === "en" ? "🇹🇳" : "🇬🇧"}
+              </span>
+            </button>
+          </motion.li>
+
           {/* Theme toggle */}
           <motion.li
             initial={{ opacity: 0, y: -20 }}
@@ -131,12 +154,22 @@ const Navbar = () => {
               className="inline-flex items-center gap-2 text-sm font-semibold bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:shadow-[0_4px_20px_-4px_hsl(152_68%_46%/0.5)] transition-all duration-300 ml-2"
             >
               <Download size={14} />
-              Resume
+              {t.resume}
             </a>
           </motion.li>
         </ul>
 
         <div className="flex items-center gap-3 md:hidden">
+          <button
+            onClick={toggleLang}
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground relative"
+            aria-label="Toggle language"
+          >
+            <Globe size={18} />
+            <span className="absolute -bottom-1 -right-1 text-[8px]">
+              {lang === "en" ? "🇹🇳" : "🇬🇧"}
+            </span>
+          </button>
           <button
             onClick={() => setIsDark(!isDark)}
             className="w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground"
@@ -191,7 +224,7 @@ const Navbar = () => {
                   className="inline-flex items-center gap-2 text-sm font-semibold bg-primary text-primary-foreground px-6 py-3 rounded-lg"
                 >
                   <Download size={14} />
-                  Resume
+                  {t.resume}
                 </a>
               </motion.li>
             </ul>
