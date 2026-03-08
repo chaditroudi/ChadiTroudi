@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -9,7 +9,7 @@ import {
   BarChart3, Map, User, History, Lightbulb, RotateCcw,
   CheckCircle2, Target, TrendingUp, Trash2, Clock,
 } from "lucide-react";
-import AIAvatar from "./AIAvatar";
+const HumanAvatar3D = lazy(() => import("./HumanAvatar3D"));
 
 /* ═══════════════════════════════════════════════════
    TYPES
@@ -442,26 +442,32 @@ const AIVoiceTutor = () => {
                 <X className="w-4 h-4 text-muted-foreground" />
               </button>
 
-              {/* ═══ LEFT: Robot + Controls ═══ */}
-              <div className="hidden md:flex w-[260px] flex-col items-center justify-between flex-shrink-0 relative overflow-hidden"
+              {/* ═══ LEFT: Human Avatar + Controls ═══ */}
+              <div className="hidden md:flex w-[280px] flex-col items-center justify-between flex-shrink-0 relative overflow-hidden"
                 style={{
                   background: "linear-gradient(180deg, hsl(222 22% 6%) 0%, hsl(210 20% 8%) 50%, hsl(222 22% 5%) 100%)",
                   borderRight: "1px solid hsl(152 80% 50% / 0.08)",
                 }}>
                 {/* Status badge */}
-                <div className="pt-5 pb-2 flex flex-col items-center gap-2 z-10">
+                <div className="pt-4 pb-1 flex flex-col items-center gap-2 z-10">
                   <div className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
                     style={{ background: "hsl(152 80% 50% / 0.12)", color: "hsl(152 100% 60%)", border: "1px solid hsl(152 80% 50% / 0.2)" }}>
-                    <Bot className="w-3 h-3 inline mr-1" />AI Coding Mentor
+                    👨‍🏫 AI Coding Mentor
                   </div>
                   <p className="text-[11px] text-muted-foreground text-center px-4">
                     {isSpeaking ? "🔊 Speaking..." : isListening ? "🎤 Listening..." : isLoading ? "💭 Thinking..." : "Ready to help"}
                   </p>
                 </div>
 
-                {/* Robot */}
-                <div className="flex-1 flex items-center justify-center w-full px-4">
-                  <AIAvatar isSpeaking={isSpeaking} isListening={isListening} size="full" />
+                {/* 3D Human Avatar */}
+                <div className="flex-1 w-full min-h-0">
+                  <Suspense fallback={
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                    </div>
+                  }>
+                    <HumanAvatar3D isSpeaking={isSpeaking} isListening={isListening} isThinking={isLoading} />
+                  </Suspense>
                 </div>
 
                 {/* Voice controls */}
@@ -501,13 +507,6 @@ const AIVoiceTutor = () => {
                   </div>
                   <p className="text-[8px] text-muted-foreground/50 text-center">🔒 Voice processed in-browser</p>
                 </div>
-
-                {/* Bg decoration */}
-                <motion.div className="absolute top-[20%] left-[10%] w-40 h-40 rounded-full blur-[80px] pointer-events-none"
-                  style={{ background: "hsl(152 68% 46% / 0.06)" }}
-                  animate={{ opacity: [0.3, 0.6, 0.3] }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                />
               </div>
 
               {/* ═══ RIGHT: Tabs + Content ═══ */}
