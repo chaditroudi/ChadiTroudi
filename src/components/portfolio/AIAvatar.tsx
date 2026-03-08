@@ -31,7 +31,7 @@ const AIAvatar = ({ isSpeaking, isListening, size = "md" }: AIAvatarProps) => {
 
   if (size === "full") {
     return (
-      <div ref={ref} className="relative w-full h-full flex items-center justify-center select-none">
+      <div className="relative w-full h-full flex items-center justify-center select-none">
         <svg viewBox="0 0 260 440" className="w-full h-full max-w-[240px] max-h-[400px]" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
