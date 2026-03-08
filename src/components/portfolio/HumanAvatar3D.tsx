@@ -446,49 +446,30 @@ const HumanAvatar3D = ({
   isThinking = false,
 }: HumanAvatar3DProps) => {
   return (
-    <div className="relative w-full h-full">
-      {/* Status glow ring */}
-      <div
-        className="absolute inset-0 rounded-full pointer-events-none z-10 opacity-30"
-        style={{
-          background: isSpeaking
-            ? "radial-gradient(circle, hsl(152 80% 50% / 0.15) 0%, transparent 60%)"
-            : isListening
-            ? "radial-gradient(circle, hsl(200 80% 50% / 0.15) 0%, transparent 60%)"
-            : isThinking
-            ? "radial-gradient(circle, hsl(40 80% 50% / 0.15) 0%, transparent 60%)"
-            : "transparent",
-        }}
-      />
-
+    <div className="relative w-full h-full" style={{ minHeight: "300px" }}>
       <Canvas
         camera={{ position: [0, 0.8, 2.4], fov: 35 }}
         dpr={[1, 1.5]}
-        style={{ background: "transparent" }}
+        style={{ background: "transparent", width: "100%", height: "100%" }}
         gl={{ alpha: true, antialias: true }}
       >
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[2, 3, 2]} intensity={1} castShadow />
-        <directionalLight position={[-1, 2, -1]} intensity={0.3} />
+        <ambientLight intensity={0.7} />
+        <directionalLight position={[2, 3, 2]} intensity={1.2} />
+        <directionalLight position={[-1, 2, -1]} intensity={0.4} />
         <pointLight
           position={[0, 1, 2]}
-          intensity={0.5}
+          intensity={0.6}
           color={isSpeaking ? "#50e090" : isListening ? "#60b0f0" : "#ffffff"}
         />
+        <hemisphereLight args={["#b1e1ff", "#b97a20", 0.4]} />
 
         <HumanBody isSpeaking={isSpeaking} isListening={isListening} />
 
         {/* Floor plane */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.7, 0]} receiveShadow>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.7, 0]}>
           <planeGeometry args={[3, 3]} />
-          <meshStandardMaterial
-            color="#111118"
-            transparent
-            opacity={0.3}
-          />
+          <meshStandardMaterial color="#111118" transparent opacity={0.3} />
         </mesh>
-
-        <Environment preset="city" />
       </Canvas>
     </div>
   );
