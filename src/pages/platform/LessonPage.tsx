@@ -106,9 +106,9 @@ const LessonPage = () => {
     }
 
     setXpEarned(true);
+    setShowXpPopup(true);
     setCompleted(true);
     setStep("complete");
-    toast.success(`+${lesson.xp_reward} XP earned! 🌟`);
   };
 
   if (loading || !lesson) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading lesson...</div>;
