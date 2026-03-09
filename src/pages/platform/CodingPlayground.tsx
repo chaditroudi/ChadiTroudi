@@ -242,16 +242,31 @@ const CodingPlayground = () => {
   };
 
   const requestHint = () => {
-    sendTutorMessage(`I'm working on this ${LANGUAGE_TEMPLATES[language].label} code in the playground. Can you give me a hint about what I could improve or try next?\n\n\`\`\`${language}\n${code}\n\`\`\``);
+    const currentHint = hintLevel;
+    setHintLevel(prev => Math.min(prev + 1, 4));
+    sendTutorMessage(
+      `I'm working on this ${LANGUAGE_TEMPLATES[language].label} code. Please give me a Level ${currentHint} hint (out of 4).\n\n\`\`\`${language}\n${code}\n\`\`\``,
+      currentHint
+    );
   };
 
   const requestCodeReview = () => {
-    sendTutorMessage(`Please review this ${LANGUAGE_TEMPLATES[language].label} code. Check for bugs, anti-patterns, and suggest improvements:\n\n\`\`\`${language}\n${code}\n\`\`\``);
+    sendTutorMessage(`Please do a thorough code review of this ${LANGUAGE_TEMPLATES[language].label} code. Evaluate correctness, efficiency, readability, best practices, and give a score out of 100:\n\n\`\`\`${language}\n${code}\n\`\`\``);
   };
 
   const requestDebugHelp = () => {
-    const context = output ? `\n\nOutput/Error:\n\`\`\`\n${output}\n\`\`\`` : "";
-    sendTutorMessage(`Help me debug this ${LANGUAGE_TEMPLATES[language].label} code:${context}\n\n\`\`\`${language}\n${code}\n\`\`\``);
+    setFailedAttempts(prev => prev + 1);
+    const ctx = output ? `\n\nOutput/Error:\n\`\`\`\n${output}\n\`\`\`` : "";
+    const stuckNote = failedAttempts >= 2 ? "\n\n⚠️ I've been struggling with this for a while. Please break it into smaller steps." : "";
+    sendTutorMessage(`Help me debug this ${LANGUAGE_TEMPLATES[language].label} code:${ctx}${stuckNote}\n\n\`\`\`${language}\n${code}\n\`\`\``);
+  };
+
+  const requestStudyPlan = () => {
+    sendTutorMessage("Based on my current level and weak areas, what should I study today? Give me a personalized study plan with specific exercises.");
+  };
+
+  const requestExplainConcept = () => {
+    sendTutorMessage(`I'm writing ${LANGUAGE_TEMPLATES[language].label} code. Can you explain the key concepts used in this code and suggest related topics to study?\n\n\`\`\`${language}\n${code}\n\`\`\``);
   };
 
   if (loading || !user) {
