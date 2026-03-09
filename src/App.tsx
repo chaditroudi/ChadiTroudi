@@ -60,6 +60,7 @@ const App = () => (
             <Route path="/platform/playground" element={<CodingPlayground />} />
             <Route path="/platform/world-map" element={<WorldMap />} />
             <Route path="/platform/island/:islandId" element={<IslandDetail />} />
+            <Route path="/platform/boss/:islandId" element={<BossChallenge />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
