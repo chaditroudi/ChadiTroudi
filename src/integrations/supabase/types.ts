@@ -232,39 +232,99 @@ export type Database = {
         }
         Relationships: []
       }
-      student_profiles: {
+      skill_assessments: {
         Row: {
-          avatar_url: string | null
-          created_at: string
-          current_level: number
-          display_name: string
+          category: string
+          completed_at: string
           id: string
-          last_active_at: string | null
-          streak_days: number
-          total_xp: number
+          score: number
+          total_questions: number
           user_id: string
         }
         Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          current_level?: number
-          display_name?: string
+          category: string
+          completed_at?: string
           id?: string
-          last_active_at?: string | null
-          streak_days?: number
-          total_xp?: number
+          score?: number
+          total_questions?: number
           user_id: string
         }
         Update: {
+          category?: string
+          completed_at?: string
+          id?: string
+          score?: number
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      student_profiles: {
+        Row: {
+          assessment_completed: boolean
+          assessment_score: number | null
+          avatar_url: string | null
+          career_goal: string | null
+          created_at: string
+          current_level: number
+          display_name: string
+          experience_level: string | null
+          id: string
+          known_languages: string[] | null
+          last_active_at: string | null
+          learning_style: string | null
+          onboarding_completed: boolean
+          recommended_level: number | null
+          streak_days: number
+          strong_topics: string[] | null
+          total_xp: number
+          user_id: string
+          weak_topics: string[] | null
+          weekly_hours: number | null
+        }
+        Insert: {
+          assessment_completed?: boolean
+          assessment_score?: number | null
           avatar_url?: string | null
+          career_goal?: string | null
           created_at?: string
           current_level?: number
           display_name?: string
+          experience_level?: string | null
           id?: string
+          known_languages?: string[] | null
           last_active_at?: string | null
+          learning_style?: string | null
+          onboarding_completed?: boolean
+          recommended_level?: number | null
           streak_days?: number
+          strong_topics?: string[] | null
+          total_xp?: number
+          user_id: string
+          weak_topics?: string[] | null
+          weekly_hours?: number | null
+        }
+        Update: {
+          assessment_completed?: boolean
+          assessment_score?: number | null
+          avatar_url?: string | null
+          career_goal?: string | null
+          created_at?: string
+          current_level?: number
+          display_name?: string
+          experience_level?: string | null
+          id?: string
+          known_languages?: string[] | null
+          last_active_at?: string | null
+          learning_style?: string | null
+          onboarding_completed?: boolean
+          recommended_level?: number | null
+          streak_days?: number
+          strong_topics?: string[] | null
           total_xp?: number
           user_id?: string
+          weak_topics?: string[] | null
+          weekly_hours?: number | null
         }
         Relationships: []
       }
