@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, CheckCircle2, Star, BookOpen, Code2, HelpCircle } from "lucide-react";
+import { XpPopup, playCorrectSound, playWrongSound } from "@/components/platform/XpPopup";
 
 const LessonPage = () => {
   const { lessonId } = useParams();
