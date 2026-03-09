@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          created_at: string
+          criteria: Json | null
+          description: string | null
+          icon: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       coding_challenges: {
         Row: {
           category: string
@@ -86,6 +113,86 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_lessons: {
+        Row: {
+          content: Json
+          created_at: string
+          description: string | null
+          id: string
+          language: string | null
+          lesson_type: string
+          level_id: string
+          order_index: number
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          language?: string | null
+          lesson_type?: string
+          level_id: string
+          order_index?: number
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          language?: string | null
+          lesson_type?: string
+          level_id?: string
+          order_index?: number
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_lessons_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "platform_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      platform_levels: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          number: number
+          required_xp: number
+          subtitle: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          number: number
+          required_xp?: number
+          subtitle?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          number?: number
+          required_xp?: number
+          subtitle?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           company: string | null
@@ -125,6 +232,42 @@ export type Database = {
         }
         Relationships: []
       }
+      student_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          current_level: number
+          display_name: string
+          id: string
+          last_active_at: string | null
+          streak_days: number
+          total_xp: number
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          current_level?: number
+          display_name?: string
+          id?: string
+          last_active_at?: string | null
+          streak_days?: number
+          total_xp?: number
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          current_level?: number
+          display_name?: string
+          id?: string
+          last_active_at?: string | null
+          streak_days?: number
+          total_xp?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_requests: {
         Row: {
           created_at: string
@@ -161,6 +304,73 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_lesson_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          lesson_id: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          lesson_id: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "platform_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -175,6 +385,33 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      xp_logs: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          source: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          source?: string
           user_id?: string
         }
         Relationships: []
