@@ -215,6 +215,7 @@ const WorldMap = () => {
   const [totalXp, setTotalXp] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [soundOn, setSoundOn] = useState(true);
+  const [musicOn, setMusicOn] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const soundRef = useRef(new SoundEngine());
   const navigate = useNavigate();
