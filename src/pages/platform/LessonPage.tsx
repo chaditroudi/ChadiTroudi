@@ -47,8 +47,10 @@ const LessonPage = () => {
   const handleQuizSubmit = () => {
     setQuizSubmitted(true);
     if (quizAnswer === quiz?.correct) {
+      playCorrectSound();
       toast.success("Correct! 🎉");
     } else {
+      playWrongSound();
       toast.error("Not quite — try reviewing the lesson.");
     }
   };
