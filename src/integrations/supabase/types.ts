@@ -113,6 +113,86 @@ export type Database = {
         }
         Relationships: []
       }
+      island_progress: {
+        Row: {
+          boss_completed: boolean | null
+          completed_at: string | null
+          completion_percentage: number | null
+          created_at: string
+          id: string
+          island_id: string
+          started_at: string | null
+          unlocked: boolean | null
+          user_id: string
+        }
+        Insert: {
+          boss_completed?: boolean | null
+          completed_at?: string | null
+          completion_percentage?: number | null
+          created_at?: string
+          id?: string
+          island_id: string
+          started_at?: string | null
+          unlocked?: boolean | null
+          user_id: string
+        }
+        Update: {
+          boss_completed?: boolean | null
+          completed_at?: string | null
+          completion_percentage?: number | null
+          created_at?: string
+          id?: string
+          island_id?: string
+          started_at?: string | null
+          unlocked?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "island_progress_island_id_fkey"
+            columns: ["island_id"]
+            isOneToOne: false
+            referencedRelation: "islands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      islands: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          order_index: number
+          unlock_requirement_completion: number | null
+          unlock_requirement_xp: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          order_index?: number
+          unlock_requirement_completion?: number | null
+          unlock_requirement_xp?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          order_index?: number
+          unlock_requirement_completion?: number | null
+          unlock_requirement_xp?: number | null
+        }
+        Relationships: []
+      }
       platform_lessons: {
         Row: {
           content: Json
@@ -166,6 +246,8 @@ export type Database = {
           description: string | null
           icon: string | null
           id: string
+          is_boss: boolean | null
+          island_id: string | null
           number: number
           required_xp: number
           subtitle: string | null
@@ -176,6 +258,8 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          is_boss?: boolean | null
+          island_id?: string | null
           number: number
           required_xp?: number
           subtitle?: string | null
@@ -186,12 +270,22 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          is_boss?: boolean | null
+          island_id?: string | null
           number?: number
           required_xp?: number
           subtitle?: string | null
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "platform_levels_island_id_fkey"
+            columns: ["island_id"]
+            isOneToOne: false
+            referencedRelation: "islands"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reviews: {
         Row: {

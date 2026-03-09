@@ -24,6 +24,8 @@ import LevelDetail from "./pages/platform/LevelDetail";
 import LessonPage from "./pages/platform/LessonPage";
 import AchievementsPage from "./pages/platform/AchievementsPage";
 import CodingPlayground from "./pages/platform/CodingPlayground";
+import WorldMap from "./pages/platform/WorldMap";
+import IslandDetail from "./pages/platform/IslandDetail";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +57,8 @@ const App = () => (
             <Route path="/platform/lesson/:lessonId" element={<LessonPage />} />
             <Route path="/platform/achievements" element={<AchievementsPage />} />
             <Route path="/platform/playground" element={<CodingPlayground />} />
+            <Route path="/platform/world-map" element={<WorldMap />} />
+            <Route path="/platform/island/:islandId" element={<IslandDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
