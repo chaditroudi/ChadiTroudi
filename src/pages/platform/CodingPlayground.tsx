@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { usePlatformAuth } from "@/hooks/use-platform-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +9,7 @@ import ReactMarkdown from "react-markdown";
 import {
   Play, Sparkles, ArrowLeft, Bot, Send, Lightbulb,
   RotateCcw, Copy, Check, Code2, Terminal, ChevronDown,
-  Loader2, Bug, BookOpen
+  Loader2, Bug, BookOpen, Brain, Zap, GraduationCap
 } from "lucide-react";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
