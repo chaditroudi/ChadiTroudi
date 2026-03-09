@@ -5,11 +5,12 @@ import { usePlatformAuth } from "@/hooks/use-platform-auth";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Flame, Star, Trophy, LogOut, BookOpen, Map,
-  Zap, Target, ChevronRight, Award
+  Zap, Target, ChevronRight, Award, Sparkles
 } from "lucide-react";
+import coderAvatar from "@/assets/coder-avatar.png";
 
 interface StudentProfile {
   display_name: string;
@@ -113,12 +114,75 @@ const PlatformDashboard = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Welcome & Stats */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="text-3xl font-bold font-display text-foreground mb-1">
-            Welcome back, {profile.display_name || "Coder"} 👋
-          </h1>
-          <p className="text-muted-foreground">Keep coding — you're doing great!</p>
+        {/* Welcome with Animated Avatar */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 flex flex-col sm:flex-row items-center gap-6"
+        >
+          {/* Bouncing Avatar */}
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
+          >
+            <motion.div
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-primary/20 to-accent overflow-hidden border-2 border-primary/30 shadow-lg"
+              whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 0.4 }}
+            >
+              <img src={coderAvatar} alt="Coder Avatar" className="w-full h-full object-cover" />
+            </motion.div>
+            {/* XP sparkle effect */}
+            <motion.div
+              animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full p-1.5 shadow-md"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+            </motion.div>
+            {/* Level badge on avatar */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, type: "spring" }}
+              className="absolute -bottom-2 -right-2 bg-card border-2 border-primary rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold text-primary shadow"
+            >
+              {profile.current_level}
+            </motion.div>
+          </motion.div>
+
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-3xl font-bold font-display text-foreground mb-1"
+            >
+              Welcome back, {profile.display_name || "Coder"} 👋
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35 }}
+              className="text-muted-foreground"
+            >
+              Level {profile.current_level} • {currentLevel?.title} • Keep coding to level up! 🎮
+            </motion.p>
+            {/* XP bar under welcome */}
+            <motion.div
+              initial={{ opacity: 0, scaleX: 0 }}
+              animate={{ opacity: 1, scaleX: 1 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="mt-2 max-w-xs origin-left"
+            >
+              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5">
+                <span>{profile.total_xp} XP</span>
+                <span>{nextLevel ? `${nextLevel.required_xp} XP` : "MAX"}</span>
+              </div>
+              <Progress value={Math.min(xpProgress, 100)} className="h-2" />
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* Stats Cards */}
