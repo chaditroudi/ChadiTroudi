@@ -48,11 +48,18 @@ const IslandDetail = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [islandProgress, setIslandProgress] = useState<any>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => { requireAuth(); }, [loading, user]);
 
   useEffect(() => {
     if (!user || !islandId) return;
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(islandId)) {
+      setLoadError(true);
+      return;
+    }
     loadIsland();
   }, [user, islandId]);
 
@@ -64,7 +71,11 @@ const IslandDetail = () => {
       supabase.from("island_progress").select("*").eq("user_id", user!.id).eq("island_id", islandId!).maybeSingle(),
     ]);
 
-    if (islandRes.data) setIsland(islandRes.data as unknown as Island);
+    if (islandRes.error || !islandRes.data) {
+      setLoadError(true);
+      return;
+    }
+    setIsland(islandRes.data as unknown as Island);
     if (islandProgressRes.data) setIslandProgress(islandProgressRes.data);
     if (levelsRes.data) setLevels(levelsRes.data as unknown as Level[]);
 
