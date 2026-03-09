@@ -26,6 +26,7 @@ import AchievementsPage from "./pages/platform/AchievementsPage";
 import CodingPlayground from "./pages/platform/CodingPlayground";
 import WorldMap from "./pages/platform/WorldMap";
 import IslandDetail from "./pages/platform/IslandDetail";
+import BossChallenge from "./pages/platform/BossChallenge";
 
 const queryClient = new QueryClient();
 
