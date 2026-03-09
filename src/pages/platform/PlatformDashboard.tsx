@@ -252,7 +252,7 @@ const PlatformDashboard = () => {
         </motion.div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
           <Link to="/platform/learn">
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:border-primary/40 transition-colors group">
               <BookOpen className="w-8 h-8 text-primary mb-3" />
