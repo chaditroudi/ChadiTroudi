@@ -125,6 +125,9 @@ const PlatformDashboard = () => {
             <span className="text-primary">{'<'}</span>CodeCamp<span className="text-primary">{'/>'}</span>
           </Link>
           <nav className="flex items-center gap-4">
+            <Link to="/platform/world-map" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+              <MapPin className="w-4 h-4" /> World Map
+            </Link>
             <Link to="/platform/learn" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
               <Map className="w-4 h-4" /> Learning Path
             </Link>
