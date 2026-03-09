@@ -40,7 +40,15 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/docs" element={<Docs />} />
+            <Route path="/docs" element={<Docs />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/platform/login" element={<PlatformLogin />} />
+            <Route path="/platform/signup" element={<PlatformSignup />} />
+            <Route path="/platform/dashboard" element={<PlatformDashboard />} />
+            <Route path="/platform/learn" element={<LearningPath />} />
+            <Route path="/platform/level/:levelId" element={<LevelDetail />} />
+            <Route path="/platform/lesson/:lessonId" element={<LessonPage />} />
+            <Route path="/platform/achievements" element={<AchievementsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
