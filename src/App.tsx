@@ -50,6 +50,7 @@ const App = () => (
             <Route path="/platform/level/:levelId" element={<LevelDetail />} />
             <Route path="/platform/lesson/:lessonId" element={<LessonPage />} />
             <Route path="/platform/achievements" element={<AchievementsPage />} />
+            <Route path="/platform/playground" element={<CodingPlayground />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

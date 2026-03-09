@@ -273,6 +273,16 @@ const PlatformDashboard = () => {
               </span>
             </div>
           </Link>
+          <Link to="/platform/playground">
+            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/5 border border-blue-500/20 rounded-xl p-6 hover:border-blue-500/40 transition-colors group">
+              <Code2 className="w-8 h-8 text-blue-500 mb-3" />
+              <h3 className="font-bold text-foreground mb-1">Coding Playground</h3>
+              <p className="text-sm text-muted-foreground mb-3">Write code, run it, and get AI tutor feedback</p>
+              <span className="text-blue-500 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                Open Playground <ChevronRight className="w-4 h-4" />
+              </span>
+            </div>
+          </Link>
         </div>
 
         {/* Level Map Preview */}
