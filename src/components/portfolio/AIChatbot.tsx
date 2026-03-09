@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User, Sparkles } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, Sparkles, Bug, Code2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -162,16 +163,21 @@ const AIChatbot = () => {
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground text-sm mt-8 space-y-3">
                   <Bot className="w-10 h-10 mx-auto opacity-50" />
-                  <p>Hi! 👋 I'm Chadi's AI assistant.</p>
-                  <p className="text-xs">Ask me about his skills, projects, experience, or availability.</p>
+                  <p>Hi! 👋 I'm Chadi's AI coding tutor.</p>
+                  <p className="text-xs">Ask me coding questions, debug help, or about Chadi's work.</p>
                   <div className="flex flex-wrap gap-2 justify-center mt-4">
-                    {["What are Chadi's skills?", "Tell me about his experience", "Is he available for freelance?"].map((q) => (
+                    {[
+                      { icon: Code2, text: "Explain async/await" },
+                      { icon: Bug, text: "Help me debug my code" },
+                      { icon: Sparkles, text: "What are Chadi's skills?" },
+                    ].map((q) => (
                       <button
-                        key={q}
-                        onClick={() => { setInput(q); }}
-                        className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors"
+                        key={q.text}
+                        onClick={() => { setInput(q.text); }}
+                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors"
                       >
-                        {q}
+                        <q.icon className="w-3 h-3" />
+                        {q.text}
                       </button>
                     ))}
                   </div>
@@ -195,7 +201,13 @@ const AIChatbot = () => {
                         : "bg-muted text-foreground rounded-bl-md"
                     }`}
                   >
-                    {msg.content}
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-sm dark:prose-invert max-w-none [&_pre]:bg-foreground/10 [&_pre]:rounded-lg [&_pre]:p-3 [&_pre]:text-xs [&_pre]:overflow-x-auto [&_code]:bg-foreground/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono [&_p]:m-0 [&_ul]:m-0 [&_ol]:m-0 [&_li]:m-0">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                   {msg.role === "user" && (
                     <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-1">
