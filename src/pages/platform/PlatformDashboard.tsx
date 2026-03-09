@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlatformAuth } from "@/hooks/use-platform-auth";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,7 @@ interface Level {
 
 const PlatformDashboard = () => {
   const { user, loading, requireAuth, signOut } = usePlatformAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [levels, setLevels] = useState<Level[]>([]);
   const [completedLessons, setCompletedLessons] = useState(0);
@@ -79,6 +80,12 @@ const PlatformDashboard = () => {
         .select()
         .single();
       profileData = newProfile;
+    }
+
+    // Redirect to onboarding if not completed
+    if (profileData && !(profileData as any).onboarding_completed) {
+      navigate("/platform/onboarding");
+      return;
     }
 
     const [levelsRes, progressRes, lessonsRes, achievementsRes] = await Promise.all([

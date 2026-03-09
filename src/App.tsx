@@ -16,6 +16,8 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import PlatformLogin from "./pages/platform/PlatformLogin";
 import PlatformSignup from "./pages/platform/PlatformSignup";
+import Onboarding from "./pages/platform/Onboarding";
+import Assessment from "./pages/platform/Assessment";
 import PlatformDashboard from "./pages/platform/PlatformDashboard";
 import LearningPath from "./pages/platform/LearningPath";
 import LevelDetail from "./pages/platform/LevelDetail";
@@ -45,6 +47,8 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/platform/login" element={<PlatformLogin />} />
             <Route path="/platform/signup" element={<PlatformSignup />} />
+            <Route path="/platform/onboarding" element={<Onboarding />} />
+            <Route path="/platform/assessment" element={<Assessment />} />
             <Route path="/platform/dashboard" element={<PlatformDashboard />} />
             <Route path="/platform/learn" element={<LearningPath />} />
             <Route path="/platform/level/:levelId" element={<LevelDetail />} />

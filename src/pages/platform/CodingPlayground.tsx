@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { usePlatformAuth } from "@/hooks/use-platform-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +9,7 @@ import ReactMarkdown from "react-markdown";
 import {
   Play, Sparkles, ArrowLeft, Bot, Send, Lightbulb,
   RotateCcw, Copy, Check, Code2, Terminal, ChevronDown,
-  Loader2, Bug, BookOpen
+  Loader2, Bug, BookOpen, Brain, Zap, GraduationCap
 } from "lucide-react";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
@@ -82,11 +83,22 @@ const CodingPlayground = () => {
   const [tutorMessages, setTutorMessages] = useState<Message[]>([]);
   const [tutorInput, setTutorInput] = useState("");
   const [tutorLoading, setTutorLoading] = useState(false);
+  const [hintLevel, setHintLevel] = useState(1);
+  const [studentContext, setStudentContext] = useState<any>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const tutorScrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => { requireAuth(); }, [loading, user]);
 
+  // Load student context for adaptive AI
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("student_profiles").select("current_level, total_xp, experience_level, weak_topics, strong_topics, career_goal")
+      .eq("user_id", user.id).maybeSingle().then(({ data }) => {
+        if (data) setStudentContext(data);
+      });
+  }, [user]);
   useEffect(() => {
     if (tutorScrollRef.current) {
       tutorScrollRef.current.scrollTop = tutorScrollRef.current.scrollHeight;
@@ -137,8 +149,8 @@ const CodingPlayground = () => {
     setOutput("");
   };
 
-  // AI Tutor streaming
-  const sendTutorMessage = async (messageOverride?: string) => {
+  // AI Tutor streaming with context
+  const sendTutorMessage = async (messageOverride?: string, requestedHintLevel?: number) => {
     const content = messageOverride || tutorInput.trim();
     if (!content || tutorLoading) return;
 
@@ -167,7 +179,13 @@ const CodingPlayground = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({
+          messages: allMessages,
+          context: {
+            ...studentContext,
+            hintLevel: requestedHintLevel || undefined,
+          },
+        }),
       });
 
       if (!resp.ok || !resp.body) throw new Error("Stream failed");
@@ -224,16 +242,31 @@ const CodingPlayground = () => {
   };
 
   const requestHint = () => {
-    sendTutorMessage(`I'm working on this ${LANGUAGE_TEMPLATES[language].label} code in the playground. Can you give me a hint about what I could improve or try next?\n\n\`\`\`${language}\n${code}\n\`\`\``);
+    const currentHint = hintLevel;
+    setHintLevel(prev => Math.min(prev + 1, 4));
+    sendTutorMessage(
+      `I'm working on this ${LANGUAGE_TEMPLATES[language].label} code. Please give me a Level ${currentHint} hint (out of 4).\n\n\`\`\`${language}\n${code}\n\`\`\``,
+      currentHint
+    );
   };
 
   const requestCodeReview = () => {
-    sendTutorMessage(`Please review this ${LANGUAGE_TEMPLATES[language].label} code. Check for bugs, anti-patterns, and suggest improvements:\n\n\`\`\`${language}\n${code}\n\`\`\``);
+    sendTutorMessage(`Please do a thorough code review of this ${LANGUAGE_TEMPLATES[language].label} code. Evaluate correctness, efficiency, readability, best practices, and give a score out of 100:\n\n\`\`\`${language}\n${code}\n\`\`\``);
   };
 
   const requestDebugHelp = () => {
-    const context = output ? `\n\nOutput/Error:\n\`\`\`\n${output}\n\`\`\`` : "";
-    sendTutorMessage(`Help me debug this ${LANGUAGE_TEMPLATES[language].label} code:${context}\n\n\`\`\`${language}\n${code}\n\`\`\``);
+    setFailedAttempts(prev => prev + 1);
+    const ctx = output ? `\n\nOutput/Error:\n\`\`\`\n${output}\n\`\`\`` : "";
+    const stuckNote = failedAttempts >= 2 ? "\n\n⚠️ I've been struggling with this for a while. Please break it into smaller steps." : "";
+    sendTutorMessage(`Help me debug this ${LANGUAGE_TEMPLATES[language].label} code:${ctx}${stuckNote}\n\n\`\`\`${language}\n${code}\n\`\`\``);
+  };
+
+  const requestStudyPlan = () => {
+    sendTutorMessage("Based on my current level and weak areas, what should I study today? Give me a personalized study plan with specific exercises.");
+  };
+
+  const requestExplainConcept = () => {
+    sendTutorMessage(`I'm writing ${LANGUAGE_TEMPLATES[language].label} code. Can you explain the key concepts used in this code and suggest related topics to study?\n\n\`\`\`${language}\n${code}\n\`\`\``);
   };
 
   if (loading || !user) {
@@ -379,27 +412,26 @@ const CodingPlayground = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="flex gap-1.5 mt-3">
-              <button
-                onClick={requestHint}
-                disabled={tutorLoading}
-                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50"
-              >
-                <Lightbulb className="w-3 h-3" /> Hint
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              <button onClick={requestHint} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
+                <Lightbulb className="w-3 h-3" /> Hint {hintLevel}/4
               </button>
-              <button
-                onClick={requestCodeReview}
-                disabled={tutorLoading}
-                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50"
-              >
+              <button onClick={requestCodeReview} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
                 <BookOpen className="w-3 h-3" /> Review
               </button>
-              <button
-                onClick={requestDebugHelp}
-                disabled={tutorLoading}
-                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50"
-              >
+              <button onClick={requestDebugHelp} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
                 <Bug className="w-3 h-3" /> Debug
+              </button>
+              <button onClick={requestExplainConcept} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
+                <Brain className="w-3 h-3" /> Explain
+              </button>
+              <button onClick={requestStudyPlan} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
+                <GraduationCap className="w-3 h-3" /> Study Plan
               </button>
             </div>
           </div>
