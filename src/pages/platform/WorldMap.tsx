@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Lock, CheckCircle2, Star, Sparkles,
-  Trophy, Compass, Anchor, Swords, Volume2, VolumeX
+  Trophy, Compass, Anchor, Swords, Volume2, VolumeX, Music
 } from "lucide-react";
 
 // Island images
