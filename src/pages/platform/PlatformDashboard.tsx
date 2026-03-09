@@ -44,15 +44,32 @@ const PlatformDashboard = () => {
   }, [user]);
 
   const loadDashboard = async () => {
-    const [profileRes, levelsRes, progressRes, lessonsRes, achievementsRes] = await Promise.all([
-      supabase.from("student_profiles").select("*").eq("user_id", user!.id).single(),
+    // Try to get profile, create if missing
+    let { data: profileData, error: profileError } = await supabase
+      .from("student_profiles")
+      .select("*")
+      .eq("user_id", user!.id)
+      .maybeSingle();
+
+    if (!profileData && !profileError) {
+      // Profile doesn't exist — create it
+      const displayName = user!.user_metadata?.display_name || user!.email || "Coder";
+      const { data: newProfile } = await supabase
+        .from("student_profiles")
+        .insert({ user_id: user!.id, display_name: displayName })
+        .select()
+        .single();
+      profileData = newProfile;
+    }
+
+    const [levelsRes, progressRes, lessonsRes, achievementsRes] = await Promise.all([
       supabase.from("platform_levels").select("*").order("number"),
       supabase.from("user_lesson_progress").select("*").eq("user_id", user!.id).eq("completed", true),
       supabase.from("platform_lessons").select("id"),
       supabase.from("user_achievements").select("*, achievements(*)").eq("user_id", user!.id).order("earned_at", { ascending: false }).limit(5),
     ]);
 
-    if (profileRes.data) setProfile(profileRes.data as unknown as StudentProfile);
+    if (profileData) setProfile(profileData as unknown as StudentProfile);
     if (levelsRes.data) setLevels(levelsRes.data as unknown as Level[]);
     if (progressRes.data) setCompletedLessons(progressRes.data.length);
     if (lessonsRes.data) setTotalLessons(lessonsRes.data.length);
