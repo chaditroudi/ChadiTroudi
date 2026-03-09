@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Flame, Star, Trophy, LogOut, BookOpen, Map,
-  Zap, Target, ChevronRight, Award, Sparkles
+  Zap, Target, ChevronRight, Award, Sparkles, Code2
 } from "lucide-react";
 import level1Avatar from "@/assets/avatars/level-1-recruit.png";
 import level2Avatar from "@/assets/avatars/level-2-junior.png";
