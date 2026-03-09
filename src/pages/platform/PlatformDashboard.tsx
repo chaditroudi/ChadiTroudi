@@ -283,27 +283,37 @@ const PlatformDashboard = () => {
             {levels.map((level) => {
               const isUnlocked = profile.total_xp >= level.required_xp;
               const isCurrent = level.number === profile.current_level;
-              return (
-                <Link
-                  key={level.id}
-                  to={isUnlocked ? `/platform/level/${level.id}` : "#"}
-                  className={`relative rounded-xl p-4 text-center border transition-all ${
-                    isCurrent
-                      ? "bg-primary/10 border-primary shadow-md"
-                      : isUnlocked
-                      ? "bg-card border-border hover:border-primary/40"
-                      : "bg-muted/30 border-border/50 opacity-50 cursor-not-allowed"
-                  }`}
+                <motion.div
+                  whileHover={isUnlocked ? { scale: 1.08, y: -4 } : {}}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <span className="text-2xl block mb-1">{level.icon}</span>
-                  <p className="text-xs font-bold text-foreground">Lv.{level.number}</p>
-                  <p className="text-[10px] text-muted-foreground">{level.title}</p>
-                  {isCurrent && (
-                    <Badge className="absolute -top-2 -right-2 text-[10px] bg-primary text-primary-foreground">
-                      Current
-                    </Badge>
-                  )}
-                </Link>
+                  <Link
+                    key={level.id}
+                    to={isUnlocked ? `/platform/level/${level.id}` : "#"}
+                    className={`relative block rounded-xl p-4 text-center border transition-all ${
+                      isCurrent
+                        ? "bg-primary/10 border-primary shadow-md"
+                        : isUnlocked
+                        ? "bg-card border-border hover:border-primary/40"
+                        : "bg-muted/30 border-border/50 opacity-50 cursor-not-allowed"
+                    }`}
+                  >
+                    <div className="w-12 h-12 mx-auto mb-2 rounded-lg overflow-hidden bg-muted/30">
+                      <img
+                        src={levelAvatars[level.number] || level1Avatar}
+                        alt={level.title}
+                        className={`w-full h-full object-cover ${!isUnlocked ? "grayscale" : ""}`}
+                      />
+                    </div>
+                    <p className="text-xs font-bold text-foreground">Lv.{level.number}</p>
+                    <p className="text-[10px] text-muted-foreground">{level.title}</p>
+                    {isCurrent && (
+                      <Badge className="absolute -top-2 -right-2 text-[10px] bg-primary text-primary-foreground">
+                        Current
+                      </Badge>
+                    )}
+                  </Link>
+                </motion.div>
               );
             })}
           </div>
