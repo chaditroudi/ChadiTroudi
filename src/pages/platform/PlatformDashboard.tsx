@@ -82,6 +82,12 @@ const PlatformDashboard = () => {
       profileData = newProfile;
     }
 
+    // Redirect to onboarding if not completed
+    if (profileData && !(profileData as any).onboarding_completed) {
+      navigate("/platform/onboarding");
+      return;
+    }
+
     const [levelsRes, progressRes, lessonsRes, achievementsRes] = await Promise.all([
       supabase.from("platform_levels").select("*").order("number"),
       supabase.from("user_lesson_progress").select("*").eq("user_id", user!.id).eq("completed", true),
