@@ -16,6 +16,8 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import PlatformLogin from "./pages/platform/PlatformLogin";
 import PlatformSignup from "./pages/platform/PlatformSignup";
+import Onboarding from "./pages/platform/Onboarding";
+import Assessment from "./pages/platform/Assessment";
 import PlatformDashboard from "./pages/platform/PlatformDashboard";
 import LearningPath from "./pages/platform/LearningPath";
 import LevelDetail from "./pages/platform/LevelDetail";
