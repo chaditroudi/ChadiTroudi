@@ -24,6 +24,8 @@ import LevelDetail from "./pages/platform/LevelDetail";
 import LessonPage from "./pages/platform/LessonPage";
 import AchievementsPage from "./pages/platform/AchievementsPage";
 import CodingPlayground from "./pages/platform/CodingPlayground";
+import WorldMap from "./pages/platform/WorldMap";
+import IslandDetail from "./pages/platform/IslandDetail";
 
 const queryClient = new QueryClient();
 
