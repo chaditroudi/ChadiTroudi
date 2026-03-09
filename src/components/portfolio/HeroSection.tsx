@@ -163,16 +163,16 @@ const HeroSection = () => {
 
             {/* Bootcamp link */}
             <motion.div {...fadeUp(0.65)} className="flex justify-center lg:justify-start">
-              <a
-                href="#tutoring"
-                className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl border border-border/60 hover:border-primary/30 hover:bg-accent/30 transition-all"
+              <Link
+                to="/tutoring"
+                className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl border border-border/60 hover:border-primary/30 hover:bg-accent/30 transition-all gradient-border"
               >
                 <GraduationCap className="w-4 h-4 text-primary" />
                 <span className="text-sm text-foreground font-medium">{t.joinBootcamp}</span>
                 <span className="px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold uppercase">
                   {t.newBadge}
                 </span>
-              </a>
+              </Link>
             </motion.div>
 
             {/* Stats */}
