@@ -19,6 +19,7 @@ const LessonPage = () => {
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [xpEarned, setXpEarned] = useState(false);
+  const [showXpPopup, setShowXpPopup] = useState(false);
   const [step, setStep] = useState<"theory" | "quiz" | "complete">("theory");
 
   useEffect(() => { requireAuth(); }, [loading, user]);
