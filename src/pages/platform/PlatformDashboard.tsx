@@ -149,7 +149,7 @@ const PlatformDashboard = () => {
               whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
               transition={{ duration: 0.4 }}
             >
-              <img src={coderAvatar} alt="Coder Avatar" className="w-full h-full object-cover" />
+              <img src={levelAvatars[profile.current_level] || level1Avatar} alt="Coder Avatar" className="w-full h-full object-cover" />
             </motion.div>
             {/* XP sparkle effect */}
             <motion.div
