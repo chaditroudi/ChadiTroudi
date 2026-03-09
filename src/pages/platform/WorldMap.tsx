@@ -329,7 +329,10 @@ const WorldMap = () => {
               <span className="font-bold text-white font-display text-lg">🗺️ Adventure Map</span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={toggleMusic} className={`text-white/70 hover:text-white hover:bg-white/10 gap-1 text-xs ${musicOn ? "bg-white/10 text-cyan-300" : ""}`}>
+              <Music className="w-4 h-4" /> {musicOn ? "🎵" : ""}
+            </Button>
             <Button variant="ghost" size="sm" onClick={toggleSound} className="text-white/70 hover:text-white hover:bg-white/10">
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </Button>
