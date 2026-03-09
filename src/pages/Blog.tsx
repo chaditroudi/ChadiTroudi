@@ -1,11 +1,15 @@
 import Layout from "@/components/portfolio/Layout";
+import PageHeader from "@/components/portfolio/PageHeader";
 import BlogSection from "@/components/portfolio/BlogSection";
 
 const Blog = () => (
   <Layout>
-    <div className="pt-20">
-      <BlogSection />
-    </div>
+    <PageHeader
+      number="06"
+      title="Blog & Insights"
+      subtitle="Technical articles, career advice, and lessons from the trenches — sharing knowledge from building production systems at scale."
+    />
+    <BlogSection />
   </Layout>
 );
 
