@@ -149,8 +149,8 @@ const CodingPlayground = () => {
     setOutput("");
   };
 
-  // AI Tutor streaming
-  const sendTutorMessage = async (messageOverride?: string) => {
+  // AI Tutor streaming with context
+  const sendTutorMessage = async (messageOverride?: string, requestedHintLevel?: number) => {
     const content = messageOverride || tutorInput.trim();
     if (!content || tutorLoading) return;
 
@@ -179,7 +179,13 @@ const CodingPlayground = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({
+          messages: allMessages,
+          context: {
+            ...studentContext,
+            hintLevel: requestedHintLevel || undefined,
+          },
+        }),
       });
 
       if (!resp.ok || !resp.body) throw new Error("Stream failed");
