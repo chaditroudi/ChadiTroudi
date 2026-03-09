@@ -104,6 +104,13 @@ const IslandDetail = () => {
   const completedLessonCount = Array.from(completedIds).filter(id => lessons.some(l => l.id === id)).length;
   const totalXpAvailable = lessons.reduce((sum, l) => sum + l.xp_reward, 0);
 
+  if (loadError) return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center text-muted-foreground gap-4">
+      <p>Island not found.</p>
+      <Link to="/platform/world-map"><Button variant="outline">Back to World Map</Button></Link>
+    </div>
+  );
+
   if (loading || !island) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading island...</div>;
 
   return (
