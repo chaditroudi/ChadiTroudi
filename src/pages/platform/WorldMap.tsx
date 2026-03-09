@@ -284,6 +284,16 @@ const WorldMap = () => {
     });
   };
 
+  const toggleMusic = () => {
+    soundRef.current.toggleAmbient();
+    setMusicOn(soundRef.current.ambientPlaying);
+  };
+
+  // Cleanup ambient on unmount
+  useEffect(() => {
+    return () => { soundRef.current.stopAmbient(); };
+  }, []);
+
   // Auto-scroll to current island
   useEffect(() => {
     if (islands.length > 0 && mapRef.current) {
