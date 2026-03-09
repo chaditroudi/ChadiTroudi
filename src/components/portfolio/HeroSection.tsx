@@ -1,6 +1,7 @@
 import { ArrowRight, Github, Linkedin, Mail, GraduationCap, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useLang } from "@/hooks/use-lang";
 import chadiLounge from "@/assets/chadi-lounge.jpeg";
 import websummitQatar from "@/assets/websummit-qatar.jpg";
