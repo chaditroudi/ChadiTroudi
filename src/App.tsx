@@ -26,6 +26,7 @@ import AchievementsPage from "./pages/platform/AchievementsPage";
 import CodingPlayground from "./pages/platform/CodingPlayground";
 import WorldMap from "./pages/platform/WorldMap";
 import IslandDetail from "./pages/platform/IslandDetail";
+import BossChallenge from "./pages/platform/BossChallenge";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/platform/playground" element={<CodingPlayground />} />
             <Route path="/platform/world-map" element={<WorldMap />} />
             <Route path="/platform/island/:islandId" element={<IslandDetail />} />
+            <Route path="/platform/boss/:islandId" element={<BossChallenge />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
