@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, CheckCircle2, Star, BookOpen, Code2, HelpCircle } from "lucide-react";
+import { XpPopup, playCorrectSound, playWrongSound } from "@/components/platform/XpPopup";
 
 const LessonPage = () => {
   const { lessonId } = useParams();
@@ -18,6 +19,7 @@ const LessonPage = () => {
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [xpEarned, setXpEarned] = useState(false);
+  const [showXpPopup, setShowXpPopup] = useState(false);
   const [step, setStep] = useState<"theory" | "quiz" | "complete">("theory");
 
   useEffect(() => { requireAuth(); }, [loading, user]);
@@ -45,8 +47,10 @@ const LessonPage = () => {
   const handleQuizSubmit = () => {
     setQuizSubmitted(true);
     if (quizAnswer === quiz?.correct) {
+      playCorrectSound();
       toast.success("Correct! 🎉");
     } else {
+      playWrongSound();
       toast.error("Not quite — try reviewing the lesson.");
     }
   };
@@ -102,15 +106,16 @@ const LessonPage = () => {
     }
 
     setXpEarned(true);
+    setShowXpPopup(true);
     setCompleted(true);
     setStep("complete");
-    toast.success(`+${lesson.xp_reward} XP earned! 🌟`);
   };
 
   if (loading || !lesson) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading lesson...</div>;
 
   return (
     <div className="min-h-screen bg-background">
+      <XpPopup show={showXpPopup} xp={lesson?.xp_reward || 0} onComplete={() => setShowXpPopup(false)} />
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
