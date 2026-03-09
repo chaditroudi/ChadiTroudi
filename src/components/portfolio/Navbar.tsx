@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Download, Sun, Moon, Globe, MessageSquare } from "lucide-react";
+import { Menu, X, Download, Sun, Moon, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";
 import { useLang } from "@/hooks/use-lang";
 
 const Navbar = () => {
   const { lang, setLang, t } = useLang();
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("theme");
@@ -18,12 +19,13 @@ const Navbar = () => {
   });
 
   const navLinks = [
-    { label: t.about, href: "#about" },
-    { label: t.projects, href: "#projects" },
-    { label: t.experience, href: "#experience" },
-    { label: t.tutoring, href: "#tutoring" },
-    { label: t.blog, href: "#blog" },
-    { label: t.contact, href: "#contact" },
+    { label: t.about, href: "/" },
+    { label: t.projects, href: "/projects" },
+    { label: "Skills", href: "/skills" },
+    { label: t.tutoring, href: "/tutoring" },
+    { label: "Pricing", href: "/pricing" },
+    { label: t.blog, href: "/blog" },
+    { label: t.contact, href: "/contact" },
   ];
 
   useEffect(() => {
@@ -38,22 +40,14 @@ const Navbar = () => {
   }, [isDark]);
 
   useEffect(() => {
-    const sections = navLinks.map((l) => l.href.slice(1));
-    const onScroll = () => {
-      setScrolled(window.scrollY > 40);
-      for (const id of [...sections].reverse()) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= 120) {
-          setActiveSection(id);
-          break;
-        }
-      }
-    };
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const toggleLang = () => setLang(lang === "en" ? "tn" : "en");
+
+  const isActive = (href: string) => location.pathname === href;
 
   return (
     <motion.nav
@@ -68,32 +62,32 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between h-14 px-6">
         {/* Logo */}
-        <a href="#" className="text-lg font-bold tracking-tight">
+        <Link to="/" className="text-lg font-bold tracking-tight">
           <span className="text-gradient">CT</span>
           <span className="text-primary">.</span>
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-0.5">
           {navLinks.map((l) => (
             <li key={l.href}>
-              <a
-                href={l.href}
+              <Link
+                to={l.href}
                 className={`relative text-[13px] px-3 py-1.5 rounded-md transition-colors ${
-                  activeSection === l.href.slice(1)
+                  isActive(l.href)
                     ? "text-primary font-medium"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {l.label}
-                {activeSection === l.href.slice(1) && (
+                {isActive(l.href) && (
                   <motion.div
                     layoutId="activeNav"
                     className="absolute inset-0 bg-primary/8 rounded-md -z-10"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -182,13 +176,15 @@ const Navbar = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04 }}
                 >
-                  <a
-                    href={l.href}
+                  <Link
+                    to={l.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium"
+                    className={`text-sm font-medium transition-colors ${
+                      isActive(l.href) ? "text-primary" : "text-muted-foreground hover:text-primary"
+                    }`}
                   >
                     {l.label}
-                  </a>
+                  </Link>
                 </motion.li>
               ))}
               <motion.li
