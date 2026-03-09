@@ -115,6 +115,7 @@ const LessonPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <XpPopup show={showXpPopup} xp={lesson?.xp_reward || 0} onComplete={() => setShowXpPopup(false)} />
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
