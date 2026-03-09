@@ -21,6 +21,7 @@ import LearningPath from "./pages/platform/LearningPath";
 import LevelDetail from "./pages/platform/LevelDetail";
 import LessonPage from "./pages/platform/LessonPage";
 import AchievementsPage from "./pages/platform/AchievementsPage";
+import CodingPlayground from "./pages/platform/CodingPlayground";
 
 const queryClient = new QueryClient();
 
