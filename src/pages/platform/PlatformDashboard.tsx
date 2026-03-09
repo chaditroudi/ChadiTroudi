@@ -262,14 +262,24 @@ const PlatformDashboard = () => {
         </motion.div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
+        <div className="grid md:grid-cols-4 gap-4 mb-8">
+          <Link to="/platform/world-map">
+            <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 rounded-xl p-6 hover:border-emerald-500/40 transition-colors group">
+              <MapPin className="w-8 h-8 text-emerald-500 mb-3" />
+              <h3 className="font-bold text-foreground mb-1">World Map</h3>
+              <p className="text-sm text-muted-foreground mb-3">Explore islands and conquer coding challenges</p>
+              <span className="text-emerald-500 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                Explore Map <ChevronRight className="w-4 h-4" />
+              </span>
+            </div>
+          </Link>
           <Link to="/platform/learn">
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:border-primary/40 transition-colors group">
               <BookOpen className="w-8 h-8 text-primary mb-3" />
               <h3 className="font-bold text-foreground mb-1">Continue Learning</h3>
-              <p className="text-sm text-muted-foreground mb-3">Pick up where you left off in your learning path</p>
+              <p className="text-sm text-muted-foreground mb-3">Pick up where you left off</p>
               <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                Go to Learning Path <ChevronRight className="w-4 h-4" />
+                Learning Path <ChevronRight className="w-4 h-4" />
               </span>
             </div>
           </Link>
@@ -277,19 +287,19 @@ const PlatformDashboard = () => {
             <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/5 border border-yellow-500/20 rounded-xl p-6 hover:border-yellow-500/40 transition-colors group">
               <Award className="w-8 h-8 text-yellow-500 mb-3" />
               <h3 className="font-bold text-foreground mb-1">Achievements</h3>
-              <p className="text-sm text-muted-foreground mb-3">{recentAchievements.length} badges earned — collect them all!</p>
+              <p className="text-sm text-muted-foreground mb-3">{recentAchievements.length} badges earned</p>
               <span className="text-yellow-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                View Achievements <ChevronRight className="w-4 h-4" />
+                View Badges <ChevronRight className="w-4 h-4" />
               </span>
             </div>
           </Link>
           <Link to="/platform/playground">
             <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/5 border border-blue-500/20 rounded-xl p-6 hover:border-blue-500/40 transition-colors group">
               <Code2 className="w-8 h-8 text-blue-500 mb-3" />
-              <h3 className="font-bold text-foreground mb-1">Coding Playground</h3>
-              <p className="text-sm text-muted-foreground mb-3">Write code, run it, and get AI tutor feedback</p>
+              <h3 className="font-bold text-foreground mb-1">Playground</h3>
+              <p className="text-sm text-muted-foreground mb-3">Code, run, and get AI feedback</p>
               <span className="text-blue-500 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                Open Playground <ChevronRight className="w-4 h-4" />
+                Open Editor <ChevronRight className="w-4 h-4" />
               </span>
             </div>
           </Link>
