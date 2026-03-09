@@ -47,6 +47,8 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/platform/login" element={<PlatformLogin />} />
             <Route path="/platform/signup" element={<PlatformSignup />} />
+            <Route path="/platform/onboarding" element={<Onboarding />} />
+            <Route path="/platform/assessment" element={<Assessment />} />
             <Route path="/platform/dashboard" element={<PlatformDashboard />} />
             <Route path="/platform/learn" element={<LearningPath />} />
             <Route path="/platform/level/:levelId" element={<LevelDetail />} />
