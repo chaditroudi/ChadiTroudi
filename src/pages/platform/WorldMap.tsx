@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Lock, CheckCircle2, Star, Sparkles,
-  Trophy, Compass, Anchor, Swords, Volume2, VolumeX
+  Trophy, Compass, Anchor, Swords, Volume2, VolumeX, Music
 } from "lucide-react";
 
 // Island images
@@ -53,14 +53,18 @@ const ISLAND_LAYOUT = [
   { x: 55, y: 7, side: "right" },
 ];
 
-// Sound engine
+// Sound engine with ambient ocean music
 class SoundEngine {
   private ctx: AudioContext | null = null;
   public muted = false;
+  private ambientNodes: { oscs: OscillatorNode[]; gains: GainNode[]; masterGain: GainNode | null } = { oscs: [], gains: [], masterGain: null };
+  public ambientPlaying = false;
+
   private getCtx() {
     if (!this.ctx) this.ctx = new AudioContext();
     return this.ctx;
   }
+
   play(type: "hover" | "click" | "unlock" | "wave" | "locked") {
     if (this.muted) return;
     try {
@@ -105,6 +109,103 @@ class SoundEngine {
       }
     } catch {}
   }
+
+  startAmbient() {
+    if (this.ambientPlaying) return;
+    try {
+      const ctx = this.getCtx();
+      const masterGain = ctx.createGain();
+      masterGain.gain.setValueAtTime(0, ctx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 2);
+      masterGain.connect(ctx.destination);
+
+      const oscs: OscillatorNode[] = [];
+      const gains: GainNode[] = [];
+
+      // Deep ocean drone layers
+      const freqs = [55, 82.5, 110, 165];
+      freqs.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        // Gentle frequency wobble for wave-like feel
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.type = "sine";
+        lfo.frequency.setValueAtTime(0.1 + i * 0.05, ctx.currentTime);
+        lfoGain.gain.setValueAtTime(1 + i * 0.5, ctx.currentTime);
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+        lfo.start();
+
+        gain.gain.setValueAtTime(0.3 - i * 0.05, ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start();
+        oscs.push(osc, lfo);
+        gains.push(gain, lfoGain);
+      });
+
+      // White noise for waves (filtered)
+      const bufferSize = ctx.sampleRate * 4;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+      const noiseSource = ctx.createBufferSource();
+      noiseSource.buffer = noiseBuffer;
+      noiseSource.loop = true;
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = "lowpass";
+      noiseFilter.frequency.setValueAtTime(400, ctx.currentTime);
+      // Modulate filter for wave swells
+      const noiseLfo = ctx.createOscillator();
+      const noiseLfoGain = ctx.createGain();
+      noiseLfo.type = "sine";
+      noiseLfo.frequency.setValueAtTime(0.08, ctx.currentTime);
+      noiseLfoGain.gain.setValueAtTime(200, ctx.currentTime);
+      noiseLfo.connect(noiseLfoGain);
+      noiseLfoGain.connect(noiseFilter.frequency);
+      noiseLfo.start();
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.5, ctx.currentTime);
+      noiseSource.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(masterGain);
+      noiseSource.start();
+
+      this.ambientNodes = { oscs: [...oscs, noiseLfo], gains: [...gains, noiseGain, noiseLfoGain], masterGain };
+      // Store noiseSource separately for cleanup
+      (this.ambientNodes as any).noiseSource = noiseSource;
+      this.ambientPlaying = true;
+    } catch {}
+  }
+
+  stopAmbient() {
+    if (!this.ambientPlaying) return;
+    try {
+      const ctx = this.getCtx();
+      if (this.ambientNodes.masterGain) {
+        this.ambientNodes.masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      }
+      setTimeout(() => {
+        this.ambientNodes.oscs.forEach(o => { try { o.stop(); } catch {} });
+        try { (this.ambientNodes as any).noiseSource?.stop(); } catch {}
+        this.ambientNodes = { oscs: [], gains: [], masterGain: null };
+      }, 1200);
+      this.ambientPlaying = false;
+    } catch {}
+  }
+
+  toggleAmbient() {
+    if (this.ambientPlaying) {
+      this.stopAmbient();
+    } else {
+      this.startAmbient();
+    }
+    return this.ambientPlaying;
+  }
 }
 
 const WorldMap = () => {
@@ -114,6 +215,7 @@ const WorldMap = () => {
   const [totalXp, setTotalXp] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [soundOn, setSoundOn] = useState(true);
+  const [musicOn, setMusicOn] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const soundRef = useRef(new SoundEngine());
   const navigate = useNavigate();
@@ -182,6 +284,16 @@ const WorldMap = () => {
     });
   };
 
+  const toggleMusic = () => {
+    soundRef.current.toggleAmbient();
+    setMusicOn(soundRef.current.ambientPlaying);
+  };
+
+  // Cleanup ambient on unmount
+  useEffect(() => {
+    return () => { soundRef.current.stopAmbient(); };
+  }, []);
+
   // Auto-scroll to current island
   useEffect(() => {
     if (islands.length > 0 && mapRef.current) {
@@ -217,7 +329,10 @@ const WorldMap = () => {
               <span className="font-bold text-white font-display text-lg">🗺️ Adventure Map</span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={toggleMusic} className={`text-white/70 hover:text-white hover:bg-white/10 gap-1 text-xs ${musicOn ? "bg-white/10 text-cyan-300" : ""}`}>
+              <Music className="w-4 h-4" /> {musicOn ? "🎵" : ""}
+            </Button>
             <Button variant="ghost" size="sm" onClick={toggleSound} className="text-white/70 hover:text-white hover:bg-white/10">
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </Button>
