@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Flame, Star, Trophy, LogOut, BookOpen, Map,
-  Zap, Target, ChevronRight, Award, Sparkles
+  Zap, Target, ChevronRight, Award, Sparkles, Code2
 } from "lucide-react";
 import level1Avatar from "@/assets/avatars/level-1-recruit.png";
 import level2Avatar from "@/assets/avatars/level-2-junior.png";
@@ -123,6 +123,9 @@ const PlatformDashboard = () => {
             </Link>
             <Link to="/platform/achievements" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
               <Trophy className="w-4 h-4" /> Achievements
+            </Link>
+            <Link to="/platform/playground" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+              <Code2 className="w-4 h-4" /> Playground
             </Link>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="w-4 h-4" />
@@ -249,7 +252,7 @@ const PlatformDashboard = () => {
         </motion.div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
           <Link to="/platform/learn">
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:border-primary/40 transition-colors group">
               <BookOpen className="w-8 h-8 text-primary mb-3" />
@@ -267,6 +270,16 @@ const PlatformDashboard = () => {
               <p className="text-sm text-muted-foreground mb-3">{recentAchievements.length} badges earned — collect them all!</p>
               <span className="text-yellow-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                 View Achievements <ChevronRight className="w-4 h-4" />
+              </span>
+            </div>
+          </Link>
+          <Link to="/platform/playground">
+            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/5 border border-blue-500/20 rounded-xl p-6 hover:border-blue-500/40 transition-colors group">
+              <Code2 className="w-8 h-8 text-blue-500 mb-3" />
+              <h3 className="font-bold text-foreground mb-1">Coding Playground</h3>
+              <p className="text-sm text-muted-foreground mb-3">Write code, run it, and get AI tutor feedback</p>
+              <span className="text-blue-500 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                Open Playground <ChevronRight className="w-4 h-4" />
               </span>
             </div>
           </Link>

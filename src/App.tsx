@@ -21,6 +21,7 @@ import LearningPath from "./pages/platform/LearningPath";
 import LevelDetail from "./pages/platform/LevelDetail";
 import LessonPage from "./pages/platform/LessonPage";
 import AchievementsPage from "./pages/platform/AchievementsPage";
+import CodingPlayground from "./pages/platform/CodingPlayground";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/platform/level/:levelId" element={<LevelDetail />} />
             <Route path="/platform/lesson/:lessonId" element={<LessonPage />} />
             <Route path="/platform/achievements" element={<AchievementsPage />} />
+            <Route path="/platform/playground" element={<CodingPlayground />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
