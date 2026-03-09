@@ -48,11 +48,18 @@ const IslandDetail = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [islandProgress, setIslandProgress] = useState<any>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => { requireAuth(); }, [loading, user]);
 
   useEffect(() => {
     if (!user || !islandId) return;
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(islandId)) {
+      setLoadError(true);
+      return;
+    }
     loadIsland();
   }, [user, islandId]);
 
@@ -64,7 +71,11 @@ const IslandDetail = () => {
       supabase.from("island_progress").select("*").eq("user_id", user!.id).eq("island_id", islandId!).maybeSingle(),
     ]);
 
-    if (islandRes.data) setIsland(islandRes.data as unknown as Island);
+    if (islandRes.error || !islandRes.data) {
+      setLoadError(true);
+      return;
+    }
+    setIsland(islandRes.data as unknown as Island);
     if (islandProgressRes.data) setIslandProgress(islandProgressRes.data);
     if (levelsRes.data) setLevels(levelsRes.data as unknown as Level[]);
 
@@ -92,6 +103,13 @@ const IslandDetail = () => {
   const bossCompleted = islandProgress?.boss_completed || false;
   const completedLessonCount = Array.from(completedIds).filter(id => lessons.some(l => l.id === id)).length;
   const totalXpAvailable = lessons.reduce((sum, l) => sum + l.xp_reward, 0);
+
+  if (loadError) return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center text-muted-foreground gap-4">
+      <p>Island not found.</p>
+      <Link to="/platform/world-map"><Button variant="outline">Back to World Map</Button></Link>
+    </div>
+  );
 
   if (loading || !island) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading island...</div>;
 
