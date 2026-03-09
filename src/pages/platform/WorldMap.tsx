@@ -1,15 +1,27 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlatformAuth } from "@/hooks/use-platform-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Lock, CheckCircle2, Star, Sparkles,
   Trophy, Compass, Anchor, Swords, Volume2, VolumeX
 } from "lucide-react";
+
+// Island images
+import island1 from "@/assets/islands/island-1-village.png";
+import island2 from "@/assets/islands/island-2-forest.png";
+import island3 from "@/assets/islands/island-3-mountains.png";
+import island4 from "@/assets/islands/island-4-valley.png";
+import island5 from "@/assets/islands/island-5-harbor.png";
+import island6 from "@/assets/islands/island-6-algorithm.png";
+import island7 from "@/assets/islands/island-7-project.png";
+import island8 from "@/assets/islands/island-8-ai.png";
+
+const ISLAND_IMAGES = [island1, island2, island3, island4, island5, island6, island7, island8];
 
 interface Island {
   id: string;
@@ -29,17 +41,27 @@ interface IslandProgress {
   unlocked: boolean;
 }
 
-// ─── Sound Engine ──────────────────────────────────────────
+// Zigzag positions for the islands on the scrollable map
+const ISLAND_LAYOUT = [
+  { x: 20, y: 0, side: "left" },
+  { x: 55, y: 1, side: "right" },
+  { x: 15, y: 2, side: "left" },
+  { x: 60, y: 3, side: "right" },
+  { x: 10, y: 4, side: "left" },
+  { x: 50, y: 5, side: "right" },
+  { x: 25, y: 6, side: "left" },
+  { x: 55, y: 7, side: "right" },
+];
+
+// Sound engine
 class SoundEngine {
   private ctx: AudioContext | null = null;
   public muted = false;
-
   private getCtx() {
     if (!this.ctx) this.ctx = new AudioContext();
     return this.ctx;
   }
-
-  play(type: "hover" | "click" | "unlock" | "wave" | "sail" | "boss") {
+  play(type: "hover" | "click" | "unlock" | "wave" | "locked") {
     if (this.muted) return;
     try {
       const ctx = this.getCtx();
@@ -47,118 +69,43 @@ class SoundEngine {
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);
-
       const now = ctx.currentTime;
       switch (type) {
         case "hover":
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(600, now);
+          osc.type = "sine"; osc.frequency.setValueAtTime(600, now);
           osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-          osc.start(now);
-          osc.stop(now + 0.12);
-          break;
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          osc.start(now); osc.stop(now + 0.1); break;
         case "click":
-          osc.type = "square";
-          osc.frequency.setValueAtTime(440, now);
+          osc.type = "square"; osc.frequency.setValueAtTime(440, now);
           osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
-          osc.frequency.exponentialRampToValueAtTime(660, now + 0.1);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-          osc.start(now);
-          osc.stop(now + 0.2);
-          break;
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+          osc.start(now); osc.stop(now + 0.15); break;
         case "unlock":
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(523, now);
+          osc.type = "sine"; osc.frequency.setValueAtTime(523, now);
           osc.frequency.setValueAtTime(659, now + 0.1);
           osc.frequency.setValueAtTime(784, now + 0.2);
-          osc.frequency.setValueAtTime(1047, now + 0.3);
           gain.gain.setValueAtTime(0.1, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-          osc.start(now);
-          osc.stop(now + 0.5);
-          break;
-        case "wave":
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(180, now);
-          osc.frequency.linearRampToValueAtTime(220, now + 0.5);
-          osc.frequency.linearRampToValueAtTime(160, now + 1);
-          gain.gain.setValueAtTime(0.03, now);
-          gain.gain.linearRampToValueAtTime(0.05, now + 0.5);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
-          osc.start(now);
-          osc.stop(now + 1.2);
-          break;
-        case "sail":
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(330, now);
-          osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
-          osc.frequency.exponentialRampToValueAtTime(550, now + 0.3);
-          gain.gain.setValueAtTime(0.07, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-          osc.start(now);
-          osc.stop(now + 0.4);
-          break;
-        case "boss":
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(200, now);
-          osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-          osc.start(now);
-          osc.stop(now + 0.5);
-          break;
+          osc.start(now); osc.stop(now + 0.4); break;
+        case "wave":
+          osc.type = "sine"; osc.frequency.setValueAtTime(180, now);
+          osc.frequency.linearRampToValueAtTime(220, now + 0.5);
+          gain.gain.setValueAtTime(0.025, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+          osc.start(now); osc.stop(now + 0.8); break;
+        case "locked":
+          osc.type = "sawtooth"; osc.frequency.setValueAtTime(200, now);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now); osc.stop(now + 0.3); break;
       }
     } catch {}
   }
 }
-
-// ─── Canvas Particle ──────────────────────────────────────
-interface Particle {
-  x: number; y: number; vx: number; vy: number;
-  life: number; maxLife: number; size: number;
-  color: string; type: "bubble" | "sparkle" | "leaf";
-}
-
-// ─── Cloud ────────────────────────────────────────────────
-interface Cloud {
-  x: number; y: number; speed: number; width: number; opacity: number;
-}
-
-// ─── Fish ─────────────────────────────────────────────────
-interface Fish {
-  x: number; y: number; speed: number; size: number; color: string; dir: number; wiggle: number;
-}
-
-// ─── Wave ─────────────────────────────────────────────────
-interface WaveLine {
-  y: number; amplitude: number; frequency: number; speed: number; opacity: number;
-}
-
-// ─── Ship ─────────────────────────────────────────────────
-interface Ship {
-  x: number; y: number; targetX: number; targetY: number; angle: number;
-}
-
-// ─── Island Positions (normalized 0-1) ────────────────────
-const ISLAND_NORM = [
-  { x: 0.15, y: 0.82 },
-  { x: 0.38, y: 0.70 },
-  { x: 0.18, y: 0.55 },
-  { x: 0.50, y: 0.45 },
-  { x: 0.22, y: 0.33 },
-  { x: 0.55, y: 0.22 },
-  { x: 0.72, y: 0.14 },
-  { x: 0.85, y: 0.07 },
-];
-
-const ISLAND_COLORS: Record<string, string> = {
-  emerald: "#10b981", green: "#22c55e", amber: "#f59e0b", blue: "#3b82f6",
-  purple: "#a855f7", orange: "#f97316", cyan: "#06b6d4", pink: "#ec4899",
-  primary: "#10b981",
-};
 
 const WorldMap = () => {
   const { user, loading, requireAuth } = usePlatformAuth();
@@ -167,32 +114,13 @@ const WorldMap = () => {
   const [totalXp, setTotalXp] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [soundOn, setSoundOn] = useState(true);
-  const [hoveredIsland, setHoveredIsland] = useState<number | null>(null);
-  const [dataLoaded, setDataLoaded] = useState(false);
-
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const animRef = useRef<number>(0);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const soundRef = useRef(new SoundEngine());
   const navigate = useNavigate();
-
-  // Mutable refs for animation state
-  const cloudsRef = useRef<Cloud[]>([]);
-  const fishRef = useRef<Fish[]>([]);
-  const wavesRef = useRef<WaveLine[]>([]);
-  const particlesRef = useRef<Particle[]>([]);
-  const shipRef = useRef<Ship>({ x: 0, y: 0, targetX: 0, targetY: 0, angle: 0 });
-  const mouseRef = useRef({ x: 0, y: 0 });
-  const timeRef = useRef(0);
-  const lastWaveSound = useRef(0);
-  const islandRectsRef = useRef<{ x: number; y: number; r: number; idx: number }[]>([]);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { requireAuth(); }, [loading, user]);
-
-  useEffect(() => {
-    if (!user) return;
-    loadData();
-  }, [user]);
+  useEffect(() => { if (user) loadData(); }, [user]);
 
   const loadData = async () => {
     const [islandsRes, progressRes, profileRes] = await Promise.all([
@@ -200,10 +128,8 @@ const WorldMap = () => {
       supabase.from("island_progress").select("*").eq("user_id", user!.id),
       supabase.from("student_profiles").select("total_xp").eq("user_id", user!.id).single(),
     ]);
-
     if (islandsRes.data) setIslands(islandsRes.data as unknown as Island[]);
     if (profileRes.data) setTotalXp((profileRes.data as any).total_xp || 0);
-
     if (progressRes.data) {
       const map: Record<string, IslandProgress> = {};
       let completed = 0;
@@ -214,587 +140,39 @@ const WorldMap = () => {
       setProgressMap(map);
       setCompletedCount(completed);
     }
-    setDataLoaded(true);
   };
 
-  const isIslandUnlocked = useCallback((island: Island, idx: number, islandsArr: Island[], pMap: Record<string, IslandProgress>, xp: number) => {
+  const isIslandUnlocked = (island: Island, idx: number) => {
     if (idx === 0) return true;
-    if (xp < island.unlock_requirement_xp) return false;
-    const prevIsland = islandsArr[idx - 1];
+    if (totalXp < island.unlock_requirement_xp) return false;
+    const prevIsland = islands[idx - 1];
     if (prevIsland) {
-      const prevProgress = pMap[prevIsland.id];
+      const prevProgress = progressMap[prevIsland.id];
       if (!prevProgress?.boss_completed && island.unlock_requirement_completion > 0) {
         return (prevProgress?.completion_percentage || 0) >= island.unlock_requirement_completion;
       }
     }
     return true;
-  }, []);
+  };
 
-  const getCurrentIslandIdx = useCallback((islandsArr: Island[], pMap: Record<string, IslandProgress>, xp: number) => {
-    for (let i = islandsArr.length - 1; i >= 0; i--) {
-      if (isIslandUnlocked(islandsArr[i], i, islandsArr, pMap, xp)) {
-        const progress = pMap[islandsArr[i].id];
+  const getCurrentIslandIdx = () => {
+    for (let i = islands.length - 1; i >= 0; i--) {
+      if (isIslandUnlocked(islands[i], i)) {
+        const progress = progressMap[islands[i].id];
         if (!progress?.boss_completed) return i;
       }
     }
     return 0;
-  }, [isIslandUnlocked]);
-
-  // ─── Initialize canvas entities ─────────────────────────
-  const initEntities = useCallback((w: number, h: number) => {
-    // Clouds
-    cloudsRef.current = Array.from({ length: 6 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h * 0.3,
-      speed: 0.15 + Math.random() * 0.3,
-      width: 60 + Math.random() * 100,
-      opacity: 0.15 + Math.random() * 0.2,
-    }));
-
-    // Fish
-    fishRef.current = Array.from({ length: 10 }, () => ({
-      x: Math.random() * w,
-      y: h * 0.5 + Math.random() * h * 0.45,
-      speed: 0.3 + Math.random() * 0.8,
-      size: 6 + Math.random() * 10,
-      color: ["#f97316", "#06b6d4", "#eab308", "#ec4899", "#8b5cf6"][Math.floor(Math.random() * 5)],
-      dir: Math.random() > 0.5 ? 1 : -1,
-      wiggle: Math.random() * Math.PI * 2,
-    }));
-
-    // Waves
-    wavesRef.current = Array.from({ length: 5 }, (_, i) => ({
-      y: h * 0.3 + i * (h * 0.14),
-      amplitude: 8 + Math.random() * 12,
-      frequency: 0.008 + Math.random() * 0.005,
-      speed: 0.3 + Math.random() * 0.5,
-      opacity: 0.04 + Math.random() * 0.06,
-    }));
-  }, []);
-
-  // ─── Draw functions ─────────────────────────────────────
-  const drawWater = (ctx: CanvasRenderingContext2D, w: number, h: number, t: number) => {
-    // Deep ocean gradient
-    const grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, "#0c1929");
-    grad.addColorStop(0.3, "#0f2942");
-    grad.addColorStop(0.6, "#0d3b5e");
-    grad.addColorStop(1, "#0a2f4a");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-
-    // Animated wave lines
-    wavesRef.current.forEach(wave => {
-      ctx.beginPath();
-      ctx.strokeStyle = `rgba(56, 189, 248, ${wave.opacity})`;
-      ctx.lineWidth = 1.5;
-      for (let x = 0; x < w; x += 3) {
-        const y = wave.y + Math.sin(x * wave.frequency + t * wave.speed) * wave.amplitude;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    });
-
-    // Sparkle on water
-    for (let i = 0; i < 15; i++) {
-      const sx = ((i * 137 + t * 20) % w);
-      const sy = ((i * 211 + t * 5) % h);
-      const sparkleAlpha = 0.1 + Math.sin(t * 2 + i) * 0.08;
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(147, 197, 253, ${sparkleAlpha})`;
-      ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
   };
 
-  const drawCloud = (ctx: CanvasRenderingContext2D, cloud: Cloud) => {
-    ctx.fillStyle = `rgba(200, 220, 240, ${cloud.opacity})`;
-    const cx = cloud.x, cy = cloud.y, w = cloud.width;
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, w * 0.4, w * 0.15, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(cx - w * 0.15, cy - w * 0.05, w * 0.25, w * 0.12, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(cx + w * 0.18, cy - w * 0.03, w * 0.22, w * 0.1, 0, 0, Math.PI * 2);
-    ctx.fill();
-  };
-
-  const drawFish = (ctx: CanvasRenderingContext2D, fish: Fish, t: number) => {
-    const wY = Math.sin(t * 3 + fish.wiggle) * 4;
-    ctx.save();
-    ctx.translate(fish.x, fish.y + wY);
-    ctx.scale(fish.dir, 1);
-    ctx.fillStyle = fish.color;
-    // Body
-    ctx.beginPath();
-    ctx.ellipse(0, 0, fish.size, fish.size * 0.4, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Tail
-    ctx.beginPath();
-    ctx.moveTo(-fish.size, 0);
-    ctx.lineTo(-fish.size - fish.size * 0.6, -fish.size * 0.4);
-    ctx.lineTo(-fish.size - fish.size * 0.6, fish.size * 0.4);
-    ctx.closePath();
-    ctx.fill();
-    // Eye
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(fish.size * 0.4, -fish.size * 0.1, fish.size * 0.12, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  };
-
-  const drawIslandShape = (
-    ctx: CanvasRenderingContext2D,
-    cx: number, cy: number, r: number,
-    color: string, unlocked: boolean, isCurrent: boolean,
-    bossComplete: boolean, pct: number, t: number
-  ) => {
-    // Island base - green land mass
-    const landGrad = ctx.createRadialGradient(cx, cy, r * 0.1, cx, cy, r);
-    if (!unlocked) {
-      landGrad.addColorStop(0, "rgba(60, 60, 70, 0.6)");
-      landGrad.addColorStop(1, "rgba(40, 40, 50, 0.3)");
+  const handleIslandClick = (island: Island, idx: number) => {
+    const unlocked = isIslandUnlocked(island, idx);
+    if (unlocked) {
+      soundRef.current.play("click");
+      navigate(`/platform/island/${island.id}`);
     } else {
-      landGrad.addColorStop(0, color + "cc");
-      landGrad.addColorStop(0.7, color + "88");
-      landGrad.addColorStop(1, color + "22");
+      soundRef.current.play("locked");
     }
-
-    // Organic island shape
-    ctx.beginPath();
-    for (let a = 0; a < Math.PI * 2; a += 0.1) {
-      const wobble = 1 + Math.sin(a * 3 + t * 0.5) * 0.08 + Math.cos(a * 5) * 0.05;
-      const px = cx + Math.cos(a) * r * wobble;
-      const py = cy + Math.sin(a) * r * wobble * 0.7;
-      if (a === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.closePath();
-    ctx.fillStyle = landGrad;
-    ctx.fill();
-
-    // Beach ring
-    if (unlocked) {
-      ctx.strokeStyle = "#fbbf24" + "44";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-    }
-
-    // Sand/shore
-    if (unlocked) {
-      ctx.beginPath();
-      for (let a = 0; a < Math.PI * 2; a += 0.1) {
-        const wobble = 1 + Math.sin(a * 3 + t * 0.5) * 0.08 + Math.cos(a * 5) * 0.05;
-        const px = cx + Math.cos(a) * (r + 4) * wobble;
-        const py = cy + Math.sin(a) * (r + 4) * wobble * 0.7;
-        if (a === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-      ctx.strokeStyle = "rgba(251, 191, 36, 0.15)";
-      ctx.lineWidth = 6;
-      ctx.stroke();
-    }
-
-    // Palm tree
-    if (unlocked) {
-      const treeX = cx - r * 0.2;
-      const treeY = cy - r * 0.15;
-      // Trunk
-      ctx.strokeStyle = "#92400e";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(treeX, treeY + r * 0.3);
-      ctx.quadraticCurveTo(treeX - 3, treeY + r * 0.1, treeX + 2, treeY - r * 0.2);
-      ctx.stroke();
-      // Leaves
-      const leafColor = bossComplete ? "#059669" : "#22c55e";
-      for (let i = 0; i < 5; i++) {
-        const angle = -Math.PI / 2 + (i - 2) * 0.5 + Math.sin(t * 1.5 + i) * 0.05;
-        ctx.strokeStyle = leafColor;
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(treeX + 2, treeY - r * 0.2);
-        ctx.quadraticCurveTo(
-          treeX + 2 + Math.cos(angle) * r * 0.25,
-          treeY - r * 0.2 + Math.sin(angle) * r * 0.25 - 5,
-          treeX + 2 + Math.cos(angle) * r * 0.45,
-          treeY - r * 0.2 + Math.sin(angle) * r * 0.35
-        );
-        ctx.stroke();
-      }
-    }
-
-    // Glow for current island
-    if (isCurrent && unlocked) {
-      const glowAlpha = 0.15 + Math.sin(t * 2) * 0.1;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r + 15 + Math.sin(t * 2) * 5, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(16, 185, 129, ${glowAlpha})`;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-
-    // Progress ring
-    if (unlocked && pct > 0) {
-      ctx.beginPath();
-      ctx.arc(cx, cy, r + 8, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * pct / 100), false);
-      ctx.strokeStyle = bossComplete ? "#10b981" : color;
-      ctx.lineWidth = 3;
-      ctx.lineCap = "round";
-      ctx.stroke();
-      ctx.lineCap = "butt";
-    }
-
-    // Lock icon
-    if (!unlocked) {
-      ctx.fillStyle = "rgba(200, 200, 210, 0.5)";
-      ctx.font = `${r * 0.5}px serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("🔒", cx, cy);
-    }
-
-    // Boss complete flag
-    if (bossComplete) {
-      ctx.font = `${r * 0.4}px serif`;
-      ctx.textAlign = "center";
-      ctx.fillText("🏆", cx + r * 0.5, cy - r * 0.5);
-    }
-  };
-
-  const drawPath = (
-    ctx: CanvasRenderingContext2D,
-    x1: number, y1: number, x2: number, y2: number,
-    completed: boolean, t: number
-  ) => {
-    const midX = (x1 + x2) / 2 + (x1 < x2 ? 40 : -40);
-    const midY = (y1 + y2) / 2;
-
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.quadraticCurveTo(midX, midY, x2, y2);
-
-    if (completed) {
-      ctx.strokeStyle = "rgba(16, 185, 129, 0.6)";
-      ctx.lineWidth = 3;
-      ctx.setLineDash([]);
-    } else {
-      ctx.strokeStyle = "rgba(100, 140, 180, 0.25)";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([8, 6]);
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Animated dots along path
-    if (completed) {
-      for (let i = 0; i < 3; i++) {
-        const prog = ((t * 0.3 + i * 0.33) % 1);
-        const tt = prog;
-        const px = (1 - tt) * (1 - tt) * x1 + 2 * (1 - tt) * tt * midX + tt * tt * x2;
-        const py = (1 - tt) * (1 - tt) * y1 + 2 * (1 - tt) * tt * midY + tt * tt * y2;
-        ctx.beginPath();
-        ctx.arc(px, py, 3, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(16, 185, 129, ${0.6 - prog * 0.4})`;
-        ctx.fill();
-      }
-    }
-  };
-
-  const drawShip = (ctx: CanvasRenderingContext2D, ship: Ship, t: number) => {
-    ctx.save();
-    ctx.translate(ship.x, ship.y + Math.sin(t * 2) * 3);
-    ctx.rotate(Math.sin(t * 1.5) * 0.05);
-    ctx.font = "28px serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("⛵", 0, 0);
-    // Wake trail
-    for (let i = 1; i <= 4; i++) {
-      ctx.beginPath();
-      ctx.arc(-i * 8, i * 3, 2 + i, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(147, 197, 253, ${0.15 - i * 0.03})`;
-      ctx.fill();
-    }
-    ctx.restore();
-  };
-
-  const drawParticles = (ctx: CanvasRenderingContext2D) => {
-    particlesRef.current.forEach(p => {
-      const alpha = (1 - p.life / p.maxLife);
-      if (p.type === "sparkle") {
-        ctx.fillStyle = `rgba(250, 204, 21, ${alpha * 0.8})`;
-        ctx.beginPath();
-        // 4-point star
-        const s = p.size * alpha;
-        ctx.moveTo(p.x, p.y - s);
-        ctx.lineTo(p.x + s * 0.3, p.y - s * 0.3);
-        ctx.lineTo(p.x + s, p.y);
-        ctx.lineTo(p.x + s * 0.3, p.y + s * 0.3);
-        ctx.lineTo(p.x, p.y + s);
-        ctx.lineTo(p.x - s * 0.3, p.y + s * 0.3);
-        ctx.lineTo(p.x - s, p.y);
-        ctx.lineTo(p.x - s * 0.3, p.y - s * 0.3);
-        ctx.closePath();
-        ctx.fill();
-      } else if (p.type === "bubble") {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(147, 197, 253, ${alpha * 0.5})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = `rgba(34, 197, 94, ${alpha * 0.6})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    });
-  };
-
-  const spawnParticles = (x: number, y: number, type: "sparkle" | "bubble" | "leaf", count: number) => {
-    for (let i = 0; i < count; i++) {
-      particlesRef.current.push({
-        x, y,
-        vx: (Math.random() - 0.5) * 3,
-        vy: (Math.random() - 0.5) * 3 - 1,
-        life: 0, maxLife: 40 + Math.random() * 30,
-        size: 3 + Math.random() * 5,
-        color: "", type,
-      });
-    }
-  };
-
-  // ─── Main animation loop ───────────────────────────────
-  useEffect(() => {
-    if (!dataLoaded || islands.length === 0) return;
-
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
-
-    const resize = () => {
-      const rect = container.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      canvas.style.width = rect.width + "px";
-      canvas.style.height = rect.height + "px";
-      const ctx = canvas.getContext("2d");
-      if (ctx) ctx.scale(dpr, dpr);
-      initEntities(rect.width, rect.height);
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const currentIdx = getCurrentIslandIdx(islands, progressMap, totalXp);
-    const w = container.getBoundingClientRect().width;
-    const h = container.getBoundingClientRect().height;
-
-    // Set ship to current island
-    const sp = ISLAND_NORM[currentIdx];
-    if (sp) {
-      shipRef.current = { x: sp.x * w + 40, y: sp.y * h, targetX: sp.x * w + 40, targetY: sp.y * h, angle: 0 };
-    }
-
-    // Build island hit rects
-    const r = Math.min(w, h) * 0.055;
-    islandRectsRef.current = islands.map((_, i) => {
-      const pos = ISLAND_NORM[i];
-      return pos ? { x: pos.x * w, y: pos.y * h, r: r + 10, idx: i } : { x: 0, y: 0, r: 0, idx: i };
-    });
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let prevHover = -1;
-
-    const loop = () => {
-      const cw = container.getBoundingClientRect().width;
-      const ch = container.getBoundingClientRect().height;
-      timeRef.current += 0.016;
-      const t = timeRef.current;
-
-      ctx.clearRect(0, 0, cw, ch);
-
-      // Water
-      drawWater(ctx, cw, ch, t);
-
-      // Clouds
-      cloudsRef.current.forEach(cloud => {
-        cloud.x += cloud.speed;
-        if (cloud.x > cw + cloud.width) cloud.x = -cloud.width;
-        drawCloud(ctx, cloud);
-      });
-
-      // Paths between islands
-      islands.slice(0, -1).forEach((island, i) => {
-        const from = ISLAND_NORM[i];
-        const to = ISLAND_NORM[i + 1];
-        if (!from || !to) return;
-        const completed = progressMap[island.id]?.boss_completed || false;
-        drawPath(ctx, from.x * cw, from.y * ch, to.x * cw, to.y * ch, completed, t);
-      });
-
-      // Fish
-      fishRef.current.forEach(fish => {
-        fish.x += fish.speed * fish.dir;
-        if (fish.x > cw + 20) { fish.x = -20; fish.dir = 1; }
-        if (fish.x < -20) { fish.x = cw + 20; fish.dir = -1; }
-        drawFish(ctx, fish, t);
-      });
-
-      // Islands
-      const islandR = Math.min(cw, ch) * 0.055;
-      islands.forEach((island, i) => {
-        const pos = ISLAND_NORM[i];
-        if (!pos) return;
-        const cx = pos.x * cw;
-        const cy = pos.y * ch;
-        const unlocked = isIslandUnlocked(island, i, islands, progressMap, totalXp);
-        const isCurrent = i === currentIdx;
-        const bossComplete = progressMap[island.id]?.boss_completed || false;
-        const pct = progressMap[island.id]?.completion_percentage || 0;
-        const col = ISLAND_COLORS[island.color] || ISLAND_COLORS.primary;
-
-        // Hover scale
-        const isHovered = hoveredIsland === i;
-        const scale = isHovered && unlocked ? 1.12 : 1;
-
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.scale(scale, scale);
-        ctx.translate(-cx, -cy);
-
-        drawIslandShape(ctx, cx, cy, islandR, col, unlocked, isCurrent, bossComplete, pct, t);
-
-        // Label below island
-        if (unlocked) {
-          ctx.fillStyle = "#e2e8f0";
-          ctx.font = "bold 11px 'Space Grotesk', sans-serif";
-          ctx.textAlign = "center";
-          ctx.fillText(island.name, cx, cy + islandR + 20);
-
-          // Pct
-          ctx.fillStyle = "rgba(148, 163, 184, 0.8)";
-          ctx.font = "9px 'Space Grotesk', sans-serif";
-          ctx.fillText(`${Math.round(pct)}%`, cx, cy + islandR + 32);
-        }
-
-        // Icon
-        if (unlocked) {
-          ctx.font = `${islandR * 0.55}px serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(island.icon, cx + islandR * 0.25, cy + islandR * 0.1);
-        }
-
-        ctx.restore();
-      });
-
-      // Ship
-      const ship = shipRef.current;
-      ship.x += (ship.targetX - ship.x) * 0.02;
-      ship.y += (ship.targetY - ship.y) * 0.02;
-      drawShip(ctx, ship, t);
-
-      // Particles
-      particlesRef.current = particlesRef.current.filter(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy -= 0.02;
-        p.life++;
-        return p.life < p.maxLife;
-      });
-      drawParticles(ctx);
-
-      // Periodic wave sound
-      if (t - lastWaveSound.current > 12) {
-        soundRef.current.play("wave");
-        lastWaveSound.current = t;
-      }
-
-      // Periodic bubbles
-      if (Math.random() < 0.02) {
-        spawnParticles(Math.random() * cw, ch - 20, "bubble", 2);
-      }
-
-      // Check hover
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      let foundHover = -1;
-      islandRectsRef.current.forEach(ir => {
-        const dx = mx - ir.x;
-        const dy = my - ir.y;
-        if (Math.sqrt(dx * dx + dy * dy) < ir.r) {
-          foundHover = ir.idx;
-        }
-      });
-      if (foundHover !== prevHover) {
-        if (foundHover >= 0) {
-          soundRef.current.play("hover");
-          spawnParticles(
-            ISLAND_NORM[foundHover]!.x * cw,
-            ISLAND_NORM[foundHover]!.y * ch,
-            "sparkle", 5
-          );
-        }
-        prevHover = foundHover;
-        setHoveredIsland(foundHover >= 0 ? foundHover : null);
-      }
-
-      animRef.current = requestAnimationFrame(loop);
-    };
-
-    animRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(animRef.current);
-      window.removeEventListener("resize", resize);
-    };
-  }, [dataLoaded, islands, progressMap, totalXp, hoveredIsland, isIslandUnlocked, getCurrentIslandIdx, initEntities]);
-
-  // ─── Mouse handlers ─────────────────────────────────────
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  };
-
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-
-    islandRectsRef.current.forEach(ir => {
-      const dx = mx - ir.x;
-      const dy = my - ir.y;
-      if (Math.sqrt(dx * dx + dy * dy) < ir.r) {
-        const island = islands[ir.idx];
-        if (!island) return;
-        const unlocked = isIslandUnlocked(island, ir.idx, islands, progressMap, totalXp);
-        if (unlocked) {
-          soundRef.current.play("click");
-          spawnParticles(ir.x, ir.y, "sparkle", 12);
-          // Move ship
-          shipRef.current.targetX = ir.x + 40;
-          shipRef.current.targetY = ir.y;
-          setTimeout(() => {
-            soundRef.current.play("sail");
-            navigate(`/platform/island/${island.id}`);
-          }, 400);
-        } else {
-          soundRef.current.play("boss");
-          spawnParticles(ir.x, ir.y, "leaf", 6);
-        }
-      }
-    });
   };
 
   const toggleSound = () => {
@@ -804,133 +182,437 @@ const WorldMap = () => {
     });
   };
 
+  // Auto-scroll to current island
+  useEffect(() => {
+    if (islands.length > 0 && mapRef.current) {
+      const currentIdx = getCurrentIslandIdx();
+      const el = document.getElementById(`island-${currentIdx}`);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 500);
+      }
+    }
+  }, [islands, progressMap]);
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading...</div>;
 
-  const currentIdx = islands.length > 0 ? getCurrentIslandIdx(islands, progressMap, totalXp) : 0;
+  const currentIdx = getCurrentIslandIdx();
   const overallProgress = islands.length > 0 ? Math.round((completedCount / islands.length) * 100) : 0;
-  const currentIsland = islands[currentIdx];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: "linear-gradient(180deg, #0a4d8c 0%, #0e6fb5 20%, #1a90d0 40%, #2ba5d8 60%, #3dbce0 80%, #5ed4e8 100%)" }}>
       {/* Header */}
-      <header className="border-b border-border/50 bg-card/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link to="/platform/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1"><ArrowLeft className="w-4 h-4" /> Dashboard</Button>
+              <Button variant="ghost" size="sm" className="gap-1 text-white/80 hover:text-white hover:bg-white/10">
+                <ArrowLeft className="w-4 h-4" /> Dashboard
+              </Button>
             </Link>
-            <div className="h-5 w-px bg-border" />
+            <div className="h-5 w-px bg-white/20" />
             <div className="flex items-center gap-2">
-              <Compass className="w-5 h-5 text-primary" />
-              <span className="font-bold text-foreground font-display">World Map</span>
+              <Compass className="w-5 h-5 text-yellow-300" />
+              <span className="font-bold text-white font-display text-lg">🗺️ Adventure Map</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={toggleSound} className="gap-1">
+            <Button variant="ghost" size="sm" onClick={toggleSound} className="text-white/70 hover:text-white hover:bg-white/10">
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </Button>
-            <Badge variant="secondary" className="gap-1">
-              <Trophy className="w-3 h-3 text-yellow-500" /> {completedCount}/{islands.length}
+            <Badge className="bg-yellow-500/20 text-yellow-200 border-yellow-500/30 gap-1">
+              <Trophy className="w-3 h-3" /> {completedCount}/{islands.length}
             </Badge>
-            <Badge variant="secondary" className="gap-1">
-              <Star className="w-3 h-3 text-yellow-500" /> {totalXp.toLocaleString()} XP
+            <Badge className="bg-purple-500/20 text-purple-200 border-purple-500/30 gap-1">
+              <Star className="w-3 h-3" /> {totalXp.toLocaleString()} XP
             </Badge>
           </div>
         </div>
       </header>
 
-      {/* Info bar */}
-      <div className="bg-card/60 border-b border-border/30 px-4 py-2">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {currentIsland && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center gap-2 text-sm"
-              >
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Currently exploring:</span>
-                <span className="font-bold text-foreground">{currentIsland?.icon} {currentIsland?.name}</span>
-              </motion.div>
-            )}
+      {/* Progress bar */}
+      <div className="bg-black/15 backdrop-blur-sm px-4 py-2">
+        <div className="max-w-7xl mx-auto flex items-center gap-3">
+          <Sparkles className="w-4 h-4 text-yellow-300" />
+          <span className="text-white/70 text-sm">Journey Progress</span>
+          <div className="flex-1 max-w-xs">
+            <Progress value={overallProgress} className="h-2 bg-white/10" />
           </div>
-          <div className="flex items-center gap-2 w-48">
-            <span className="text-xs text-muted-foreground">Journey</span>
-            <Progress value={overallProgress} className="h-1.5 flex-1" />
-            <span className="text-xs font-bold text-foreground">{overallProgress}%</span>
-          </div>
+          <span className="text-white font-bold text-sm">{overallProgress}%</span>
         </div>
       </div>
 
-      {/* Canvas */}
-      <div ref={containerRef} className="flex-1 relative min-h-[600px]">
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 cursor-pointer"
-          onMouseMove={handleMouseMove}
-          onClick={handleClick}
-        />
-
-        {/* Tooltip for hovered island */}
-        {hoveredIsland !== null && islands[hoveredIsland] && (() => {
-          const island = islands[hoveredIsland];
-          const unlocked = isIslandUnlocked(island, hoveredIsland, islands, progressMap, totalXp);
-          const pct = progressMap[island.id]?.completion_percentage || 0;
-          const bossComplete = progressMap[island.id]?.boss_completed || false;
-          const pos = ISLAND_NORM[hoveredIsland];
-          if (!pos) return null;
-          const container = containerRef.current;
-          if (!container) return null;
-          const cw = container.getBoundingClientRect().width;
-          const ch = container.getBoundingClientRect().height;
-
-          return (
+      {/* Scrollable map */}
+      <div ref={mapRef} className="flex-1 overflow-y-auto overflow-x-hidden relative">
+        {/* Animated water effects */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+          {/* Wave layers */}
+          {[0, 1, 2, 3, 4].map(i => (
             <motion.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute z-30 pointer-events-none"
+              key={`wave-${i}`}
+              className="absolute w-[200%] h-32"
               style={{
-                left: pos.x * cw,
-                top: pos.y * ch - 90,
-                transform: "translateX(-50%)",
+                top: `${20 + i * 18}%`,
+                left: "-50%",
+                background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,${0.02 + i * 0.01}) 25%, transparent 50%, rgba(255,255,255,${0.02 + i * 0.01}) 75%, transparent 100%)`,
+                borderRadius: "50%",
               }}
+              animate={{ x: [0, 100, 0] }}
+              transition={{ duration: 6 + i * 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))}
+
+          {/* Floating bubbles */}
+          {Array.from({ length: 12 }).map((_, i) => (
+            <motion.div
+              key={`bubble-${i}`}
+              className="absolute rounded-full border border-white/10 bg-white/5"
+              style={{
+                width: 4 + Math.random() * 8,
+                height: 4 + Math.random() * 8,
+                left: `${Math.random() * 100}%`,
+                bottom: -10,
+              }}
+              animate={{ y: [0, -(600 + Math.random() * 400)], opacity: [0.3, 0] }}
+              transition={{ duration: 8 + Math.random() * 6, repeat: Infinity, delay: i * 1.2, ease: "easeOut" }}
+            />
+          ))}
+
+          {/* Fish */}
+          {["🐠", "🐟", "🐡", "🦈"].map((fish, i) => (
+            <motion.div
+              key={`fish-${i}`}
+              className="absolute text-2xl opacity-20"
+              style={{ top: `${40 + i * 15}%` }}
+              animate={{
+                x: i % 2 === 0 ? ["-5vw", "105vw"] : ["105vw", "-5vw"],
+                y: [0, Math.sin(i) * 20, 0],
+              }}
+              transition={{ duration: 15 + i * 5, repeat: Infinity, ease: "linear", delay: i * 3 }}
             >
-              <div className="bg-card/95 backdrop-blur-xl border border-border/60 rounded-xl px-4 py-3 shadow-2xl min-w-[180px]">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">{island.icon}</span>
-                  <div>
-                    <p className="font-bold text-foreground text-sm">{island.name}</p>
-                    <p className="text-[10px] text-muted-foreground">Island {island.order_index}</p>
-                  </div>
-                </div>
-                {unlocked ? (
-                  <>
-                    <Progress value={Number(pct)} className="h-1.5 mt-2" />
-                    <div className="flex justify-between mt-1">
-                      <span className="text-[10px] text-muted-foreground">{Math.round(Number(pct))}% complete</span>
-                      {bossComplete && <span className="text-[10px] text-primary font-bold">🏆 Mastered</span>}
-                    </div>
-                    <p className="text-[10px] text-primary mt-1 font-medium">Click to explore →</p>
-                  </>
-                ) : (
-                  <p className="text-[10px] text-muted-foreground mt-1">🔒 Complete previous island to unlock</p>
-                )}
-              </div>
+              {fish}
             </motion.div>
-          );
-        })()}
+          ))}
+        </div>
+
+        {/* Cloud layer (fixed) */}
+        <div className="fixed top-16 inset-x-0 pointer-events-none z-10">
+          {["☁️", "☁️", "☁️", "⛅"].map((cloud, i) => (
+            <motion.div
+              key={`cloud-${i}`}
+              className="absolute"
+              style={{ top: i * 30, fontSize: 28 + i * 8, opacity: 0.25 - i * 0.04 }}
+              animate={{ x: ["-10vw", "110vw"] }}
+              transition={{ duration: 30 + i * 10, repeat: Infinity, ease: "linear", delay: i * 7 }}
+            >
+              {cloud}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Map content */}
+        <div className="relative z-20 pb-24 pt-8">
+          {/* Path SVG behind islands */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+            {islands.slice(0, -1).map((island, i) => {
+              const from = ISLAND_LAYOUT[i];
+              const to = ISLAND_LAYOUT[i + 1];
+              if (!from || !to) return null;
+              const completed = progressMap[island.id]?.boss_completed;
+
+              const y1 = from.y * 320 + 160;
+              const y2 = to.y * 320 + 160;
+              const x1Pct = from.x + 12;
+              const x2Pct = to.x + 12;
+
+              return (
+                <g key={i}>
+                  {/* Dashed or solid path */}
+                  <motion.line
+                    x1={`${x1Pct}%`} y1={y1}
+                    x2={`${x2Pct}%`} y2={y2}
+                    stroke={completed ? "rgba(250, 204, 21, 0.6)" : "rgba(255, 255, 255, 0.15)"}
+                    strokeWidth={completed ? 4 : 2}
+                    strokeDasharray={completed ? "0" : "12 8"}
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ delay: i * 0.2, duration: 0.8 }}
+                  />
+                  {/* Animated dots on completed paths */}
+                  {completed && (
+                    <motion.circle
+                      r={5}
+                      fill="#fbbf24"
+                      animate={{
+                        cx: [`${x1Pct}%`, `${x2Pct}%`],
+                        cy: [y1, y2],
+                      }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    />
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* Islands */}
+          {islands.map((island, i) => {
+            const layout = ISLAND_LAYOUT[i];
+            if (!layout) return null;
+            const unlocked = isIslandUnlocked(island, i);
+            const progress = progressMap[island.id];
+            const pct = progress?.completion_percentage || 0;
+            const bossComplete = progress?.boss_completed || false;
+            const isCurrent = i === currentIdx;
+            const isHovered = hoveredIdx === i;
+            const imgSrc = ISLAND_IMAGES[i];
+
+            return (
+              <motion.div
+                id={`island-${i}`}
+                key={island.id}
+                className="relative"
+                style={{
+                  marginLeft: `${layout.x}%`,
+                  marginTop: i === 0 ? 0 : -30,
+                  paddingBottom: 40,
+                }}
+                initial={{ opacity: 0, y: 40, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: i * 0.12, type: "spring", stiffness: 120 }}
+              >
+                {/* Current island indicator */}
+                {isCurrent && unlocked && (
+                  <motion.div
+                    className="absolute -top-6 left-1/2 -translate-x-1/2 z-30"
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <div className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold shadow-lg shadow-yellow-400/30 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> YOU ARE HERE
+                    </div>
+                    <div className="w-3 h-3 bg-yellow-400 rotate-45 mx-auto -mt-1.5" />
+                  </motion.div>
+                )}
+
+                {/* Island card */}
+                <motion.div
+                  className={`relative cursor-pointer select-none w-56 sm:w-64 mx-auto ${!unlocked ? "cursor-not-allowed" : ""}`}
+                  whileHover={unlocked ? { scale: 1.08, y: -8 } : {}}
+                  whileTap={unlocked ? { scale: 0.97 } : {}}
+                  onHoverStart={() => {
+                    setHoveredIdx(i);
+                    if (unlocked) soundRef.current.play("hover");
+                  }}
+                  onHoverEnd={() => setHoveredIdx(null)}
+                  onClick={() => handleIslandClick(island, i)}
+                >
+                  {/* Glow ring for current */}
+                  {isCurrent && unlocked && (
+                    <motion.div
+                      className="absolute inset-0 -m-4 rounded-3xl"
+                      style={{ boxShadow: "0 0 40px rgba(250, 204, 21, 0.3), 0 0 80px rgba(250, 204, 21, 0.1)" }}
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                  )}
+
+                  {/* Island image */}
+                  <div className="relative">
+                    <motion.img
+                      src={imgSrc}
+                      alt={island.name}
+                      className={`w-full h-auto drop-shadow-2xl transition-all duration-300 ${
+                        !unlocked ? "grayscale brightness-50 opacity-60" : "brightness-105"
+                      }`}
+                      animate={isCurrent ? { y: [0, -4, 0] } : {}}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                      draggable={false}
+                    />
+
+                    {/* Lock overlay */}
+                    {!unlocked && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.div
+                          className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center border-2 border-white/10"
+                          animate={{ scale: [1, 1.05, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <Lock className="w-8 h-8 text-white/60" />
+                        </motion.div>
+                      </div>
+                    )}
+
+                    {/* Completed badge */}
+                    {bossComplete && (
+                      <motion.div
+                        className="absolute -top-2 -right-2 w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg shadow-yellow-500/40 z-20"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 200 }}
+                      >
+                        <Trophy className="w-6 h-6 text-white" />
+                      </motion.div>
+                    )}
+
+                    {/* Boss ready badge */}
+                    {unlocked && !bossComplete && Number(pct) >= 80 && (
+                      <motion.div
+                        className="absolute -top-2 -right-2 z-20"
+                        animate={{ scale: [1, 1.15, 1], rotate: [0, -5, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/40">
+                          <Swords className="w-6 h-6 text-white" />
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Sparkle particles on hover */}
+                    <AnimatePresence>
+                      {isHovered && unlocked && (
+                        <>
+                          {[...Array(6)].map((_, si) => (
+                            <motion.div
+                              key={si}
+                              className="absolute text-yellow-300"
+                              style={{
+                                left: `${20 + Math.random() * 60}%`,
+                                top: `${20 + Math.random() * 60}%`,
+                                fontSize: 10 + Math.random() * 8,
+                              }}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{
+                                opacity: [0, 1, 0],
+                                scale: [0, 1.2, 0],
+                                y: [0, -20 - Math.random() * 20],
+                              }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.8, delay: si * 0.1 }}
+                            >
+                              ✨
+                            </motion.div>
+                          ))}
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Island info card */}
+                  <motion.div
+                    className={`relative -mt-4 mx-2 rounded-2xl px-4 py-3 text-center backdrop-blur-xl border shadow-xl z-10 ${
+                      bossComplete
+                        ? "bg-yellow-500/15 border-yellow-500/30"
+                        : unlocked
+                        ? "bg-white/10 border-white/20"
+                        : "bg-black/20 border-white/5"
+                    }`}
+                  >
+                    <p className="text-[10px] font-bold tracking-widest uppercase mb-0.5"
+                      style={{ color: bossComplete ? "#fbbf24" : unlocked ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.25)" }}
+                    >
+                      Island {island.order_index}
+                    </p>
+                    <h3 className={`font-bold font-display text-sm ${unlocked ? "text-white" : "text-white/30"}`}>
+                      {island.icon} {island.name}
+                    </h3>
+
+                    {unlocked && (
+                      <>
+                        <div className="mt-2 mx-auto max-w-[80%]">
+                          <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
+                            <motion.div
+                              className="h-full rounded-full"
+                              style={{
+                                background: bossComplete
+                                  ? "linear-gradient(90deg, #fbbf24, #f59e0b)"
+                                  : "linear-gradient(90deg, #10b981, #06b6d4)",
+                              }}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${pct}%` }}
+                              transition={{ delay: i * 0.1 + 0.3, duration: 0.8 }}
+                            />
+                          </div>
+                        </div>
+                        <p className="text-[10px] mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+                          {Math.round(Number(pct))}% complete
+                        </p>
+                        {bossComplete && (
+                          <p className="text-[10px] font-bold text-yellow-300 mt-0.5">🏆 Mastered!</p>
+                        )}
+                        {!bossComplete && Number(pct) >= 80 && (
+                          <p className="text-[10px] font-bold text-orange-300 mt-0.5 animate-pulse">⚔️ Boss Ready!</p>
+                        )}
+                      </>
+                    )}
+
+                    {!unlocked && (
+                      <p className="text-[9px] mt-1" style={{ color: "rgba(255,255,255,0.25)" }}>
+                        Complete previous island
+                      </p>
+                    )}
+                  </motion.div>
+                </motion.div>
+
+                {/* Sailing ship between current and next */}
+                {isCurrent && unlocked && i < islands.length - 1 && (
+                  <motion.div
+                    className="absolute text-3xl z-30"
+                    style={{ left: "55%", bottom: -20 }}
+                    animate={{
+                      y: [0, -8, 0],
+                      x: [0, 5, 0],
+                      rotate: [0, 3, -3, 0],
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    ⛵
+                  </motion.div>
+                )}
+              </motion.div>
+            );
+          })}
+
+          {/* Treasure at the end */}
+          {islands.length > 0 && (
+            <motion.div
+              className="text-center py-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+            >
+              <motion.div
+                className="text-5xl"
+                animate={{ y: [0, -10, 0], scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                👑
+              </motion.div>
+              <p className="text-white/40 text-sm mt-2 font-display">Coding Master Awaits</p>
+            </motion.div>
+          )}
+        </div>
       </div>
 
-      {/* Legend */}
-      <div className="bg-card/60 border-t border-border/30 px-4 py-3">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" /> Current</span>
-          <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-primary" /> Completed</span>
-          <span className="flex items-center gap-1.5"><Lock className="w-3 h-3" /> Locked</span>
-          <span className="flex items-center gap-1.5"><Swords className="w-3 h-3 text-orange-500" /> Boss Ready</span>
-          <span className="flex items-center gap-1.5"><Anchor className="w-3 h-3" /> {islands.length} Islands</span>
-          <span className="flex items-center gap-1.5">⛵ Sail to explore</span>
+      {/* Bottom legend */}
+      <div className="bg-black/20 backdrop-blur-xl border-t border-white/10 px-4 py-3 z-50">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-4 text-xs text-white/50">
+          <span className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse" /> Current
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2 className="w-3 h-3 text-yellow-400" /> Completed
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Lock className="w-3 h-3 text-white/30" /> Locked
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Swords className="w-3 h-3 text-orange-400" /> Boss Ready
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Anchor className="w-3 h-3" /> {islands.length} Islands
+          </span>
         </div>
       </div>
     </div>
