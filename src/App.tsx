@@ -14,6 +14,13 @@ import Contact from "./pages/Contact";
 import Docs from "./pages/Docs";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import PlatformLogin from "./pages/platform/PlatformLogin";
+import PlatformSignup from "./pages/platform/PlatformSignup";
+import PlatformDashboard from "./pages/platform/PlatformDashboard";
+import LearningPath from "./pages/platform/LearningPath";
+import LevelDetail from "./pages/platform/LevelDetail";
+import LessonPage from "./pages/platform/LessonPage";
+import AchievementsPage from "./pages/platform/AchievementsPage";
 
 const queryClient = new QueryClient();
 
