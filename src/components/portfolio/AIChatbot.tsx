@@ -163,16 +163,21 @@ const AIChatbot = () => {
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground text-sm mt-8 space-y-3">
                   <Bot className="w-10 h-10 mx-auto opacity-50" />
-                  <p>Hi! 👋 I'm Chadi's AI assistant.</p>
-                  <p className="text-xs">Ask me about his skills, projects, experience, or availability.</p>
+                  <p>Hi! 👋 I'm Chadi's AI coding tutor.</p>
+                  <p className="text-xs">Ask me coding questions, debug help, or about Chadi's work.</p>
                   <div className="flex flex-wrap gap-2 justify-center mt-4">
-                    {["What are Chadi's skills?", "Tell me about his experience", "Is he available for freelance?"].map((q) => (
+                    {[
+                      { icon: Code2, text: "Explain async/await" },
+                      { icon: Bug, text: "Help me debug my code" },
+                      { icon: Sparkles, text: "What are Chadi's skills?" },
+                    ].map((q) => (
                       <button
-                        key={q}
-                        onClick={() => { setInput(q); }}
-                        className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors"
+                        key={q.text}
+                        onClick={() => { setInput(q.text); }}
+                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-accent transition-colors"
                       >
-                        {q}
+                        <q.icon className="w-3 h-3" />
+                        {q.text}
                       </button>
                     ))}
                   </div>
