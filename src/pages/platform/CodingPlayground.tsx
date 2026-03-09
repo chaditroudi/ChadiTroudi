@@ -412,27 +412,26 @@ const CodingPlayground = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="flex gap-1.5 mt-3">
-              <button
-                onClick={requestHint}
-                disabled={tutorLoading}
-                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50"
-              >
-                <Lightbulb className="w-3 h-3" /> Hint
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              <button onClick={requestHint} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
+                <Lightbulb className="w-3 h-3" /> Hint {hintLevel}/4
               </button>
-              <button
-                onClick={requestCodeReview}
-                disabled={tutorLoading}
-                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50"
-              >
+              <button onClick={requestCodeReview} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
                 <BookOpen className="w-3 h-3" /> Review
               </button>
-              <button
-                onClick={requestDebugHelp}
-                disabled={tutorLoading}
-                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50"
-              >
+              <button onClick={requestDebugHelp} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
                 <Bug className="w-3 h-3" /> Debug
+              </button>
+              <button onClick={requestExplainConcept} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
+                <Brain className="w-3 h-3" /> Explain
+              </button>
+              <button onClick={requestStudyPlan} disabled={tutorLoading}
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-primary/10 transition-colors disabled:opacity-50">
+                <GraduationCap className="w-3 h-3" /> Study Plan
               </button>
             </div>
           </div>
