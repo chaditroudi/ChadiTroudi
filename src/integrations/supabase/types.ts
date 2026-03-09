@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      coding_challenges: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          difficulty: string
+          expected_output: string | null
+          hints: string[] | null
+          id: string
+          language: string
+          starter_code: string
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          difficulty?: string
+          expected_output?: string | null
+          hints?: string[] | null
+          id?: string
+          language?: string
+          starter_code?: string
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          difficulty?: string
+          expected_output?: string | null
+          hints?: string[] | null
+          id?: string
+          language?: string
+          starter_code?: string
+          title?: string
+        }
+        Relationships: []
+      }
       formation_registrations: {
         Row: {
           created_at: string
