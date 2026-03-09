@@ -201,7 +201,13 @@ const AIChatbot = () => {
                         : "bg-muted text-foreground rounded-bl-md"
                     }`}
                   >
-                    {msg.content}
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-sm dark:prose-invert max-w-none [&_pre]:bg-foreground/10 [&_pre]:rounded-lg [&_pre]:p-3 [&_pre]:text-xs [&_pre]:overflow-x-auto [&_code]:bg-foreground/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono [&_p]:m-0 [&_ul]:m-0 [&_ol]:m-0 [&_li]:m-0">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                   {msg.role === "user" && (
                     <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-1">
