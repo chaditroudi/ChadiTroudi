@@ -124,6 +124,9 @@ const PlatformDashboard = () => {
             <Link to="/platform/achievements" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
               <Trophy className="w-4 h-4" /> Achievements
             </Link>
+            <Link to="/platform/playground" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+              <Code2 className="w-4 h-4" /> Playground
+            </Link>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="w-4 h-4" />
             </Button>
