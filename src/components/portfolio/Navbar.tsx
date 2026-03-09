@@ -24,6 +24,7 @@ const Navbar = () => {
     { label: "Skills", href: "/skills" },
     { label: t.tutoring, href: "/tutoring" },
     { label: "Pricing", href: "/pricing" },
+    { label: "Docs", href: "/docs" },
     { label: t.blog, href: "/blog" },
     { label: t.contact, href: "/contact" },
   ];

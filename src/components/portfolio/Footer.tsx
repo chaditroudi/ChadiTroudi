@@ -15,7 +15,7 @@ const footerLinks = [
     links: [
       { label: "Tutoring", href: "/tutoring" },
       { label: "Pricing", href: "/pricing" },
-      { label: "AI Challenges", href: "/tutoring" },
+      { label: "How It Works", href: "/docs" },
     ],
   },
   {
