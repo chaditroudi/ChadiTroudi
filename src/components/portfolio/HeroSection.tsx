@@ -137,19 +137,19 @@ const HeroSection = () => {
 
             {/* CTAs */}
             <motion.div {...fadeUp(0.55)} className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 mb-6 sm:mb-8">
-              <a
-                href="#projects"
-                className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:opacity-90 transition-opacity"
+              <Link
+                to="/projects"
+                className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:opacity-90 transition-opacity hover:shadow-[0_8px_25px_-4px_hsl(152_68%_46%/0.4)]"
               >
                 {t.viewMyWork}
                 <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
-              </a>
-              <a
-                href="#contact"
+              </Link>
+              <Link
+                to="/contact"
                 className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:border-primary/30 hover:bg-accent/50 transition-all"
               >
                 {t.getInTouch}
-              </a>
+              </Link>
               <a
                 href="/ChadiTroudiCv.pdf"
                 target="_blank"
