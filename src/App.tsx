@@ -14,6 +14,13 @@ import Contact from "./pages/Contact";
 import Docs from "./pages/Docs";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import PlatformLogin from "./pages/platform/PlatformLogin";
+import PlatformSignup from "./pages/platform/PlatformSignup";
+import PlatformDashboard from "./pages/platform/PlatformDashboard";
+import LearningPath from "./pages/platform/LearningPath";
+import LevelDetail from "./pages/platform/LevelDetail";
+import LessonPage from "./pages/platform/LessonPage";
+import AchievementsPage from "./pages/platform/AchievementsPage";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +40,15 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/docs" element={<Docs />} />
+            <Route path="/docs" element={<Docs />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/platform/login" element={<PlatformLogin />} />
+            <Route path="/platform/signup" element={<PlatformSignup />} />
+            <Route path="/platform/dashboard" element={<PlatformDashboard />} />
+            <Route path="/platform/learn" element={<LearningPath />} />
+            <Route path="/platform/level/:levelId" element={<LevelDetail />} />
+            <Route path="/platform/lesson/:lessonId" element={<LessonPage />} />
+            <Route path="/platform/achievements" element={<AchievementsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
