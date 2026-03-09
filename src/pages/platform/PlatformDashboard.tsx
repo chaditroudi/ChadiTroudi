@@ -47,6 +47,7 @@ interface Level {
 
 const PlatformDashboard = () => {
   const { user, loading, requireAuth, signOut } = usePlatformAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [levels, setLevels] = useState<Level[]>([]);
   const [completedLessons, setCompletedLessons] = useState(0);
