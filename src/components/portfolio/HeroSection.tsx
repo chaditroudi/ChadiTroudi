@@ -1,6 +1,7 @@
 import { ArrowRight, Github, Linkedin, Mail, GraduationCap, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useLang } from "@/hooks/use-lang";
 import chadiLounge from "@/assets/chadi-lounge.jpeg";
 import websummitQatar from "@/assets/websummit-qatar.jpg";
@@ -136,19 +137,19 @@ const HeroSection = () => {
 
             {/* CTAs */}
             <motion.div {...fadeUp(0.55)} className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 mb-6 sm:mb-8">
-              <a
-                href="#projects"
-                className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:opacity-90 transition-opacity"
+              <Link
+                to="/projects"
+                className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:opacity-90 transition-opacity hover:shadow-[0_8px_25px_-4px_hsl(152_68%_46%/0.4)]"
               >
                 {t.viewMyWork}
                 <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
-              </a>
-              <a
-                href="#contact"
+              </Link>
+              <Link
+                to="/contact"
                 className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:border-primary/30 hover:bg-accent/50 transition-all"
               >
                 {t.getInTouch}
-              </a>
+              </Link>
               <a
                 href="/ChadiTroudiCv.pdf"
                 target="_blank"
@@ -162,16 +163,16 @@ const HeroSection = () => {
 
             {/* Bootcamp link */}
             <motion.div {...fadeUp(0.65)} className="flex justify-center lg:justify-start">
-              <a
-                href="#tutoring"
-                className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl border border-border/60 hover:border-primary/30 hover:bg-accent/30 transition-all"
+              <Link
+                to="/tutoring"
+                className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl border border-border/60 hover:border-primary/30 hover:bg-accent/30 transition-all gradient-border"
               >
                 <GraduationCap className="w-4 h-4 text-primary" />
                 <span className="text-sm text-foreground font-medium">{t.joinBootcamp}</span>
                 <span className="px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold uppercase">
                   {t.newBadge}
                 </span>
-              </a>
+              </Link>
             </motion.div>
 
             {/* Stats */}
