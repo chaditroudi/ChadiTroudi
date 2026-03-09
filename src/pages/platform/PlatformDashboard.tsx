@@ -10,7 +10,25 @@ import {
   Flame, Star, Trophy, LogOut, BookOpen, Map,
   Zap, Target, ChevronRight, Award, Sparkles
 } from "lucide-react";
-import coderAvatar from "@/assets/coder-avatar.png";
+import level1Avatar from "@/assets/avatars/level-1-recruit.png";
+import level2Avatar from "@/assets/avatars/level-2-junior.png";
+import level3Avatar from "@/assets/avatars/level-3-explorer.png";
+import level4Avatar from "@/assets/avatars/level-4-specialist.png";
+import level5Avatar from "@/assets/avatars/level-5-builder.png";
+import level6Avatar from "@/assets/avatars/level-6-ai-apprentice.png";
+import level7Avatar from "@/assets/avatars/level-7-ai-engineer.png";
+import level8Avatar from "@/assets/avatars/level-8-master.png";
+
+const levelAvatars: Record<number, string> = {
+  1: level1Avatar,
+  2: level2Avatar,
+  3: level3Avatar,
+  4: level4Avatar,
+  5: level5Avatar,
+  6: level6Avatar,
+  7: level7Avatar,
+  8: level8Avatar,
+};
 
 interface StudentProfile {
   display_name: string;
