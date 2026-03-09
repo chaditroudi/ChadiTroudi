@@ -5,11 +5,12 @@ import { usePlatformAuth } from "@/hooks/use-platform-auth";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Flame, Star, Trophy, LogOut, BookOpen, Map,
-  Zap, Target, ChevronRight, Award
+  Zap, Target, ChevronRight, Award, Sparkles
 } from "lucide-react";
+import coderAvatar from "@/assets/coder-avatar.png";
 
 interface StudentProfile {
   display_name: string;
