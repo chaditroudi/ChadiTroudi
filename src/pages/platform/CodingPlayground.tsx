@@ -83,11 +83,22 @@ const CodingPlayground = () => {
   const [tutorMessages, setTutorMessages] = useState<Message[]>([]);
   const [tutorInput, setTutorInput] = useState("");
   const [tutorLoading, setTutorLoading] = useState(false);
+  const [hintLevel, setHintLevel] = useState(1);
+  const [studentContext, setStudentContext] = useState<any>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const tutorScrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => { requireAuth(); }, [loading, user]);
 
+  // Load student context for adaptive AI
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("student_profiles").select("current_level, total_xp, experience_level, weak_topics, strong_topics, career_goal")
+      .eq("user_id", user.id).maybeSingle().then(({ data }) => {
+        if (data) setStudentContext(data);
+      });
+  }, [user]);
   useEffect(() => {
     if (tutorScrollRef.current) {
       tutorScrollRef.current.scrollTop = tutorScrollRef.current.scrollHeight;
