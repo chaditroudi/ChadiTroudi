@@ -282,7 +282,7 @@ const PlatformDashboard = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {levels.map((level) => {
               const isUnlocked = profile.total_xp >= level.required_xp;
-              const isCurrent = level.number === profile.current_level;
+              return (
                 <motion.div
                   whileHover={isUnlocked ? { scale: 1.08, y: -4 } : {}}
                   transition={{ type: "spring", stiffness: 300 }}
