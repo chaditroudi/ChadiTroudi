@@ -19,7 +19,8 @@ const Navbar = () => {
   });
 
   const navLinks = [
-    { label: t.about, href: "/" },
+    { label: "Home", href: "/" },
+    { label: t.about, href: "/about" },
     { label: t.projects, href: "/projects" },
     { label: "Skills", href: "/skills" },
     { label: t.tutoring, href: "/tutoring" },
