@@ -115,8 +115,11 @@ const PlatformDashboard = () => {
   if (loading || !profile) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading your dashboard...</div>
-      </div>
+<div className="flex items-center justify-center">
+  <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+    <div className="h-full w-1/2 bg-blue-500 animate-pulse"></div>
+  </div>
+</div>      </div>
     );
   }
 

@@ -35,9 +35,7 @@ const PlatformLogin = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel — Brand / Visual */}
       <div className="hidden lg:flex lg:w-[480px] xl:w-[520px] relative flex-col justify-between p-10 overflow-hidden">
-        {/* Background layers */}
         <div className="absolute inset-0 bg-[hsl(222,22%,5%)]" />
         <div
           className="absolute inset-0"
