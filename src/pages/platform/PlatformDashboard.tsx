@@ -58,25 +58,35 @@ const PlatformDashboard = () => {
     requireAuth();
   }, [loading, user]);
 
+  // Reset all state when user changes (e.g. sign out → sign in as different user)
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setProfile(null);
+      setLevels([]);
+      setCompletedLessons(0);
+      setTotalLessons(0);
+      setRecentAchievements([]);
+      return;
+    }
     loadDashboard();
-  }, [user]);
+  }, [user?.id]);
 
   const loadDashboard = async () => {
-    // Try to get profile, create if missing
+    if (!user) return;
+
+    // Always fetch the profile for the CURRENT authenticated user
     let { data: profileData, error: profileError } = await supabase
       .from("student_profiles")
       .select("*")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (!profileData && !profileError) {
-      // Profile doesn't exist — create it
-      const displayName = user!.user_metadata?.display_name || user!.email || "Coder";
+      // Profile doesn't exist — create it from auth user metadata
+      const displayName = user.user_metadata?.display_name || user.email || "Coder";
       const { data: newProfile } = await supabase
         .from("student_profiles")
-        .insert({ user_id: user!.id, display_name: displayName })
+        .insert({ user_id: user.id, display_name: displayName })
         .select()
         .single();
       profileData = newProfile;
@@ -90,9 +100,9 @@ const PlatformDashboard = () => {
 
     const [levelsRes, progressRes, lessonsRes, achievementsRes] = await Promise.all([
       supabase.from("platform_levels").select("*").order("number"),
-      supabase.from("user_lesson_progress").select("*").eq("user_id", user!.id).eq("completed", true),
+      supabase.from("user_lesson_progress").select("*").eq("user_id", user.id).eq("completed", true),
       supabase.from("platform_lessons").select("id"),
-      supabase.from("user_achievements").select("*, achievements(*)").eq("user_id", user!.id).order("earned_at", { ascending: false }).limit(5),
+      supabase.from("user_achievements").select("*, achievements(*)").eq("user_id", user.id).order("earned_at", { ascending: false }).limit(5),
     ]);
 
     if (profileData) setProfile(profileData as unknown as StudentProfile);

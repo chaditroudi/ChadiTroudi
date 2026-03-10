@@ -27,6 +27,7 @@ const Navbar = () => {
     { label: "Docs", href: "/docs" },
     { label: t.blog, href: "/blog" },
     { label: t.contact, href: "/contact" },
+    { label: "Platform", href: "/platform/login" },
   ];
 
   useEffect(() => {
