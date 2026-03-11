@@ -42,6 +42,9 @@ const StudentPortfolio = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyProject);
   const [saving, setSaving] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
+  const [bio, setBio] = useState("");
+  const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
     requireAuth();
