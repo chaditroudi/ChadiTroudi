@@ -65,6 +65,7 @@ const App = () => (
             <Route path="/platform/island/:islandId" element={<IslandDetail />} />
             <Route path="/platform/boss/:islandId" element={<BossChallenge />} />
             <Route path="/platform/portfolio" element={<StudentPortfolio />} />
+            <Route path="/portfolio/:userId" element={<PublicPortfolio />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
