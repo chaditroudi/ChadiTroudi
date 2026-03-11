@@ -51,8 +51,53 @@ const StudentPortfolio = () => {
   }, [loading, user]);
 
   useEffect(() => {
-    if (user) fetchProjects();
+    if (user) {
+      fetchProjects();
+      fetchSettings();
+    }
   }, [user]);
+
+  const fetchSettings = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("student_profiles")
+      .select("portfolio_public, portfolio_bio")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (data) {
+      setIsPublic((data as any).portfolio_public || false);
+      setBio((data as any).portfolio_bio || "");
+    }
+  };
+
+  const togglePublic = async (checked: boolean) => {
+    if (!user) return;
+    setSavingSettings(true);
+    await supabase
+      .from("student_profiles")
+      .update({ portfolio_public: checked } as any)
+      .eq("user_id", user.id);
+    setIsPublic(checked);
+    setSavingSettings(false);
+    toast.success(checked ? "Portfolio is now public!" : "Portfolio is now private");
+  };
+
+  const saveBio = async () => {
+    if (!user) return;
+    setSavingSettings(true);
+    await supabase
+      .from("student_profiles")
+      .update({ portfolio_bio: bio.trim() || null } as any)
+      .eq("user_id", user.id);
+    setSavingSettings(false);
+    toast.success("Bio saved!");
+  };
+
+  const copyLink = () => {
+    const link = `${window.location.origin}${window.location.pathname}#/portfolio/${user?.id}`;
+    navigator.clipboard.writeText(link);
+    toast.success("Portfolio link copied!");
+  };
 
   const fetchProjects = async () => {
     setLoadingProjects(true);
