@@ -63,6 +63,7 @@ const App = () => (
             <Route path="/platform/world-map" element={<WorldMap />} />
             <Route path="/platform/island/:islandId" element={<IslandDetail />} />
             <Route path="/platform/boss/:islandId" element={<BossChallenge />} />
+            <Route path="/platform/portfolio" element={<StudentPortfolio />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
