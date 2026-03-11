@@ -29,6 +29,7 @@ import WorldMap from "./pages/platform/WorldMap";
 import IslandDetail from "./pages/platform/IslandDetail";
 import BossChallenge from "./pages/platform/BossChallenge";
 import StudentPortfolio from "./pages/platform/StudentPortfolio";
+import PublicPortfolio from "./pages/platform/PublicPortfolio";
 
 const queryClient = new QueryClient();
 
