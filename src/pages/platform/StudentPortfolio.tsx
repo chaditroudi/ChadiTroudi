@@ -197,6 +197,48 @@ const StudentPortfolio = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
+        {/* Share Settings */}
+        <div className="mb-8 bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Globe className="w-5 h-5 text-indigo-400" />
+              <div>
+                <h2 className="font-semibold">Public Portfolio</h2>
+                <p className="text-sm text-white/50">Share your portfolio as a website</p>
+              </div>
+            </div>
+            <Switch checked={isPublic} onCheckedChange={togglePublic} disabled={savingSettings} />
+          </div>
+          {isPublic && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  readOnly
+                  value={`${window.location.origin}${window.location.pathname}#/portfolio/${user?.id}`}
+                  className="bg-white/5 border-white/10 text-white/70 text-sm"
+                />
+                <Button onClick={copyLink} size="sm" variant="outline" className="border-white/20 text-white shrink-0 gap-1.5">
+                  <Copy className="w-3.5 h-3.5" /> Copy
+                </Button>
+              </div>
+              <div>
+                <label className="text-sm text-white/60 mb-1 block">Portfolio Bio</label>
+                <div className="flex gap-2">
+                  <Textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="A short bio about yourself..."
+                    className="bg-white/5 border-white/10 text-white min-h-[60px]"
+                  />
+                  <Button onClick={saveBio} size="sm" disabled={savingSettings} className="bg-indigo-600 hover:bg-indigo-500 shrink-0 self-end">
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </div>
+
         {/* Form overlay */}
         <AnimatePresence>
           {showForm && (
