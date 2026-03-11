@@ -150,6 +150,9 @@ const PlatformDashboard = () => {
             <Link to="/platform/playground" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
               <Code2 className="w-4 h-4" /> Playground
             </Link>
+            <Link to="/platform/portfolio" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+              <FolderOpen className="w-4 h-4" /> Portfolio
+            </Link>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="w-4 h-4" />
             </Button>
