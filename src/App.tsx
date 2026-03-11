@@ -28,6 +28,7 @@ import CodingPlayground from "./pages/platform/CodingPlayground";
 import WorldMap from "./pages/platform/WorldMap";
 import IslandDetail from "./pages/platform/IslandDetail";
 import BossChallenge from "./pages/platform/BossChallenge";
+import StudentPortfolio from "./pages/platform/StudentPortfolio";
 
 const queryClient = new QueryClient();
 
