@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
   ArrowLeft, Plus, Github, ExternalLink, Pencil, Trash2,
-  X, Save, FolderOpen, Code2, Sparkles
+  X, Save, FolderOpen, Code2, Sparkles, Globe, Copy, Link as LinkIcon
 } from "lucide-react";
 
 interface Project {
@@ -40,14 +42,62 @@ const StudentPortfolio = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyProject);
   const [saving, setSaving] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
+  const [bio, setBio] = useState("");
+  const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
     requireAuth();
   }, [loading, user]);
 
   useEffect(() => {
-    if (user) fetchProjects();
+    if (user) {
+      fetchProjects();
+      fetchSettings();
+    }
   }, [user]);
+
+  const fetchSettings = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("student_profiles")
+      .select("portfolio_public, portfolio_bio")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (data) {
+      setIsPublic((data as any).portfolio_public || false);
+      setBio((data as any).portfolio_bio || "");
+    }
+  };
+
+  const togglePublic = async (checked: boolean) => {
+    if (!user) return;
+    setSavingSettings(true);
+    await supabase
+      .from("student_profiles")
+      .update({ portfolio_public: checked } as any)
+      .eq("user_id", user.id);
+    setIsPublic(checked);
+    setSavingSettings(false);
+    toast.success(checked ? "Portfolio is now public!" : "Portfolio is now private");
+  };
+
+  const saveBio = async () => {
+    if (!user) return;
+    setSavingSettings(true);
+    await supabase
+      .from("student_profiles")
+      .update({ portfolio_bio: bio.trim() || null } as any)
+      .eq("user_id", user.id);
+    setSavingSettings(false);
+    toast.success("Bio saved!");
+  };
+
+  const copyLink = () => {
+    const link = `${window.location.origin}${window.location.pathname}#/portfolio/${user?.id}`;
+    navigator.clipboard.writeText(link);
+    toast.success("Portfolio link copied!");
+  };
 
   const fetchProjects = async () => {
     setLoadingProjects(true);
@@ -147,6 +197,48 @@ const StudentPortfolio = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
+        {/* Share Settings */}
+        <div className="mb-8 bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Globe className="w-5 h-5 text-indigo-400" />
+              <div>
+                <h2 className="font-semibold">Public Portfolio</h2>
+                <p className="text-sm text-white/50">Share your portfolio as a website</p>
+              </div>
+            </div>
+            <Switch checked={isPublic} onCheckedChange={togglePublic} disabled={savingSettings} />
+          </div>
+          {isPublic && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  readOnly
+                  value={`${window.location.origin}${window.location.pathname}#/portfolio/${user?.id}`}
+                  className="bg-white/5 border-white/10 text-white/70 text-sm"
+                />
+                <Button onClick={copyLink} size="sm" variant="outline" className="border-white/20 text-white shrink-0 gap-1.5">
+                  <Copy className="w-3.5 h-3.5" /> Copy
+                </Button>
+              </div>
+              <div>
+                <label className="text-sm text-white/60 mb-1 block">Portfolio Bio</label>
+                <div className="flex gap-2">
+                  <Textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="A short bio about yourself..."
+                    className="bg-white/5 border-white/10 text-white min-h-[60px]"
+                  />
+                  <Button onClick={saveBio} size="sm" disabled={savingSettings} className="bg-indigo-600 hover:bg-indigo-500 shrink-0 self-end">
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </div>
+
         {/* Form overlay */}
         <AnimatePresence>
           {showForm && (

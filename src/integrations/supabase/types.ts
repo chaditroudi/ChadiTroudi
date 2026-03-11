@@ -368,6 +368,8 @@ export type Database = {
           last_active_at: string | null
           learning_style: string | null
           onboarding_completed: boolean
+          portfolio_bio: string | null
+          portfolio_public: boolean
           recommended_level: number | null
           streak_days: number
           strong_topics: string[] | null
@@ -390,6 +392,8 @@ export type Database = {
           last_active_at?: string | null
           learning_style?: string | null
           onboarding_completed?: boolean
+          portfolio_bio?: string | null
+          portfolio_public?: boolean
           recommended_level?: number | null
           streak_days?: number
           strong_topics?: string[] | null
@@ -412,6 +416,8 @@ export type Database = {
           last_active_at?: string | null
           learning_style?: string | null
           onboarding_completed?: boolean
+          portfolio_bio?: string | null
+          portfolio_public?: boolean
           recommended_level?: number | null
           streak_days?: number
           strong_topics?: string[] | null
