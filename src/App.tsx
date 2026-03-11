@@ -28,6 +28,7 @@ import CodingPlayground from "./pages/platform/CodingPlayground";
 import WorldMap from "./pages/platform/WorldMap";
 import IslandDetail from "./pages/platform/IslandDetail";
 import BossChallenge from "./pages/platform/BossChallenge";
+import StudentPortfolio from "./pages/platform/StudentPortfolio";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/platform/world-map" element={<WorldMap />} />
             <Route path="/platform/island/:islandId" element={<IslandDetail />} />
             <Route path="/platform/boss/:islandId" element={<BossChallenge />} />
+            <Route path="/platform/portfolio" element={<StudentPortfolio />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>

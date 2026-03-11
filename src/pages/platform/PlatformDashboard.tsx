@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Flame, Star, Trophy, LogOut, BookOpen, Map,
-  Zap, Target, ChevronRight, Award, Sparkles, Code2, MapPin
+  Zap, Target, ChevronRight, Award, Sparkles, Code2, MapPin, FolderOpen
 } from "lucide-react";
 import level1Avatar from "@/assets/avatars/level-1-recruit.png";
 import level2Avatar from "@/assets/avatars/level-2-junior.png";
@@ -149,6 +149,9 @@ const PlatformDashboard = () => {
             </Link>
             <Link to="/platform/playground" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
               <Code2 className="w-4 h-4" /> Playground
+            </Link>
+            <Link to="/platform/portfolio" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+              <FolderOpen className="w-4 h-4" /> Portfolio
             </Link>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="w-4 h-4" />
