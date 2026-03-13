@@ -53,6 +53,7 @@ const PlatformDashboard = () => {
   const [completedLessons, setCompletedLessons] = useState(0);
   const [totalLessons, setTotalLessons] = useState(0);
   const [recentAchievements, setRecentAchievements] = useState<any[]>([]);
+  const [projectCount, setProjectCount] = useState(0);
 
   useEffect(() => {
     requireAuth();
@@ -98,11 +99,12 @@ const PlatformDashboard = () => {
       return;
     }
 
-    const [levelsRes, progressRes, lessonsRes, achievementsRes] = await Promise.all([
+    const [levelsRes, progressRes, lessonsRes, achievementsRes, projectsRes] = await Promise.all([
       supabase.from("platform_levels").select("*").order("number"),
       supabase.from("user_lesson_progress").select("*").eq("user_id", user.id).eq("completed", true),
       supabase.from("platform_lessons").select("id"),
       supabase.from("user_achievements").select("*, achievements(*)").eq("user_id", user.id).order("earned_at", { ascending: false }).limit(5),
+      supabase.from("student_projects").select("id", { count: "exact", head: true }).eq("user_id", user.id),
     ]);
 
     if (profileData) setProfile(profileData as unknown as StudentProfile);
@@ -110,6 +112,7 @@ const PlatformDashboard = () => {
     if (progressRes.data) setCompletedLessons(progressRes.data.length);
     if (lessonsRes.data) setTotalLessons(lessonsRes.data.length);
     if (achievementsRes.data) setRecentAchievements(achievementsRes.data);
+    setProjectCount(projectsRes.count ?? 0);
   };
 
   if (loading || !profile) {
@@ -278,7 +281,7 @@ const PlatformDashboard = () => {
         </motion.div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
+        <div className="grid md:grid-cols-5 gap-4 mb-8">
           <Link to="/platform/world-map">
             <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 rounded-xl p-6 hover:border-emerald-500/40 transition-colors group">
               <MapPin className="w-8 h-8 text-emerald-500 mb-3" />
@@ -316,6 +319,16 @@ const PlatformDashboard = () => {
               <p className="text-sm text-muted-foreground mb-3">Code, run, and get AI feedback</p>
               <span className="text-blue-500 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                 Open Editor <ChevronRight className="w-4 h-4" />
+              </span>
+            </div>
+          </Link>
+          <Link to="/platform/portfolio">
+            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20 rounded-xl p-6 hover:border-purple-500/40 transition-colors group">
+              <FolderOpen className="w-8 h-8 text-purple-500 mb-3" />
+              <h3 className="font-bold text-foreground mb-1">My Projects</h3>
+              <p className="text-sm text-muted-foreground mb-3">{projectCount} project{projectCount !== 1 ? "s" : ""} built</p>
+              <span className="text-purple-500 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                Manage Projects <ChevronRight className="w-4 h-4" />
               </span>
             </div>
           </Link>
