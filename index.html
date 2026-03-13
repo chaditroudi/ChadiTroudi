@@ -54,10 +54,99 @@
   <meta name="twitter:title" content="Chadi Troudi | Full-Stack Engineer — Java, Spring Boot, React">
   <meta property="og:description" content="Chadi Troudi — Senior Full-Stack Engineer in Berlin. Specializing in Java Spring Boot, React, and microservices. Currently at Bonial Germany. Also offering a 10-day Java Bootcamp.">
   <meta name="twitter:description" content="Chadi Troudi — Senior Full-Stack Engineer in Berlin. Specializing in Java Spring Boot, React, and microservices. Currently at Bonial Germany. Also offering a 10-day Java Bootcamp.">
+  <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Avatar Motion Graphics Animations -->
+  <style>
+    /* Floating bob animation for testimonial avatar circles */
+    @keyframes avatarFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.08); }
+    }
+
+    @keyframes avatarPulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.3); }
+      50% { box-shadow: 0 0 14px 4px rgba(var(--primary-rgb, 99, 102, 241), 0.18); }
+    }
+
+    @keyframes avatarSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes avatarWobble {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-4deg) scale(1.04); }
+      75% { transform: rotate(4deg) scale(1.04); }
+    }
+
+    @keyframes avatarOrbit {
+      0% { transform: translateX(0) translateY(0); }
+      25% { transform: translateX(4px) translateY(-4px); }
+      50% { transform: translateX(0) translateY(-7px); }
+      75% { transform: translateX(-4px) translateY(-4px); }
+      100% { transform: translateX(0) translateY(0); }
+    }
+
+    @keyframes avatarRipple {
+      0% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.35); }
+      70% { box-shadow: 0 0 0 12px rgba(var(--primary-rgb, 99, 102, 241), 0); }
+      100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0); }
+    }
+
+    /* Testimonial avatar circles — float + glow */
+    .w-9.h-9.rounded-full.bg-primary\/10 {
+      animation: avatarFloat 3s ease-in-out infinite, avatarPulseGlow 3s ease-in-out infinite;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      will-change: transform;
+    }
+    /* Stagger siblings: 2nd card offset, 3rd more */
+    .w-9.h-9.rounded-full.bg-primary\/10:nth-child(1) { animation-delay: 0s; }
+
+    .w-9.h-9.rounded-full.bg-primary\/10:hover {
+      animation: avatarWobble 0.6s ease-in-out;
+      box-shadow: 0 0 18px 6px rgba(var(--primary-rgb, 99, 102, 241), 0.28);
+      cursor: pointer;
+    }
+
+    /* Tutor avatar image container — orbit motion */
+    img[alt="Coder Avatar"] {
+      animation: avatarOrbit 5s ease-in-out infinite;
+      will-change: transform;
+    }
+
+    /* Tutor avatar wrapper ripple on hover */
+    .w-24.h-24.rounded-2xl,
+    .w-28.h-28.rounded-2xl {
+      animation: avatarRipple 2.5s ease-in-out infinite;
+    }
+
+    /* Level avatar images — subtle breathe */
+    img[alt="Coder Avatar"]:hover {
+      animation: avatarWobble 0.5s ease-in-out forwards;
+    }
+
+    /* Testimonial cards — entrance slide-up stagger */
+    @keyframes cardSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Reduced motion: respect user preferences */
+    @media (prefers-reduced-motion: reduce) {
+      .w-9.h-9.rounded-full.bg-primary\/10,
+      img[alt="Coder Avatar"],
+      .w-24.h-24.rounded-2xl,
+      .w-28.h-28.rounded-2xl {
+        animation: none !important;
+      }
+    }
+  </style>
+
 </head>
 
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+
   </body>
 </html>

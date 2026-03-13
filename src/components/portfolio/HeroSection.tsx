@@ -102,7 +102,7 @@ const HeroSection = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
               <span className="text-primary font-mono text-xs tracking-widest uppercase">
-                {t.availableForHire}
+                {t.hero.availableForHire}
               </span>
             </motion.div>
 
@@ -129,10 +129,10 @@ const HeroSection = () => {
 
             {/* Description */}
             <motion.p {...fadeUp(0.45)} className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-8 sm:mb-10">
-              {t.heroDesc}{" "}
-              <span className="text-foreground font-medium">{t.javaSpring}</span>,{" "}
-              <span className="text-foreground font-medium">{t.react}</span>{t.andMicroservices}{" "}
-              <span className="text-foreground font-medium">{t.cleanArch}</span>.
+              {t.hero.desc}{" "}
+              <span className="text-foreground font-medium">{t.hero.javaSpring}</span>,{" "}
+              <span className="text-foreground font-medium">{t.hero.react}</span>{t.hero.andMicroservices}{" "}
+              <span className="text-foreground font-medium">{t.hero.cleanArch}</span>.
             </motion.p>
 
             {/* CTAs */}
@@ -141,14 +141,14 @@ const HeroSection = () => {
                 to="/projects"
                 className="group inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:opacity-90 transition-opacity hover:shadow-[0_8px_25px_-4px_hsl(152_68%_46%/0.4)]"
               >
-                {t.viewMyWork}
+                {t.hero.viewMyWork}
                 <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link
                 to="/contact"
                 className="inline-flex items-center gap-2 border border-border text-foreground font-medium text-xs sm:text-sm px-5 sm:px-7 py-3 sm:py-3.5 rounded-full hover:border-primary/30 hover:bg-accent/50 transition-all"
               >
-                {t.getInTouch}
+                {t.hero.getInTouch}
               </Link>
               <a
                 href="/ChadiTroudiCv.pdf"
@@ -168,9 +168,9 @@ const HeroSection = () => {
                 className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl border border-border/60 hover:border-primary/30 hover:bg-accent/30 transition-all gradient-border"
               >
                 <GraduationCap className="w-4 h-4 text-primary" />
-                <span className="text-sm text-foreground font-medium">{t.joinBootcamp}</span>
+                <span className="text-sm text-foreground font-medium">{t.hero.joinBootcamp}</span>
                 <span className="px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold uppercase">
-                  {t.newBadge}
+                  {t.hero.newBadge}
                 </span>
               </Link>
             </motion.div>
@@ -178,9 +178,9 @@ const HeroSection = () => {
             {/* Stats */}
             <motion.div {...fadeUp(0.75)} className="flex items-center justify-center lg:justify-start gap-5 sm:gap-8 mt-8 sm:mt-12">
               {[
-                { value: "5+", label: t.years },
-                { value: "6", label: t.companies },
-                { value: "10+", label: t.projectsCount },
+                { value: "5+", label: t.hero.years },
+                { value: "6", label: t.hero.companies },
+                { value: "10+", label: t.hero.projectsCount },
               ].map((stat, i) => (
                 <div key={stat.label} className="flex items-center gap-5 sm:gap-8">
                   <div>
@@ -241,7 +241,7 @@ const HeroSection = () => {
                 <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
                   <div>
                     <p className="text-foreground font-semibold">Chadi Troudi</p>
-                    <p className="text-muted-foreground text-sm">{t.seniorEngineer}</p>
+                    <p className="text-muted-foreground text-sm">{t.hero.seniorEngineer}</p>
                   </div>
                   <span className="text-xs font-mono text-muted-foreground bg-background/40 backdrop-blur-sm px-2 py-1 rounded-full">
                     {currentImage + 1}/{heroImages.length}
@@ -267,7 +267,7 @@ const HeroSection = () => {
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -bottom-4 left-2 sm:-left-6 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-card border border-border/60 shadow-lg"
               >
-                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{t.currentlyAt}</p>
+                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{t.hero.currentlyAt}</p>
                 <p className="text-sm font-semibold text-foreground">Bonial Germany 🇩🇪</p>
               </motion.div>
 

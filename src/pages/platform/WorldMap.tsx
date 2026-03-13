@@ -307,23 +307,17 @@ const WorldMap = () => {
     }
   }, [islands, progressMap]);
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading...</div>;
+  if (loading) return <div className="flex items-center justify-center py-20 text-muted-foreground">Loading...</div>;
 
   const currentIdx = getCurrentIslandIdx();
   const overallProgress = islands.length > 0 ? Math.round((completedCount / islands.length) * 100) : 0;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "linear-gradient(180deg, #0a4d8c 0%, #0e6fb5 20%, #1a90d0 40%, #2ba5d8 60%, #3dbce0 80%, #5ed4e8 100%)" }}>
+    <div className="h-full flex flex-col" style={{ background: "linear-gradient(180deg, #0a4d8c 0%, #0e6fb5 20%, #1a90d0 40%, #2ba5d8 60%, #3dbce0 80%, #5ed4e8 100%)" }}>
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link to="/platform/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1 text-white/80 hover:text-white hover:bg-white/10">
-                <ArrowLeft className="w-4 h-4" /> Dashboard
-              </Button>
-            </Link>
-            <div className="h-5 w-px bg-white/20" />
             <div className="flex items-center gap-2">
               <Compass className="w-5 h-5 text-yellow-300" />
               <span className="font-bold text-white font-display text-lg">🗺️ Adventure Map</span>

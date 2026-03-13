@@ -12,6 +12,7 @@ import bonialIncident from "@/assets/bonial-incident-call.jpeg";
 import bonialAws from "@/assets/bonial-aws-debugging.jpeg";
 import bonialOffice from "@/assets/bonial-office-meeting.jpeg";
 import { Camera, Building2 } from "lucide-react";
+import { useLang } from "@/hooks/use-lang";
 
 const conferenceHighlights = [
   { image: websummitStage, caption: "Presenting AI innovations at Web Summit Qatar 2025" },
@@ -30,6 +31,7 @@ const bonialHighlights = [
 ];
 
 const HighlightsSection = () => {
+  const { t } = useLang();
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="container mx-auto px-6 max-w-6xl">
@@ -38,10 +40,10 @@ const HighlightsSection = () => {
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/15 bg-primary/5 mb-4">
               <Camera size={12} className="text-primary" />
-              <span className="text-primary font-mono text-xs tracking-wider uppercase">Beyond the Code</span>
+              <span className="text-primary font-mono text-xs tracking-wider uppercase">{t.highlights.badge}</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-              Moments & <span className="text-gradient">Highlights</span>
+              {t.highlights.title}<span className="text-gradient">{t.highlights.titleHighlight}</span>
             </h2>
           </div>
         </AnimatedSection>

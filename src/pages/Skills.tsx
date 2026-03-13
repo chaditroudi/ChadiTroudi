@@ -2,17 +2,21 @@ import Layout from "@/components/portfolio/Layout";
 import PageHeader from "@/components/portfolio/PageHeader";
 import SkillsSection from "@/components/portfolio/SkillsSection";
 import ExperienceSection from "@/components/portfolio/ExperienceSection";
+import { useLang } from "@/hooks/use-lang";
 
-const Skills = () => (
-  <Layout>
-    <PageHeader
-      number="03"
-      title="Skills & Experience"
-      subtitle="5+ years of building full-stack applications across frontend, backend, and DevOps — with a deep focus on Java, React, and cloud infrastructure."
-    />
-    <SkillsSection />
-    <ExperienceSection />
-  </Layout>
-);
+const Skills = () => {
+  const { t } = useLang();
+  return (
+    <Layout>
+      <PageHeader
+        number="03"
+        title={t.pages.skillsTitle}
+        subtitle={t.pages.skillsSubtitle}
+      />
+      <SkillsSection />
+      <ExperienceSection />
+    </Layout>
+  );
+};
 
 export default Skills;

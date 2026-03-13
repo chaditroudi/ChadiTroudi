@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Trophy, Target, Rocket, ChevronRight } from "lucide-react";
+import { useLang } from "@/hooks/use-lang";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -18,6 +19,7 @@ const PlatformSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLang();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ const PlatformSignup = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Account created successfully!");
+      toast.success(t.auth.accountCreated);
       navigate("/platform/dashboard");
     }
     setLoading(false);
@@ -169,23 +171,23 @@ const PlatformSignup = () => {
 
           {/* Header */}
           <motion.div {...fadeUp(0.05)} className="mb-8">
-            <h1 className="text-2xl font-bold tracking-tight mb-2">Create your account</h1>
+            <h1 className="text-2xl font-bold tracking-tight mb-2">{t.auth.signUp}</h1>
             <p className="text-muted-foreground text-sm">
-              Get started for free. No credit card required.
+              {t.auth.signUpSubtitle}
             </p>
           </motion.div>
 
           {/* Form */}
           <motion.form {...fadeUp(0.1)} onSubmit={handleSignup} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Full name</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.auth.fullName}</label>
               <div className="relative">
                 <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="John Doe"
+                  placeholder={t.auth.namePlaceholder}
                   required
                   autoFocus
                   className="w-full rounded-lg bg-background border border-border pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -194,14 +196,14 @@ const PlatformSignup = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.auth.email}</label>
               <div className="relative">
                 <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder={t.auth.emailPlaceholder}
                   required
                   className="w-full rounded-lg bg-background border border-border pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
@@ -209,7 +211,7 @@ const PlatformSignup = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.auth.password}</label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input
@@ -265,7 +267,7 @@ const PlatformSignup = () => {
               to="/platform/login"
               className="w-full flex items-center justify-center gap-2 border border-border text-foreground text-sm font-medium py-2.5 rounded-lg hover:bg-accent/50 hover:border-primary/20 transition-all duration-200"
             >
-              Sign in to existing account
+              {t.auth.signInLink}
               <ChevronRight size={14} className="text-muted-foreground" />
             </Link>
           </motion.div>

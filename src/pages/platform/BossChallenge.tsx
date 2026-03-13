@@ -360,16 +360,16 @@ const BossChallenge = () => {
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
 
-  if (loading || !island) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading boss challenge...</div>;
+  if (loading || !island) return <div className="flex items-center justify-center py-20 text-muted-foreground">Loading boss challenge...</div>;
 
   const challenge = BOSS_CHALLENGES[island.order_index];
-  if (!challenge) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Boss challenge not found for this island.</div>;
+  if (!challenge) return <div className="flex items-center justify-center py-20 text-muted-foreground">Boss challenge not found for this island.</div>;
 
   const timePct = (timeLeft / challenge.timeLimit) * 100;
   const timeUrgent = timeLeft < 60;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-full bg-background">
       {/* Reward Overlay */}
       <AnimatePresence>
         {showReward && (
@@ -383,7 +383,7 @@ const BossChallenge = () => {
       </AnimatePresence>
 
       {/* Header */}
-      <header className="border-b border-orange-500/20 bg-gradient-to-r from-orange-500/5 to-red-500/5 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-orange-500/20 bg-gradient-to-r from-orange-500/5 to-red-500/5 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => navigate(`/platform/island/${islandId}`)} className="text-muted-foreground hover:text-foreground">

@@ -5,6 +5,7 @@ import { SectionHeading } from "./AboutSection";
 import AnimatedSection from "./AnimatedSection";
 import SubmitReviewForm from "./SubmitReviewForm";
 import { supabase } from "@/integrations/supabase/client";
+import { useLang } from "@/hooks/use-lang";
 
 interface Review {
   id: string;
@@ -117,7 +118,7 @@ const TestimonialsSection = () => {
       <div className="container mx-auto px-6 max-w-6xl relative z-10">
         <AnimatedSection>
           <div className="flex items-center justify-between mb-14">
-            <SectionHeading number="05" title="Client Reviews" />
+            <SectionHeading number="05" title={useLang().t.testimonials.title} />
             <div className="hidden md:flex items-center gap-4">
               <span className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Sparkles size={14} className="text-primary" />

@@ -3,6 +3,7 @@ import { GraduationCap, Building2 } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { useLang } from "@/hooks/use-lang";
 
 const experiences = [
   {
@@ -116,7 +117,7 @@ const ExperienceSection = () => {
       <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-4xl">
         <AnimatedSection>
-          <SectionHeading number="04" title="Experience" />
+          <SectionHeading number="04" title={useLang().t.experience.title} />
         </AnimatedSection>
 
         <div>

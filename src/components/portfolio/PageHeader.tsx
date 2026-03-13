@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft, Sparkles } from "lucide-react";
+import { useLang } from "@/hooks/use-lang";
 
 interface PageHeaderProps {
   title: string;
@@ -11,6 +12,7 @@ interface PageHeaderProps {
 
 const PageHeader = ({ title, subtitle, number, gradient }: PageHeaderProps) => {
   const location = useLocation();
+  const { t } = useLang();
 
   return (
     <section className="relative pt-28 pb-16 overflow-hidden">
@@ -39,7 +41,7 @@ const PageHeader = ({ title, subtitle, number, gradient }: PageHeaderProps) => {
             className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary text-sm transition-colors"
           >
             <ArrowLeft size={14} />
-            Home
+            {t.common.home}
           </Link>
           <span className="text-border">/</span>
           <span className="text-foreground text-sm font-medium">{title}</span>

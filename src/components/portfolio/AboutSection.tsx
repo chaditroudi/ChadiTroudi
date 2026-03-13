@@ -11,7 +11,7 @@ const AboutSection = () => {
       <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-6xl">
         <AnimatedSection>
-          <SectionHeading number="01" title={t.aboutTitle} />
+          <SectionHeading number="01" title={t.about.title} />
         </AnimatedSection>
 
         <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -51,12 +51,12 @@ const AboutSection = () => {
               </p>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  {t.aboutP1}{" "}
-                  <span className="text-foreground font-medium">Bonial Germany</span>{t.aboutP1b}
+                  {t.about.p1}{" "}
+                  <span className="text-foreground font-medium">Bonial Germany</span>{t.about.p1b}
                 </p>
                 <p>
-                  {t.aboutP2} <span className="text-foreground font-medium">Yanyi</span>{t.aboutP2b}{" "}
-                  <span className="text-foreground font-medium">Web Summit Qatar 2025</span>{t.aboutP2c}
+                  {t.about.p2} <span className="text-foreground font-medium">Yanyi</span>{t.about.p2b}{" "}
+                  <span className="text-foreground font-medium">Web Summit Qatar 2025</span>{t.about.p2c}
                 </p>
               </div>
 

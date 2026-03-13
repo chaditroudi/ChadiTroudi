@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Code2, Braces, Terminal, ChevronRight } from "lucide-react";
+import { useLang } from "@/hooks/use-lang";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -17,6 +18,7 @@ const PlatformLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLang();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ const PlatformLogin = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Welcome back!");
+      toast.success(t.auth.welcomeBack);
       navigate("/platform/dashboard");
     }
     setLoading(false);
@@ -88,12 +90,12 @@ const PlatformLogin = () => {
         <div className="relative z-10 flex-1 flex flex-col justify-center">
           <motion.div {...fadeUp(0.3)}>
             <h2 className="text-3xl xl:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
-              Level up your
+              {t.auth.levelUp}
               <br />
-              <span style={{ color: "hsl(152 68% 46%)" }}>engineering skills</span>
+              <span style={{ color: "hsl(152 68% 46%)" }}>{t.auth.engineeringSkills}</span>
             </h2>
             <p className="text-white/50 text-sm leading-relaxed max-w-xs mb-8">
-              Join the bootcamp platform with hands-on projects, real-world challenges, and expert mentorship.
+              {t.auth.joinPlatform}
             </p>
           </motion.div>
 
@@ -156,23 +158,23 @@ const PlatformLogin = () => {
 
           {/* Header */}
           <motion.div {...fadeUp(0.05)} className="mb-8">
-            <h1 className="text-2xl font-bold tracking-tight mb-2">Sign in</h1>
+            <h1 className="text-2xl font-bold tracking-tight mb-2">{t.auth.signIn}</h1>
             <p className="text-muted-foreground text-sm">
-              Welcome back! Enter your credentials to continue.
+              {t.auth.signInSubtitle}
             </p>
           </motion.div>
 
           {/* Form */}
           <motion.form {...fadeUp(0.1)} onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.auth.email}</label>
               <div className="relative">
                 <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder={t.auth.emailPlaceholder}
                   required
                   autoFocus
                   className="w-full rounded-lg bg-background border border-border pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -181,14 +183,14 @@ const PlatformLogin = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.auth.password}</label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t.auth.passwordPlaceholder}
                   required
                   className="w-full rounded-lg bg-background border border-border pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
@@ -236,7 +238,7 @@ const PlatformLogin = () => {
               to="/platform/signup"
               className="w-full flex items-center justify-center gap-2 border border-border text-foreground text-sm font-medium py-2.5 rounded-lg hover:bg-accent/50 hover:border-primary/20 transition-all duration-200"
             >
-              Create an account
+              {t.auth.signUpLink}
               <ChevronRight size={14} className="text-muted-foreground" />
             </Link>
           </motion.div>

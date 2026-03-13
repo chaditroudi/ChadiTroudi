@@ -3,6 +3,7 @@ import { SectionHeading } from "./AboutSection";
 import AnimatedSection from "./AnimatedSection";
 import { motion } from "framer-motion";
 import tenderflowImg from "@/assets/tenderflow-screenshot.png";
+import { useLang } from "@/hooks/use-lang";
 
 interface Project {
   title: string;
@@ -73,7 +74,7 @@ const ProjectsSection = () => {
       <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-6xl">
         <AnimatedSection>
-          <SectionHeading number="02" title="Featured Work" />
+          <SectionHeading number="02" title={useLang().t.projects.title} />
         </AnimatedSection>
 
         <div className="grid md:grid-cols-2 gap-5 mb-24">

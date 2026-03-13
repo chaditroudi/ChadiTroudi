@@ -2,17 +2,21 @@ import Layout from "@/components/portfolio/Layout";
 import PageHeader from "@/components/portfolio/PageHeader";
 import ContactSection from "@/components/portfolio/ContactSection";
 import TestimonialsSection from "@/components/portfolio/TestimonialsSection";
+import { useLang } from "@/hooks/use-lang";
 
-const Contact = () => (
-  <Layout>
-    <PageHeader
-      number="07"
-      title="Get In Touch"
-      subtitle="I'm always open to discussing new opportunities, challenging full-stack projects, and interesting collaborations."
-    />
-    <ContactSection />
-    <TestimonialsSection />
-  </Layout>
-);
+const Contact = () => {
+  const { t } = useLang();
+  return (
+    <Layout>
+      <PageHeader
+        number="07"
+        title={t.pages.contactTitle}
+        subtitle={t.pages.contactSubtitle}
+      />
+      <ContactSection />
+      <TestimonialsSection />
+    </Layout>
+  );
+};
 
 export default Contact;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlatformAuth } from "@/hooks/use-platform-auth";
@@ -65,8 +65,11 @@ const Onboarding = () => {
   const [learningStyle, setLearningStyle] = useState("");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    requireAuth();
+  }, [loading, user]);
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading...</div>;
-  requireAuth();
 
   const stepIndex = STEPS.indexOf(step);
   const progress = ((stepIndex + 1) / STEPS.length) * 100;

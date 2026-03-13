@@ -4,20 +4,22 @@ import { Github, Linkedin, Mail, Send, User, MessageSquare, ArrowRight } from "l
 import AnimatedSection from "./AnimatedSection";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { useLang } from "@/hooks/use-lang";
 
 const EMAIL = "chadi.troudi@example.com";
 
 const ContactSection = () => {
+  const { t } = useLang();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!form.name.trim()) e.name = "Name is required";
-    if (!form.email.trim()) e.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Invalid email";
-    if (!form.message.trim()) e.message = "Message is required";
+    if (!form.name.trim()) e.name = t.contact.nameRequired;
+    if (!form.email.trim()) e.email = t.contact.emailRequired;
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = t.contact.emailInvalid;
+    if (!form.message.trim()) e.message = t.contact.messageRequired;
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -33,8 +35,8 @@ const ContactSection = () => {
     window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
 
     toast({
-      title: "Opening your email client…",
-      description: "Your message details have been pre-filled.",
+      title: t.contact.toastTitle,
+      description: t.contact.toastDesc,
     });
 
     setForm({ name: "", email: "", subject: "", message: "" });
@@ -64,7 +66,7 @@ const ContactSection = () => {
 
       <div className="container mx-auto px-6 max-w-5xl relative z-10">
         <AnimatedSection>
-          <SectionHeading number="06" title="Get In Touch" />
+          <SectionHeading number="06" title={t.contact.title} />
         </AnimatedSection>
 
         <div className="grid lg:grid-cols-[1fr_1.2fr] gap-14 items-start">
@@ -72,12 +74,11 @@ const ContactSection = () => {
           <AnimatedSection delay={0.1}>
             <div className="space-y-6">
               <p className="text-3xl md:text-4xl font-bold leading-tight tracking-tight">
-                Let's build something{" "}
-                <span className="text-gradient">together</span>.
+                {t.contact.greeting}{" "}
+                <span className="text-gradient">{t.contact.greetingHighlight}</span>.
               </p>
               <p className="text-muted-foreground text-lg leading-relaxed">
-                I'm open to new opportunities, challenging full-stack projects,
-                and interesting collaborations. Drop me a line.
+                {t.contact.desc}
               </p>
 
               <div className="flex items-center gap-3 pt-4">
@@ -112,7 +113,7 @@ const ContactSection = () => {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                    <User size={13} className="text-primary" /> Name
+                    <User size={13} className="text-primary" /> {t.contact.name}
                   </label>
                   <input
                     id="name"
@@ -120,7 +121,7 @@ const ContactSection = () => {
                     maxLength={100}
                     value={form.name}
                     onChange={(e) => update("name", e.target.value)}
-                    placeholder="Your name"
+                    placeholder={t.contact.namePlaceholder}
                     className={inputClass(!!errors.name)}
                   />
                   {errors.name && <p className="text-destructive text-xs mt-1.5">{errors.name}</p>}
@@ -128,7 +129,7 @@ const ContactSection = () => {
 
                 <div>
                   <label htmlFor="email" className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                    <Mail size={13} className="text-primary" /> Email
+                    <Mail size={13} className="text-primary" /> {t.contact.email}
                   </label>
                   <input
                     id="email"
@@ -136,7 +137,7 @@ const ContactSection = () => {
                     maxLength={255}
                     value={form.email}
                     onChange={(e) => update("email", e.target.value)}
-                    placeholder="you@example.com"
+                    placeholder={t.contact.emailPlaceholder}
                     className={inputClass(!!errors.email)}
                   />
                   {errors.email && <p className="text-destructive text-xs mt-1.5">{errors.email}</p>}
@@ -145,8 +146,8 @@ const ContactSection = () => {
 
               <div>
                 <label htmlFor="subject" className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                  <MessageSquare size={13} className="text-primary" /> Subject
-                  <span className="text-muted-foreground text-xs">(optional)</span>
+                  <MessageSquare size={13} className="text-primary" /> {t.contact.subject}
+                  <span className="text-muted-foreground text-xs">{t.contact.optional}</span>
                 </label>
                 <input
                   id="subject"
@@ -154,14 +155,14 @@ const ContactSection = () => {
                   maxLength={200}
                   value={form.subject}
                   onChange={(e) => update("subject", e.target.value)}
-                  placeholder="Project inquiry"
+                  placeholder={t.contact.subjectPlaceholder}
                   className={inputClass(false)}
                 />
               </div>
 
               <div>
                 <label htmlFor="message" className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                  <Send size={13} className="text-primary" /> Message
+                  <Send size={13} className="text-primary" /> {t.contact.message}
                 </label>
                 <textarea
                   id="message"
@@ -169,7 +170,7 @@ const ContactSection = () => {
                   maxLength={1000}
                   value={form.message}
                   onChange={(e) => update("message", e.target.value)}
-                  placeholder="Tell me about your project…"
+                  placeholder={t.contact.messagePlaceholder}
                   className={`${inputClass(!!errors.message)} resize-none`}
                 />
                 {errors.message && <p className="text-destructive text-xs mt-1.5">{errors.message}</p>}
@@ -181,7 +182,7 @@ const ContactSection = () => {
                 whileTap={{ scale: 0.99 }}
                 className="w-full inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground font-semibold px-8 py-4 rounded-xl hover:shadow-[0_8px_30px_-4px_hsl(152_68%_46%/0.4)] transition-all duration-300"
               >
-                Send Message
+                {t.contact.send}
                 <ArrowRight size={16} />
               </motion.button>
             </form>

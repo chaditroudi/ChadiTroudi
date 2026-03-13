@@ -1,34 +1,38 @@
 import { Github, Linkedin, Mail, ArrowUpRight, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLang } from "@/hooks/use-lang";
 
-const footerLinks = [
-  {
-    title: "Explore",
-    links: [
-      { label: "Projects", href: "/projects" },
-      { label: "Skills", href: "/skills" },
-      { label: "Blog", href: "/blog" },
-    ],
-  },
-  {
-    title: "Learn",
-    links: [
-      { label: "Tutoring", href: "/tutoring" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "How It Works", href: "/docs" },
-    ],
-  },
-  {
-    title: "Connect",
-    links: [
-      { label: "Contact", href: "/contact" },
-      { label: "LinkedIn", href: "https://www.linkedin.com/in/chaditroudi", external: true },
-      { label: "GitHub", href: "https://github.com/chaditroudi", external: true },
-    ],
-  },
-];
+const Footer = () => {
+  const { t } = useLang();
 
-const Footer = () => (
+  const footerLinks = [
+    {
+      title: t.footer.explore,
+      links: [
+        { label: t.nav.projects, href: "/projects" },
+        { label: t.nav.skills, href: "/skills" },
+        { label: t.nav.blog, href: "/blog" },
+      ],
+    },
+    {
+      title: t.footer.learn,
+      links: [
+        { label: t.nav.tutoring, href: "/tutoring" },
+        { label: t.nav.pricing, href: "/pricing" },
+        { label: t.footer.howItWorks, href: "/docs" },
+      ],
+    },
+    {
+      title: t.footer.connect,
+      links: [
+        { label: t.nav.contact, href: "/contact" },
+        { label: "LinkedIn", href: "https://www.linkedin.com/in/chaditroudi", external: true },
+        { label: "GitHub", href: "https://github.com/chaditroudi", external: true },
+      ],
+    },
+  ];
+
+  return (
   <footer className="relative border-t border-border/50">
     {/* Gradient accent */}
     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
@@ -42,7 +46,7 @@ const Footer = () => (
             <span className="text-primary">.</span>
           </Link>
           <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mb-6">
-            Full-Stack Engineer building scalable web applications with Java, React, and cloud technologies.
+            {t.footer.desc}
           </p>
           <div className="flex items-center gap-2">
             {[
@@ -103,8 +107,8 @@ const Footer = () => (
       {/* Bottom bar */}
       <div className="mt-14 pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-muted-foreground text-xs font-mono flex items-center gap-1">
-          © {new Date().getFullYear()} Chadi Troudi. Built with{" "}
-          <Heart size={10} className="text-primary fill-primary" /> in Tunisia.
+          © {new Date().getFullYear()} Chadi Troudi. {t.footer.builtWith}{" "}
+          <Heart size={10} className="text-primary fill-primary" /> {t.footer.inTunisia}
         </p>
         <div className="flex items-center gap-4">
           <a
@@ -122,6 +126,7 @@ const Footer = () => (
       </div>
     </div>
   </footer>
-);
+  );
+};
 
 export default Footer;

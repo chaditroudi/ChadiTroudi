@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Menu, X, Download, Sun, Moon, MessageSquare } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, Download, Sun, Moon, MessageSquare, Globe, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { useLang } from "@/hooks/use-lang";
+import { useLang, LANGS, LANG_META } from "@/hooks/use-lang";
 
 const Navbar = () => {
   const { lang, setLang, t } = useLang();
@@ -19,16 +19,16 @@ const Navbar = () => {
   });
 
   const navLinks = [
-    { label: "Home", href: "/" },
-    { label: t.about, href: "/about" },
-    { label: t.projects, href: "/projects" },
-    { label: "Skills", href: "/skills" },
-    { label: t.tutoring, href: "/tutoring" },
-    { label: "Pricing", href: "/pricing" },
-    { label: "Docs", href: "/docs" },
-    { label: t.blog, href: "/blog" },
-    { label: t.contact, href: "/contact" },
-    { label: "Platform", href: "/platform/login" },
+    { label: t.nav.home, href: "/" },
+    { label: t.nav.about, href: "/about" },
+    { label: t.nav.projects, href: "/projects" },
+    { label: t.nav.skills, href: "/skills" },
+    { label: t.nav.tutoring, href: "/tutoring" },
+    { label: t.nav.pricing, href: "/pricing" },
+    { label: t.nav.docs, href: "/docs" },
+    { label: t.nav.blog, href: "/blog" },
+    { label: t.nav.contact, href: "/contact" },
+    { label: t.nav.platform, href: "/platform/login" },
   ];
 
   useEffect(() => {
@@ -48,7 +48,18 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggleLang = () => setLang(lang === "en" ? "tn" : "en");
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const isActive = (href: string) => location.pathname === href;
 
@@ -97,14 +108,47 @@ const Navbar = () => {
 
         {/* Right actions */}
         <div className="hidden md:flex items-center gap-1">
-          <button
-            onClick={toggleLang}
-            className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all"
-            aria-label="Toggle language"
-            title={lang === "en" ? "بدّل للدارجة التونسية" : "Switch to English"}
-          >
-            <span className="text-xs font-bold">{lang === "en" ? "🇹🇳" : "🇬🇧"}</span>
-          </button>
+          {/* Language dropdown */}
+          <div ref={langRef} className="relative">
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="h-8 px-2 rounded-md flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all"
+              aria-label={t.nav.toggleLang}
+            >
+              <Globe size={14} />
+              <span className="text-xs font-semibold">{LANG_META[lang].flag}</span>
+              <ChevronDown size={12} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
+            </button>
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full right-0 mt-1 w-44 bg-background/95 backdrop-blur-xl border border-border/60 rounded-lg shadow-lg overflow-hidden z-50"
+                >
+                  {LANGS.map((l) => (
+                    <button
+                      key={l}
+                      onClick={() => { setLang(l); setLangOpen(false); }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-colors ${
+                        l === lang
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                      }`}
+                    >
+                      <span className="text-base">{LANG_META[l].flag}</span>
+                      <span>{LANG_META[l].label}</span>
+                      {l === lang && (
+                        <span className="ml-auto text-primary text-xs">✓</span>
+                      )}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <button
             onClick={() => setIsDark(!isDark)}
@@ -131,19 +175,50 @@ const Navbar = () => {
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold bg-primary text-primary-foreground px-4 py-1.5 rounded-md hover:opacity-90 transition-opacity ml-1"
           >
             <Download size={13} />
-            {t.resume}
+            {t.nav.resume}
           </a>
         </div>
 
         {/* Mobile actions */}
         <div className="flex items-center gap-2 md:hidden">
-          <button
-            onClick={toggleLang}
-            className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground"
-            aria-label="Toggle language"
-          >
-            <span className="text-xs">{lang === "en" ? "🇹🇳" : "🇬🇧"}</span>
-          </button>
+          <div className="relative" ref={langRef}>
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground"
+              aria-label={t.nav.toggleLang}
+            >
+              <Globe size={16} />
+            </button>
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full right-0 mt-1 w-44 bg-background/95 backdrop-blur-xl border border-border/60 rounded-lg shadow-lg overflow-hidden z-50"
+                >
+                  {LANGS.map((l) => (
+                    <button
+                      key={l}
+                      onClick={() => { setLang(l); setLangOpen(false); }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-colors ${
+                        l === lang
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                      }`}
+                    >
+                      <span className="text-base">{LANG_META[l].flag}</span>
+                      <span>{LANG_META[l].label}</span>
+                      {l === lang && (
+                        <span className="ml-auto text-primary text-xs">✓</span>
+                      )}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           <button
             onClick={() => setIsDark(!isDark)}
             className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground"
@@ -201,7 +276,7 @@ const Navbar = () => {
                   className="inline-flex items-center gap-2 text-sm font-semibold bg-primary text-primary-foreground px-5 py-2.5 rounded-md"
                 >
                   <Download size={14} />
-                  {t.resume}
+                  {t.nav.resume}
                 </a>
               </motion.li>
             </ul>

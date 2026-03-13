@@ -1,16 +1,20 @@
 import Layout from "@/components/portfolio/Layout";
 import PageHeader from "@/components/portfolio/PageHeader";
 import ProjectsSection from "@/components/portfolio/ProjectsSection";
+import { useLang } from "@/hooks/use-lang";
 
-const Projects = () => (
-  <Layout>
-    <PageHeader
-      number="02"
-      title="Featured Work"
-      subtitle="A curated selection of projects I've built — from AI-powered platforms to enterprise-scale retail systems, each solving real-world problems."
-    />
-    <ProjectsSection />
-  </Layout>
-);
+const Projects = () => {
+  const { t } = useLang();
+  return (
+    <Layout>
+      <PageHeader
+        number="02"
+        title={t.pages.projectsTitle}
+        subtitle={t.pages.projectsSubtitle}
+      />
+      <ProjectsSection />
+    </Layout>
+  );
+};
 
 export default Projects;

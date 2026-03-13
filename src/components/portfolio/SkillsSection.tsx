@@ -3,45 +3,7 @@ import AnimatedSection from "./AnimatedSection";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Monitor, Server, Settings } from "lucide-react";
-
-const skillCategories = [
-  {
-    category: "Frontend",
-    icon: <Monitor size={18} />,
-    color: "from-primary to-accent-foreground",
-    skills: [
-      { name: "React & TypeScript", level: 95 },
-      { name: "Angular", level: 80 },
-      { name: "Tailwind CSS", level: 90 },
-      { name: "HTML / CSS / JS", level: 95 },
-      { name: "Redux / Zustand", level: 82 },
-    ],
-  },
-  {
-    category: "Backend",
-    icon: <Server size={18} />,
-    color: "from-chart-2 to-chart-3",
-    skills: [
-      { name: "Java Spring Boot", level: 92 },
-      { name: "Node.js / NestJS", level: 85 },
-      { name: "PostgreSQL", level: 88 },
-      { name: "MongoDB", level: 82 },
-      { name: "REST & GraphQL APIs", level: 90 },
-    ],
-  },
-  {
-    category: "DevOps & Tools",
-    icon: <Settings size={18} />,
-    color: "from-chart-4 to-chart-1",
-    skills: [
-      { name: "Git / GitHub Actions", level: 93 },
-      { name: "Docker", level: 85 },
-      { name: "AWS (S3, EC2, Lambda)", level: 78 },
-      { name: "CI/CD (Jenkins)", level: 85 },
-      { name: "Odoo ERP", level: 75 },
-    ],
-  },
-];
+import { useLang } from "@/hooks/use-lang";
 
 const SkillBar = ({ name, level, delay }: { name: string; level: number; delay: number }) => {
   const ref = useRef(null);
@@ -73,13 +35,54 @@ const SkillBar = ({ name, level, delay }: { name: string; level: number; delay: 
 };
 
 const SkillsSection = () => {
+  const { t } = useLang();
+
+  const skillCategories = [
+    {
+      category: t.skills.frontend,
+      icon: <Monitor size={18} />,
+      color: "from-primary to-accent-foreground",
+      skills: [
+        { name: "React & TypeScript", level: 95 },
+        { name: "Angular", level: 80 },
+        { name: "Tailwind CSS", level: 90 },
+        { name: "HTML / CSS / JS", level: 95 },
+        { name: "Redux / Zustand", level: 82 },
+      ],
+    },
+    {
+      category: t.skills.backend,
+      icon: <Server size={18} />,
+      color: "from-chart-2 to-chart-3",
+      skills: [
+        { name: "Java Spring Boot", level: 92 },
+        { name: "Node.js / NestJS", level: 85 },
+        { name: "PostgreSQL", level: 88 },
+        { name: "MongoDB", level: 82 },
+        { name: "REST & GraphQL APIs", level: 90 },
+      ],
+    },
+    {
+      category: t.skills.devops,
+      icon: <Settings size={18} />,
+      color: "from-chart-4 to-chart-1",
+      skills: [
+        { name: "Git / GitHub Actions", level: 93 },
+        { name: "Docker", level: 85 },
+        { name: "AWS (S3, EC2, Lambda)", level: 78 },
+        { name: "CI/CD (Jenkins)", level: 85 },
+        { name: "Odoo ERP", level: 75 },
+      ],
+    },
+  ];
+
   return (
     <section id="skills" className="py-32 relative">
       <div className="absolute inset-0 dot-pattern pointer-events-none opacity-50" />
       <div className="section-divider mb-32" />
       <div className="container mx-auto px-6 max-w-5xl relative z-10">
         <AnimatedSection>
-          <SectionHeading number="03" title="Skills & Expertise" />
+          <SectionHeading number="03" title={t.skills.title} />
         </AnimatedSection>
 
         <div className="grid md:grid-cols-3 gap-6">

@@ -80,6 +80,7 @@ const IslandDetail = () => {
   const [islandProgress, setIslandProgress] = useState<any>(null);
   const [loadError, setLoadError] = useState(false);
   const [hoveredLesson, setHoveredLesson] = useState<string | null>(null);
+  const [nextIsland, setNextIsland] = useState<Island | null>(null);
 
   useEffect(() => { requireAuth(); }, [loading, user]);
 
@@ -109,6 +110,15 @@ const IslandDetail = () => {
     if (islandProgressRes.data) setIslandProgress(islandProgressRes.data);
     if (levelsRes.data) setLevels(levelsRes.data as unknown as Level[]);
 
+    // Find the next island
+    const { data: nextIslandData } = await supabase
+      .from("islands")
+      .select("*")
+      .gt("order_index", (islandRes.data as any).order_index)
+      .order("order_index")
+      .limit(1);
+    if (nextIslandData?.[0]) setNextIsland(nextIslandData[0] as unknown as Island);
+
     if (levelsRes.data && levelsRes.data.length > 0) {
       const levelIds = levelsRes.data.map((l: any) => l.id);
       const { data: lessonsData } = await supabase
@@ -137,14 +147,14 @@ const IslandDetail = () => {
   const islandImg = island ? ISLAND_IMAGES[(island.order_index - 1) % ISLAND_IMAGES.length] : "";
 
   if (loadError) return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center text-muted-foreground gap-4">
+    <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-4">
       <p>Island not found.</p>
       <Link to="/platform/world-map"><Button variant="outline">Back to World Map</Button></Link>
     </div>
   );
 
   if (loading || !island) return (
-    <div className={`min-h-screen bg-gradient-to-b ${ISLAND_THEMES[1].gradient} flex items-center justify-center`}>
+    <div className={`flex items-center justify-center py-20 bg-gradient-to-b ${ISLAND_THEMES[1].gradient}`}>
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -156,9 +166,9 @@ const IslandDetail = () => {
   );
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b ${theme.gradient} relative overflow-hidden`}>
+    <div className={`h-full bg-gradient-to-b ${theme.gradient} relative overflow-hidden`}>
       {/* Animated background particles */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         {/* Floating theme particles */}
         {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
@@ -225,7 +235,7 @@ const IslandDetail = () => {
       </div>
 
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-30">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
           <Link to="/platform/world-map" className="text-white/60 hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
@@ -399,6 +409,14 @@ const IslandDetail = () => {
                 className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white gap-1.5 shadow-lg shadow-orange-500/30"
               >
                 <Swords className="w-4 h-4" /> Fight Boss
+              </Button>
+            )}
+            {bossCompleted && nextIsland && (
+              <Button
+                onClick={() => navigate(`/platform/island/${nextIsland.id}`)}
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white gap-1.5 shadow-lg shadow-emerald-500/30"
+              >
+                {nextIsland.icon} Next Island
               </Button>
             )}
           </div>
