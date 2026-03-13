@@ -368,6 +368,8 @@ export type Database = {
           last_active_at: string | null
           learning_style: string | null
           onboarding_completed: boolean
+          portfolio_bio: string | null
+          portfolio_public: boolean
           recommended_level: number | null
           streak_days: number
           strong_topics: string[] | null
@@ -390,6 +392,8 @@ export type Database = {
           last_active_at?: string | null
           learning_style?: string | null
           onboarding_completed?: boolean
+          portfolio_bio?: string | null
+          portfolio_public?: boolean
           recommended_level?: number | null
           streak_days?: number
           strong_topics?: string[] | null
@@ -412,6 +416,8 @@ export type Database = {
           last_active_at?: string | null
           learning_style?: string | null
           onboarding_completed?: boolean
+          portfolio_bio?: string | null
+          portfolio_public?: boolean
           recommended_level?: number | null
           streak_days?: number
           strong_topics?: string[] | null
@@ -419,6 +425,45 @@ export type Database = {
           user_id?: string
           weak_topics?: string[] | null
           weekly_hours?: number | null
+        }
+        Relationships: []
+      }
+      student_projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          github_url: string | null
+          id: string
+          live_url: string | null
+          screenshot_url: string | null
+          technologies: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          github_url?: string | null
+          id?: string
+          live_url?: string | null
+          screenshot_url?: string | null
+          technologies?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          github_url?: string | null
+          id?: string
+          live_url?: string | null
+          screenshot_url?: string | null
+          technologies?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

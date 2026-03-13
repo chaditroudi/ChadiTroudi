@@ -302,7 +302,7 @@ const PlatformDashboard = () => {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {levels.map((level) => {
-            const isUnlocked = profile.total_xp >= level.required_xp || profile.current_level >= level.number;
+            const isUnlocked = profile.total_xp >= level.required_xp;
             const isCurrent = level.number === profile.current_level;
             return (
               <motion.div
