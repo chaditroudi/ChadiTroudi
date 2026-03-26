@@ -37,10 +37,9 @@ const StatsCounter = () => {
   const { t } = useLang();
 
   const stats = [
-    { value: 5, suffix: "+", label: t.stats.yearsExp },
+    { value: 4, suffix: "+", label: t.stats.yearsExp },
     { value: 30, suffix: "+", label: t.stats.projectsDelivered },
     { value: 6, suffix: "", label: t.stats.industriesServed },
-    { value: 99, suffix: "%", label: t.stats.clientSatisfaction },
   ];
 
   return (

@@ -43,8 +43,7 @@ import CourseLessonViewer from "./pages/platform/CourseLessonViewer";
 import ResourceLibrary from "./pages/platform/ResourceLibrary";
 import { AIAssistantProvider } from "@/features/ai-assistant/hooks/use-ai-assistant";
 import { SubscriptionProvider } from "@/hooks/use-subscription";
-// TODO: Re-enable FeatureGate wrappers on premium routes when ready for production
-// import { FeatureGate } from "@/components/platform/SaasGate";
+import { FeatureGate } from "@/components/platform/SaasGate";
 
 const queryClient = new QueryClient();
 
@@ -76,15 +75,15 @@ const App = () => (
               <Route path="level/:levelId" element={<LevelDetail />} />
               <Route path="lesson/:lessonId" element={<LessonPage />} />
               <Route path="achievements" element={<AchievementsPage />} />
-              <Route path="playground" element={<CodingPlayground />} />
+              <Route path="playground" element={<FeatureGate feature="playground"><CodingPlayground /></FeatureGate>} />
               <Route path="world-map" element={<WorldMap />} />
               <Route path="island/:islandId" element={<IslandDetail />} />
               <Route path="boss/:islandId" element={<BossChallenge />} />
               <Route path="sharpen" element={<SharpenYourSkills />} />
               <Route path="sharpen/skill/:skillId" element={<SkillDetail />} />
-              <Route path="ai-courses" element={<AI4ELearning />} />
-              <Route path="interview" element={<InterviewCoach />} />
-              <Route path="debug" element={<DebugDetective />} />
+              <Route path="ai-courses" element={<FeatureGate feature="ai_courses"><AI4ELearning /></FeatureGate>} />
+              <Route path="interview" element={<FeatureGate feature="interview_coach"><InterviewCoach /></FeatureGate>} />
+              <Route path="debug" element={<FeatureGate feature="debug_detective"><DebugDetective /></FeatureGate>} />
               <Route path="billing" element={<BillingPage />} />
               <Route path="ai-assistant" element={<AIAssistantPage />} />
               <Route path="student-help" element={<StudentHelp />} />

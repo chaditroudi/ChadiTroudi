@@ -14,7 +14,6 @@ const Contact = () => {
         subtitle={t.pages.contactSubtitle}
       />
       <ContactSection />
-      <TestimonialsSection />
     </Layout>
   );
 };

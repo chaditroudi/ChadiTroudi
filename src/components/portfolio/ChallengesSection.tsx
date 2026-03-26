@@ -424,13 +424,15 @@ const ChallengesSection = () => {
     setEvaluation(null);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const resp = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/evaluate-challenge`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ code, challenge: selectedChallenge }),
         }
@@ -522,9 +524,11 @@ const ChallengesSection = () => {
     };
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const chatToken = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const resp = await fetch(CHAT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${chatToken}` },
         body: JSON.stringify({ messages: all }),
       });
       if (!resp.ok || !resp.body) throw new Error("Stream failed");

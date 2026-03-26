@@ -1,11 +1,13 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, BookOpen, Clock, ChevronDown, ChevronRight, Trophy, Layers, Star, GraduationCap, User } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, ChevronDown, ChevronRight, Trophy, Layers, Star, GraduationCap, User, Languages, Brain, Captions } from "lucide-react";
 import { getCourseById, lessonTypeConfig, difficultyConfig } from "@/data/courses-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
+import { useLang } from "@/hooks/use-lang";
+import CourseExperienceAssistant from "@/components/platform/CourseExperienceAssistant";
 
 const colorMap: Record<string, { gradient: string; border: string; text: string; iconBg: string }> = {
   amber:   { gradient: "from-amber-500/10 to-orange-500/5", border: "border-amber-500/20", text: "text-amber-500", iconBg: "bg-amber-500/15" },
@@ -14,9 +16,66 @@ const colorMap: Record<string, { gradient: string; border: string; text: string;
   emerald: { gradient: "from-emerald-500/10 to-teal-500/5", border: "border-emerald-500/20", text: "text-emerald-500", iconBg: "bg-emerald-500/15" },
 };
 
+const detailCopy = {
+  en: {
+    notFound: "Course not found",
+    back: "Back to courses",
+    modules: "Modules",
+    lessons: "Lessons",
+    quizzes: "Quizzes",
+    start: "Start learning",
+    progress: "Course progress",
+    completed: "lessons completed",
+    courseModules: "Course modules",
+    module: "Module",
+    lessonCount: "lessons",
+    pass: "Pass",
+    multilingual: "Arabic, English, French support",
+    adaptive: "AI-guided study support",
+    access: "Accessible review modes",
+  },
+  fr: {
+    notFound: "Cours introuvable",
+    back: "Retour aux cours",
+    modules: "Modules",
+    lessons: "Leçons",
+    quizzes: "Quiz",
+    start: "Commencer",
+    progress: "Progression du cours",
+    completed: "leçons terminées",
+    courseModules: "Modules du cours",
+    module: "Module",
+    lessonCount: "leçons",
+    pass: "Réussite",
+    multilingual: "Support arabe, anglais, français",
+    adaptive: "Accompagnement IA adaptatif",
+    access: "Révision accessible",
+  },
+  ar: {
+    notFound: "تعذر العثور على المقرر",
+    back: "العودة إلى المقررات",
+    modules: "الوحدات",
+    lessons: "الدروس",
+    quizzes: "الاختبارات",
+    start: "ابدأ التعلم",
+    progress: "تقدم المقرر",
+    completed: "درسًا مكتملًا",
+    courseModules: "وحدات المقرر",
+    module: "الوحدة",
+    lessonCount: "دروس",
+    pass: "نسبة النجاح",
+    multilingual: "دعم بالعربية والإنجليزية والفرنسية",
+    adaptive: "مساندة تعلم بالذكاء الاصطناعي",
+    access: "مراجعة ميسرة",
+  },
+} as const;
+
 export default function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const { lang, dir } = useLang();
+  const uiLang = lang === "fr" || lang === "ar" ? lang : "en";
+  const ui = detailCopy[uiLang];
   const course = getCourseById(courseId || "");
   const [openModule, setOpenModule] = useState<string | null>(course?.modules[0]?.id || null);
 
@@ -26,9 +85,9 @@ export default function CourseDetail() {
         <div className="rounded-full bg-muted/50 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
           <BookOpen className="w-8 h-8 text-muted-foreground" />
         </div>
-        <p className="text-foreground font-semibold mb-1">Course not found</p>
+        <p className="text-foreground font-semibold mb-1">{ui.notFound}</p>
         <Button variant="outline" size="sm" className="mt-3" onClick={() => navigate("/platform/courses")}>
-          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to courses
+          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> {ui.back}
         </Button>
       </div>
     );
@@ -39,11 +98,11 @@ export default function CourseDetail() {
   const c = colorMap[course.color];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 space-y-6" dir={dir}>
       {/* Back */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <Button variant="ghost" size="sm" onClick={() => navigate("/platform/courses")} className="text-muted-foreground hover:text-foreground -ml-2 mb-2">
-          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to courses
+          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> {ui.back}
         </Button>
       </motion.div>
 
@@ -68,16 +127,16 @@ export default function CourseDetail() {
             {/* Meta badges */}
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="secondary" className="gap-1 text-xs">
-                <Layers className="w-3 h-3" /> {course.modules.length} Modules
+                <Layers className="w-3 h-3" /> {course.modules.length} {ui.modules}
               </Badge>
               <Badge variant="secondary" className="gap-1 text-xs">
-                <BookOpen className="w-3 h-3" /> {totalLessons} Lessons
+                <BookOpen className="w-3 h-3" /> {totalLessons} {ui.lessons}
               </Badge>
               <Badge variant="secondary" className="gap-1 text-xs">
                 <Clock className="w-3 h-3" /> {course.estimatedHours}h
               </Badge>
               <Badge variant="secondary" className="gap-1 text-xs">
-                <Trophy className="w-3 h-3" /> {totalQuizzes} Quizzes
+                <Trophy className="w-3 h-3" /> {totalQuizzes} {ui.quizzes}
               </Badge>
               <Badge variant="secondary" className="gap-1 text-xs">
                 <User className="w-3 h-3" /> {course.instructor}
@@ -95,16 +154,28 @@ export default function CourseDetail() {
                 if (firstMod && firstLesson) navigate(`/platform/courses/${course.id}/${firstMod.id}/${firstLesson.id}`);
               }}
             >
-              <GraduationCap className="w-4 h-4" /> Start Learning
+              <GraduationCap className="w-4 h-4" /> {ui.start}
             </Button>
           </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Badge variant="outline" className="gap-1.5 border-primary/20 bg-background/60 text-xs">
+            <Languages className="w-3 h-3 text-primary" /> {ui.multilingual}
+          </Badge>
+          <Badge variant="outline" className="gap-1.5 border-primary/20 bg-background/60 text-xs">
+            <Brain className="w-3 h-3 text-primary" /> {ui.adaptive}
+          </Badge>
+          <Badge variant="outline" className="gap-1.5 border-primary/20 bg-background/60 text-xs">
+            <Captions className="w-3 h-3 text-primary" /> {ui.access}
+          </Badge>
         </div>
 
         {/* Overall progress */}
         <div className="mt-5 pt-4 border-t border-border/50">
           <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-            <span>Course Progress</span>
-            <span>0 / {totalLessons} lessons completed</span>
+            <span>{ui.progress}</span>
+            <span>0 / {totalLessons} {ui.completed}</span>
           </div>
           <Progress value={0} className="h-2" />
         </div>
@@ -117,10 +188,18 @@ export default function CourseDetail() {
         ))}
       </motion.div>
 
+      <CourseExperienceAssistant
+        courseTitle={course.title}
+        courseDescription={course.description}
+        tags={course.tags}
+        difficulty={course.difficulty}
+        estimatedHours={course.estimatedHours}
+      />
+
       {/* Modules Accordion */}
       <div className="space-y-3">
         <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <Layers className="w-5 h-5 text-primary" /> Course Modules
+          <Layers className="w-5 h-5 text-primary" /> {ui.courseModules}
         </h2>
 
         {course.modules.map((mod, modIdx) => {
@@ -144,13 +223,13 @@ export default function CourseDetail() {
                   </div>
                   <div className="text-left">
                     <h3 className="text-sm font-semibold text-foreground">
-                      Module {modIdx + 1}: {mod.title}
+                      {ui.module} {modIdx + 1}: {mod.title}
                     </h3>
                     <p className="text-[11px] text-muted-foreground">{mod.description}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 shrink-0">
-                  <Badge variant="secondary" className="text-[10px] hidden sm:flex">{mod.lessons.length} lessons</Badge>
+                  <Badge variant="secondary" className="text-[10px] hidden sm:flex">{mod.lessons.length} {ui.lessonCount}</Badge>
                   <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
                   </motion.div>
@@ -215,7 +294,7 @@ export default function CourseDetail() {
                           <div>
                             <p className="text-sm font-semibold text-foreground">{mod.quiz.title}</p>
                             <p className="text-[10px] text-muted-foreground">
-                              {mod.quiz.questions.length} questions · Pass: {mod.quiz.passingScore}% · +{mod.quiz.xpReward} XP
+                              {mod.quiz.questions.length} {ui.quizzes.toLowerCase()} · {ui.pass}: {mod.quiz.passingScore}% · +{mod.quiz.xpReward} XP
                             </p>
                           </div>
                         </div>

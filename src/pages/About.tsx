@@ -7,7 +7,6 @@ const About = () => {
   return (
     <Layout>
       <div className="pt-20">
-        <StatsCounter />
         <AboutSection />
         <HighlightsSection />
       </div>

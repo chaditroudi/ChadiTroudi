@@ -16,8 +16,7 @@ import {
   Menu, LayoutDashboard, ChevronsLeft, ChevronsRight, Wand2, GraduationCap, Bug, Sparkles, Users, BookOpen, FolderOpen, Globe, /* CreditCard, */
 } from "lucide-react";
 import { useLang, LANGS, LANG_META } from "@/hooks/use-lang";
-// TODO: Re-enable when premium features are ready
-// import { TrialBanner, TokenBalanceWidget } from "@/components/platform/SaasGate";
+import { TrialBanner, TokenBalanceWidget } from "@/components/platform/SaasGate";
 import { AIFloatingWidget } from "@/features/ai-assistant/components/AIFloatingWidget";
 import level1Avatar from "@/assets/avatars/level-1-recruit.png";
 import level2Avatar from "@/assets/avatars/level-2-junior.png";
@@ -179,11 +178,10 @@ const PlatformLayout = () => {
         </div>
       </div>
 
-      {/* Trial Banner — disabled until premium is ready */}
-      {/* {!collapsed && <TrialBanner />} */}
+      {!collapsed && <TrialBanner />}
 
       {/* Nav links */}
-      <nav className="flex-1 px-2 space-y-1">
+      <nav className="flex-1 px-2 space-y-1 overflow-y-auto min-h-0">
         {navItems.map((item) => {
           const isActive = location.pathname === item.to ||
             (item.to !== "/platform/dashboard" && location.pathname.startsWith(item.to));
@@ -214,8 +212,7 @@ const PlatformLayout = () => {
         })}
       </nav>
 
-      {/* Token Balance — disabled until premium is ready */}
-      {/* {!collapsed && <TokenBalanceWidget />} */}
+      {!collapsed && <TokenBalanceWidget />}
 
       {/* Streak widget */}
       {!collapsed && (

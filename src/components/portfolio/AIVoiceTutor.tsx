@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import HumanAvatar3D from "./HumanAvatar3D";
 import tutorAvatar from "@/assets/tutor-avatar.png";
+import { supabase } from "@/integrations/supabase/client";
 
 /* ═══════════════════════════════════════════════════
    TYPES
@@ -266,9 +267,11 @@ const AIVoiceTutor = () => {
         ? `\n\n[Student Memory: Topics studied: ${memory.topicsStudied.join(", ")}. Challenges completed: ${memory.challengesFinished}. Level: ${memory.difficultyLevel}. Language: ${memory.preferredLanguage}. Weak topics: ${memory.weakTopics.join(", ") || "none identified yet"}.]`
         : "";
 
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const resp = await fetch(CHAT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           messages: [
             ...(memoryContext ? [{ role: "system" as const, content: memoryContext }] : []),
