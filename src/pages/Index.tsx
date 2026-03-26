@@ -10,7 +10,6 @@ const Index = () => {
       <HeroSection />
       <AboutSection />
       <HighlightsSection />
-      <TestimonialsSection />
     </Layout>
   );
 };
