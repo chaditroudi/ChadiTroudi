@@ -112,9 +112,9 @@ const TestimonialsSection = () => {
   if (!currentReview) return null;
 
   return (
-    <section ref={sectionRef} className="py-28 relative overflow-hidden">
+    <section ref={sectionRef} className="py-20 relative overflow-hidden">
       <div className="absolute inset-0 line-pattern pointer-events-none" />
-      <div className="section-divider mb-28" />
+      <div className="section-divider mb-16" />
       <div className="container mx-auto px-6 max-w-6xl relative z-10">
         <AnimatedSection>
           <div className="flex items-center justify-between mb-14">

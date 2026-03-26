@@ -7,8 +7,8 @@ import { useLang } from "@/hooks/use-lang";
 const AboutSection = () => {
   const { t } = useLang();
   return (
-    <section id="about" className="py-32 relative">
-      <div className="section-divider mb-32" />
+    <section id="about" className="py-20 relative">
+      <div className="section-divider mb-16" />
       <div className="container mx-auto px-6 max-w-6xl">
         <AnimatedSection>
           <SectionHeading number="01" title={t.about.title} />
@@ -92,7 +92,7 @@ const AboutSection = () => {
 };
 
 export const SectionHeading = ({ number, title }: { number: string; title: string }) => (
-  <div className="flex items-center gap-4 mb-16">
+  <div className="flex items-center gap-4 mb-12">
     <span className="text-primary font-mono text-sm font-semibold tracking-wider">{number}</span>
     <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{title}</h2>
     <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent ml-6" />
