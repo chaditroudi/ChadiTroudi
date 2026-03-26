@@ -1,4 +1,5 @@
-import { AlertTriangle, ExternalLink, FileText, GraduationCap } from "lucide-react";
+import { AlertTriangle, ExternalLink, FileText, Github, GraduationCap, Linkedin, Mail, FolderGit2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import AnimatedSection from "./AnimatedSection";
 
 const ImportantLinksSection = () => {
@@ -52,6 +53,44 @@ const ImportantLinksSection = () => {
                     Open
                     <ExternalLink size={12} className="group-hover:translate-x-0.5 transition-transform" />
                   </p>
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-border/60">
+              <p className="text-xs font-mono uppercase tracking-wider text-primary mb-3">Coordinates</p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <a
+                  href="https://github.com/chaditroudi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground hover:border-primary/35 hover:text-primary transition-all"
+                >
+                  <Github size={15} />
+                  GitHub
+                </a>
+                <Link
+                  to="/projects"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground hover:border-primary/35 hover:text-primary transition-all"
+                >
+                  <FolderGit2 size={15} />
+                  Previous Projects
+                </Link>
+                <a
+                  href="https://www.linkedin.com/in/chaditroudi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground hover:border-primary/35 hover:text-primary transition-all"
+                >
+                  <Linkedin size={15} />
+                  LinkedIn
+                </a>
+                <a
+                  href="mailto:chadi.troudi@example.com"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground hover:border-primary/35 hover:text-primary transition-all"
+                >
+                  <Mail size={15} />
+                  Email
                 </a>
               </div>
             </div>
