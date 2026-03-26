@@ -1,7 +1,6 @@
 import Layout from "@/components/portfolio/Layout";
 import PageHeader from "@/components/portfolio/PageHeader";
 import ContactSection from "@/components/portfolio/ContactSection";
-import TestimonialsSection from "@/components/portfolio/TestimonialsSection";
 import { useLang } from "@/hooks/use-lang";
 
 const Contact = () => {

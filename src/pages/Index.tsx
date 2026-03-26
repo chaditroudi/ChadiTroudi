@@ -4,7 +4,6 @@ import ImportantLinksSection from "@/components/portfolio/ImportantLinksSection"
 import HireMeSection from "@/components/portfolio/HireMeSection";
 import AboutSection from "@/components/portfolio/AboutSection";
 import HighlightsSection from "@/components/portfolio/HighlightsSection";
-import TestimonialsSection from "@/components/portfolio/TestimonialsSection";
 
 const Index = () => {
   return (
@@ -14,7 +13,6 @@ const Index = () => {
       <HireMeSection />
       <AboutSection />
       <HighlightsSection />
-      <TestimonialsSection />
     </Layout>
   );
 };
