@@ -7,6 +7,7 @@ import { useLang, LANGS, LANG_META } from "@/hooks/use-lang";
 const Navbar = () => {
   const { lang, setLang, t } = useLang();
   const location = useLocation();
+  const resumePdfUrl = `${import.meta.env.BASE_URL}ChadiTroudiCv.pdf`;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(() => {
@@ -170,7 +171,7 @@ const Navbar = () => {
           </button>
 
           <a
-            href="/ChadiTroudiCv.pdf"
+            href={resumePdfUrl}
             download
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold bg-primary text-primary-foreground px-4 py-1.5 rounded-md hover:opacity-90 transition-opacity ml-1"
           >
@@ -271,7 +272,7 @@ const Navbar = () => {
                 transition={{ delay: 0.25 }}
               >
                 <a
-                  href="/ChadiTroudiCv.pdf"
+                  href={resumePdfUrl}
                   download
                   className="inline-flex items-center gap-2 text-sm font-semibold bg-primary text-primary-foreground px-5 py-2.5 rounded-md"
                 >

@@ -69,6 +69,7 @@ const fadeUp = (delay = 0) => ({
 const HeroSection = () => {
   const { t } = useLang();
   const typedRole = useTypewriter(roles);
+  const resumePdfUrl = `${import.meta.env.BASE_URL}ChadiTroudiCv.pdf`;
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
@@ -151,7 +152,7 @@ const HeroSection = () => {
                 {t.hero.getInTouch}
               </Link>
               <a
-                href="/ChadiTroudiCv.pdf"
+                href={resumePdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground text-sm transition-colors"
@@ -197,6 +198,7 @@ const HeroSection = () => {
               {[
                 { href: "https://www.linkedin.com/in/chaditroudi", icon: <Linkedin size={16} />, label: "LinkedIn" },
                 { href: "https://github.com/chaditroudi", icon: <Github size={16} />, label: "GitHub" },
+                { href: "https://github.com/Chadi7781", icon: <Github size={16} />, label: "GitHub (Alt)" },
                 { href: "mailto:chadi.troudi@example.com", icon: <Mail size={16} />, label: "Email" },
               ].map((s) => (
                 <a

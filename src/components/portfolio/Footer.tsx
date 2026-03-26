@@ -4,6 +4,7 @@ import { useLang } from "@/hooks/use-lang";
 
 const Footer = () => {
   const { t } = useLang();
+  const resumePdfUrl = `${import.meta.env.BASE_URL}ChadiTroudiCv.pdf`;
 
   const footerLinks = [
     {
@@ -28,6 +29,7 @@ const Footer = () => {
         { label: t.nav.contact, href: "/contact" },
         { label: "LinkedIn", href: "https://www.linkedin.com/in/chaditroudi", external: true },
         { label: "GitHub", href: "https://github.com/chaditroudi", external: true },
+        { label: "GitHub (Alt)", href: "https://github.com/Chadi7781", external: true },
       ],
     },
   ];
@@ -51,6 +53,7 @@ const Footer = () => {
           <div className="flex items-center gap-2">
             {[
               { href: "https://github.com/chaditroudi", icon: <Github size={15} />, label: "GitHub" },
+              { href: "https://github.com/Chadi7781", icon: <Github size={15} />, label: "GitHub (Alt)" },
               { href: "https://www.linkedin.com/in/chaditroudi", icon: <Linkedin size={15} />, label: "LinkedIn" },
               { href: "mailto:chadi.troudi@example.com", icon: <Mail size={15} />, label: "Email" },
             ].map((s) => (
@@ -112,7 +115,7 @@ const Footer = () => {
         </p>
         <div className="flex items-center gap-4">
           <a
-            href="/ChadiTroudiCv.pdf"
+            href={resumePdfUrl}
             download
             className="text-xs text-muted-foreground hover:text-primary transition-colors"
           >

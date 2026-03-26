@@ -1,8 +1,10 @@
-import { AlertTriangle, ExternalLink, FileText, Github, GraduationCap, Linkedin, Mail, FolderGit2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { AlertTriangle, ExternalLink, FileText, Github, GraduationCap, Linkedin, Mail } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 
 const ImportantLinksSection = () => {
+  const resumePdfUrl = `${import.meta.env.BASE_URL}ChadiTroudiCv.pdf`;
+  const certifPdfUrl = `${import.meta.env.BASE_URL}certif.pdf`;
+
   return (
     <section className="py-20 relative">
       <div className="container mx-auto px-6 max-w-6xl">
@@ -22,7 +24,7 @@ const ImportantLinksSection = () => {
 
               <div className="grid sm:grid-cols-2 gap-3 w-full md:w-auto">
                 <a
-                  href="/ChadiTroudiCv.pdf"
+                  href={resumePdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group rounded-2xl border border-border/70 bg-background/70 px-4 py-3 hover:border-primary/35 hover:bg-accent/40 transition-all"
@@ -39,7 +41,7 @@ const ImportantLinksSection = () => {
                 </a>
 
                 <a
-                  href="/certif.pdf"
+                  href={certifPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group rounded-2xl border border-border/70 bg-background/70 px-4 py-3 hover:border-primary/35 hover:bg-accent/40 transition-all"
@@ -69,13 +71,15 @@ const ImportantLinksSection = () => {
                   <Github size={15} />
                   GitHub
                 </a>
-                <Link
-                  to="/projects"
+                <a
+                  href="https://github.com/Chadi7781"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground hover:border-primary/35 hover:text-primary transition-all"
                 >
-                  <FolderGit2 size={15} />
-                  Previous Projects
-                </Link>
+                  <Github size={15} />
+                  Ex GitHub Account
+                </a>
                 <a
                   href="https://www.linkedin.com/in/chaditroudi"
                   target="_blank"
