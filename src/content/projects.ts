@@ -3,6 +3,16 @@ import tijResults from "@/assets/case-studies/tij-results.webp";
 import tijJoin from "@/assets/case-studies/tij-join.webp";
 import tijMobile from "@/assets/case-studies/tij-mobile.webp";
 import tenderflow from "@/assets/case-studies/tenderflow.webp";
+import sicapEn from "@/assets/case-studies/sicap-signin-en.webp";
+import sicapAr from "@/assets/case-studies/sicap-signin-ar.webp";
+import sicapMobile from "@/assets/case-studies/sicap-signin-mobile.webp";
+import kaufdaShelf from "@/assets/case-studies/bonial-kaufda-shelf.webp";
+import kaufdaBrochure from "@/assets/case-studies/bonial-kaufda-brochure.webp";
+import kaufdaOffers from "@/assets/case-studies/bonial-kaufda-offers.webp";
+import kaufdaMobile from "@/assets/case-studies/bonial-kaufda-mobile.webp";
+import bonialCompany from "@/assets/case-studies/bonial-company.webp";
+import bonialStandup from "@/assets/bonial-standup.webp";
+import bonialOffice from "@/assets/bonial-office.webp";
 
 export interface Shot {
   src: string;
@@ -58,64 +68,76 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  /* ────────────────────────── Mind Platform ────────────────────────── */
+  /* ────────────────────────── SICAP (Mind Platform) ────────────────────────── */
   {
-    slug: "mind-platform",
-    title: "Mind Platform — AI analytics agent",
+    slug: "sicap",
+    title: "SICAP — Angular front-end for an institutional data platform",
     tagline:
-      "Business users ask a question in plain language and get a validated MongoDB query back as a chart, a written report or a one-line answer, in seconds.",
-    client: "Mind Hands (2026 – present) · core platform with AlMergab (2022 – 2024)",
-    period: "Dec 2022 – present",
-    role: "Full-stack developer — designed and built the AI analytics service (NestJS) and its Angular client",
-    stack: ["Angular", "NestJS 11", "TypeScript", "MongoDB", "Mastra AI", "Vercel AI SDK", "Zod", "ECharts", "Jest"],
-    highlight: "Natural-language questions → validated MongoDB pipelines → charts & reports",
+      "SICAP lets institutions collect records, route them through approvals and publish live dashboards, in five languages including Arabic. I'm the main contributor to its Angular front-end, plus NestJS work.",
+    client: "Mind Platform (Mind Hands Tec)",
+    period: "Apr 2026 – present",
+    role: "Full-stack developer — mainly the Angular front-end, plus NestJS services and the AI analytics module",
+    stack: ["Angular", "TypeScript", "RxJS", "i18n (RTL + LTR)", "NestJS", "MongoDB", "Mastra AI", "ECharts", "Jest"],
+    highlight: "Angular app in 5 languages, Arabic right-to-left, records → approvals → dashboards",
     url: "https://www.mind-platform.com",
+    cover: { src: sicapEn, alt: "SICAP sign-in page: Govern your data. Decide with confidence. Records, approvals and dashboards.", caption: "SICAP sign-in", frame: "desktop" },
     caseStudy: {
-      team: "Sole developer of the AI analytics service",
+      team: "Mind Platform product team; I'm the main Angular contributor and sole developer of the AI analytics service",
       outcomes: [
-        { value: "2", label: "LLM calls per question (planner + writer), 0 on a cached repeat" },
-        { value: "3", label: "answer types from one endpoint: dashboard, report, inquiry" },
-        { value: "7", label: "LLM providers behind one model client, with automatic fallback" },
-        { value: "1", label: "bounded retry with a targeted hint — never an open-ended loop" },
+        { value: "5", label: "UI languages: Arabic, English, French, Spanish, Turkish" },
+        { value: "RTL ⇄ LTR", label: "one Angular app that mirrors its layout for Arabic" },
+        { value: "3", label: "core modules: records, approval workflows, dashboards" },
+        { value: "0", label: "LLM calls for a repeated AI question, thanks to a 7-day cache" },
       ],
       sections: [
         {
           id: "context",
           heading: "Context",
           paragraphs: [
-            "Mind Platform is a SaaS product for workflows, dashboards and business data management. From 2022 to 2024, with AlMergab, I built core platform features on an Angular + NestJS Nx monorepo: authentication (OTP, sessions, email verification, password reset), notifications over Server-Sent Events, reporting, workflows and permissions.",
-            "In 2026, as a freelancer for Mind Hands, I added an AI analytics layer on top of that data.",
+            "SICAP (Smart Institutional Coordination & Analytics Platform) is built by Mind Hands Tec on Mind Platform. Teams keep their data in records that are checked as they are entered, approval workflows send each record to the right people on time, and dashboards stay up to date as records change.",
+            "I first worked on Mind Platform in 2022–2024 through AlMergab (authentication with OTP, sessions and password reset; notifications over Server-Sent Events; reporting, workflows and permissions). Since April 2026 I've worked on SICAP as a freelancer, mostly on the Angular front-end.",
           ],
         },
         {
           id: "problem",
-          heading: "The problem",
+          heading: "The challenge",
           paragraphs: [
-            "Every new business question (\"top 5 projects by budget\", \"how many projects are active?\") needed a developer to write an aggregation pipeline and a chart. Fixed report templates did not keep up with new datasets.",
-            "The obvious fix, letting an LLM write database queries, brings real risks: invented field names, write or cross-collection stages, unbounded retries and unpredictable cost.",
+            "Users work in Arabic and in European languages, from data-entry staff filling in records to managers reading dashboards. The same Angular app has to switch language and direction without breaking layouts, stay responsive with large record lists and live charts, and validate forms strictly enough that bad data never reaches an approval step.",
+            "On top of that, managers wanted answers that dashboards didn't anticipate, without waiting for a developer to build a new chart.",
           ],
         },
         {
           id: "role",
           heading: "My role",
           bullets: [
-            "Designed the request pipeline end to end: intent detection, planning, validation, execution, chart and report generation.",
-            "Built the NestJS service (modules for analytics, data sources, cache, history, memory, provider settings) and the Angular client.",
-            "Wrote the model client that wraps OpenAI, Anthropic, Gemini, Groq, Mistral, Together and Perplexity behind one interface.",
-            "Added unit tests for the planner, writer, model client, pipeline and analytics services.",
+            "Main contributor to the Angular front-end: screens for records, approval workflows and dashboards, with reusable form and data-visualisation components.",
+            "Screens that work in all five languages, with the layout mirrored for Arabic right-to-left.",
+            "NestJS endpoints and MongoDB aggregations behind dashboards and reports, with attention to query and API performance.",
+            "The AI analytics module: a NestJS service and Angular client that turn plain-language questions into validated MongoDB pipelines, charts and reports (details below).",
+          ],
+        },
+        {
+          id: "product",
+          heading: "The product",
+          paragraphs: [
+            "Everything past sign-in holds client data, so only the public sign-in screens are shown here. They show the two things the front-end has to get right everywhere: Arabic right-to-left and Latin left-to-right from the same components, on desktop and mobile.",
+          ],
+          shots: [
+            { src: sicapAr, alt: "SICAP sign-in in Arabic, laid out right to left", caption: "Arabic (right-to-left) — the default language", frame: "desktop" },
+            { src: sicapMobile, alt: "SICAP sign-in on a phone in Arabic", caption: "Mobile, Arabic", frame: "phone" },
           ],
         },
         {
           id: "architecture",
-          heading: "How a question becomes an answer",
+          heading: "AI analytics module: how a question becomes an answer",
           paragraphs: [
-            "Datasets are registered at runtime as data sources: a MongoDB collection plus a field schema. The planner LLM only ever sees registered field names, and its output is a Zod-typed plan that must pass validation before it reaches the database.",
+            "Inside SICAP, managers can also ask a question in plain language (English or Arabic) and get a chart, a short report or a one-line answer. Datasets are registered at runtime as data sources: a MongoDB collection plus a field schema. The planner LLM only ever sees registered field names, and its output is a Zod-typed plan that must pass validation before it reaches the database.",
           ],
           diagram: "mind-pipeline",
         },
         {
           id: "decisions",
-          heading: "Key decisions",
+          heading: "Key decisions in the AI module",
           decisions: [
             {
               title: "Validate every LLM-written pipeline against a registered schema",
@@ -188,7 +210,7 @@ export const projects: Project[] = [
           heading: "Results",
           bullets: [
             "One endpoint (POST /api/analytics) returns three kinds of answer: ECharts dashboards, 1–5 section reports, or short factual answers.",
-            "Questions can be asked in English or Arabic.",
+            "AI questions can be asked in English or Arabic, matching the rest of the interface.",
             "LLM failures surface as classified errors (INVALID_API_KEY, LLM_RATE_LIMIT, TOKEN_LIMIT_TOO_LOW…) with a human-readable next step, instead of stack traces.",
             "Token usage is tracked per user and per connection, so AI cost can be attributed.",
           ],
@@ -197,7 +219,7 @@ export const projects: Project[] = [
           id: "next",
           heading: "What I'd do next",
           bullets: [
-            "Production-grade multi-tenant access control and per-tenant cost caps.",
+            "Per-tenant cost caps and stricter access control for the AI module.",
             "Extend unit tests to the chart, cache and history services.",
             "An evaluation set of real business questions to catch prompt regressions in CI.",
           ],
@@ -276,7 +298,7 @@ export const projects: Project[] = [
         },
         {
           id: "decisions",
-          heading: "Key decisions",
+          heading: "Key decisions in the AI module",
           decisions: [
             {
               title: "Serve the API on the same origin",
@@ -358,6 +380,149 @@ if (! empty($levels)) {
     },
   },
 
+  /* ────────────────────────── Bonial ────────────────────────── */
+  {
+    slug: "bonial",
+    title: "Bonial — brochures & offers at scale",
+    tagline:
+      "In Bonial's Planet Express team I worked on Bonial Console and the APIs behind the brochures and local offers that millions of shoppers browse on kaufDA, and moved the front-end to TypeScript.",
+    client: "Bonial (Germany) · Planet Express team",
+    period: "Sep 2025 – Feb 2026",
+    role: "Full-stack developer (freelance) — React/TypeScript front-end, Spring Boot APIs, Camunda workflows",
+    stack: ["React", "TypeScript 5", "Material UI 5", "Tailwind CSS 3", "Java", "Spring Boot", "OpenAPI", "Camunda 7 (BPMN)", "Docker", "GitHub Actions"],
+    highlight: "15+ modules migrated to TypeScript · ~30% fewer production bugs",
+    url: "https://bonial.com/de/",
+    cover: { src: kaufdaShelf, alt: "kaufDA home page: a grid of current retailer brochures near Berlin", caption: "kaufDA brochure shelf", frame: "desktop" },
+    caseStudy: {
+      team: "Planet Express team, Bonial (Berlin) — remote from Tunis, with in-person sprint planning at the Berlin office",
+      outcomes: [
+        { value: "15+", label: "front-end modules migrated from JavaScript to TypeScript 5" },
+        { value: "~30%", label: "fewer production bugs after the migration" },
+        { value: "1", label: "shared component library: buttons, forms, tables, modals" },
+        { value: "BPMN", label: "Camunda 7 workflows automating data-driven campaigns" },
+      ],
+      sections: [
+        {
+          id: "context",
+          heading: "Context",
+          paragraphs: [
+            "Bonial is the retail-marketing company behind kaufDA in Germany (and bonial.fr in France). Retailers and brands publish their weekly brochures and offers; shoppers browse them by location, store and product.",
+            "Bonial Console is the platform side of that: where brochures, offers and campaigns are managed. I joined the Planet Express team for six months to work across its React front-end and Spring Boot services.",
+          ],
+          shots: [
+            { src: bonialCompany, alt: "bonial.com home page: the retail marketing hub for retailers and brands", caption: "bonial.com — company context (public site, not built by me)", frame: "desktop" },
+          ],
+        },
+        {
+          id: "problem",
+          heading: "The challenge",
+          paragraphs: [
+            "A large JavaScript front-end shared by several screens: type errors reached production, and similar UI (forms, tables, dialogs) was rebuilt slightly differently on each screen.",
+            "On the back-end, offers and brochures needed precise edits without overwriting other fields, and marketing campaigns built on first-party data needed to run as repeatable, visible workflows instead of manual steps.",
+          ],
+        },
+        {
+          id: "role",
+          heading: "My role",
+          bullets: [
+            "Migrated more than 15 front-end modules from JavaScript to TypeScript 5.",
+            "Refactored React screens with Material UI 5 and Tailwind CSS 3, and built a reusable component library (buttons, forms, tables, modals).",
+            "Developed and maintained Spring Boot REST APIs for offer and brochure management, including PATCH endpoints for partial updates, documented with OpenAPI.",
+            "Implemented BPMN workflows in Camunda 7 to automate data-driven marketing campaigns based on first-party customer data.",
+            "Wrote unit and integration tests and shipped through GitHub Actions and Docker, in Scrum and Kanban ceremonies with the team.",
+          ],
+        },
+        {
+          id: "product",
+          heading: "Where the work shows up",
+          paragraphs: [
+            "Brochures and offers managed on the platform side are what shoppers see on kaufDA: a shelf of current brochures near them, a brochure viewer tied to the nearest store, and offer pages by product.",
+          ],
+          shots: [
+            { src: kaufdaBrochure, alt: "kaufDA brochure viewer: a REWE brochure with the nearest store, opening hours and page count", caption: "Brochure viewer with the nearest store and opening hours", frame: "desktop" },
+            { src: kaufdaMobile, alt: "kaufDA on a phone: brochure grid for postcode 10178", caption: "Mobile brochure shelf", frame: "phone" },
+            { src: kaufdaOffers, alt: "kaufDA offers page for coffee, listing brochures that contain coffee deals", caption: "Offers by product, linked to the brochures that contain them", frame: "desktop" },
+          ],
+        },
+        {
+          id: "decisions",
+          heading: "How I approached it",
+          decisions: [
+            {
+              title: "Migrate module by module, not in one big rewrite",
+              why: "The team kept shipping features while the migration ran. Each module moved to TypeScript on its own, so every merge left the app working.",
+              tradeoff: "For a while JavaScript and TypeScript lived side by side, with typed boundaries between them.",
+            },
+            {
+              title: "One component library instead of per-screen widgets",
+              why: "Buttons, forms, tables and modals were built once on Material UI 5 with Tailwind CSS, so screens look and behave the same and fixes land everywhere at once.",
+              tradeoff: "Up-front design work and agreeing on component APIs before using them.",
+            },
+            {
+              title: "PATCH for partial updates of offers and brochures",
+              why: "Editors change one field (a date, a price, a status) without resending the whole resource, so concurrent edits to other fields aren't overwritten.",
+              tradeoff: "Each patchable field needs its own validation and clear null-versus-missing semantics.",
+            },
+            {
+              title: "Campaigns as BPMN workflows in Camunda 7",
+              why: "Campaign steps become a diagram that product and marketing can read, with retries and timers handled by the engine rather than custom code.",
+              tradeoff: "Another runtime to operate and version alongside the services.",
+            },
+          ],
+        },
+        {
+          id: "code",
+          heading: "Pattern example",
+          code: {
+            filename: "Illustrative example — not Bonial source code",
+            language: "java",
+            intro:
+              "Bonial's code is private, so this is a minimal example of the PATCH pattern I used for partial updates: only the fields present in the request change.",
+            code: `@PatchMapping("/brochures/{id}")
+public BrochureResponse patch(@PathVariable UUID id,
+                              @Valid @RequestBody BrochurePatch patch) {
+    Brochure brochure = brochures.findById(id)
+        .orElseThrow(() -> new BrochureNotFoundException(id));
+
+    patch.title().ifPresent(brochure::setTitle);
+    patch.validFrom().ifPresent(brochure::setValidFrom);
+    patch.validUntil().ifPresent(brochure::setValidUntil);
+    patch.status().ifPresent(brochure::changeStatus); // domain rule checks
+
+    return mapper.toResponse(brochures.save(brochure));
+}
+
+// Optional<T> distinguishes "not sent" (leave unchanged) from a value to set.
+public record BrochurePatch(Optional<String> title,
+                            Optional<LocalDate> validFrom,
+                            Optional<LocalDate> validUntil,
+                            Optional<BrochureStatus> status) {}`,
+          },
+        },
+        {
+          id: "team",
+          heading: "Working with the team",
+          paragraphs: [
+            "Remote from Tunis, in the same daily stand-ups, refinements, reviews and retrospectives as the rest of Planet Express, with in-person sprint planning at Bonial's Berlin office.",
+          ],
+          shots: [
+            { src: bonialStandup, alt: "Daily stand-up with the Planet Express team at Bonial", caption: "Daily stand-up with the Planet Express team", frame: "desktop" },
+            { src: bonialOffice, alt: "Sprint planning at the Bonial office in Berlin", caption: "Sprint planning at the Berlin office", frame: "desktop" },
+          ],
+        },
+        {
+          id: "next",
+          heading: "What I took away",
+          bullets: [
+            "Incremental migrations work when every step ships: small, typed modules merged continuously beat a long-lived rewrite branch.",
+            "A component library only sticks if it is easier to use than copy-paste, so documentation and examples matter as much as the code.",
+            "Workflow engines make long-running business processes visible to people who don't read code.",
+          ],
+        },
+      ],
+    },
+  },
+
   /* ────────────────────────── Project cards (no full case study yet) ────────────────────────── */
   {
     slug: "tenderflow-ai",
@@ -370,16 +535,6 @@ if (! empty($levels)) {
     highlight: "~40% better document-search relevance",
     url: "https://www.tender-flow.com/",
     cover: { src: tenderflow, alt: "TenderFlow AI product screenshot", caption: "TenderFlow AI", frame: "desktop" },
-  },
-  {
-    slug: "bonial-console",
-    title: "Bonial Console",
-    tagline: "Retail SaaS for catalogues and geolocated offers: React front-end, Spring Boot APIs, Camunda campaign automation.",
-    client: "Bonial (Germany)",
-    period: "Sep 2025 – Feb 2026",
-    role: "Full-stack developer",
-    stack: ["React", "TypeScript 5", "Material UI 5", "Tailwind CSS", "Spring Boot", "Camunda 7"],
-    highlight: "15+ modules migrated to TypeScript · ~30% fewer production bugs",
   },
   {
     slug: "catalog-ai",

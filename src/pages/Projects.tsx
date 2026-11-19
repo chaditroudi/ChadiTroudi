@@ -22,7 +22,7 @@ const Projects = () => {
       </Container>
 
       <Section id="case-studies" eyebrow="In depth" title="Case studies">
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {caseStudies.map((p, i) => (
             <Reveal key={p.slug} delay={i * 0.08}>
               <CaseStudyCard project={p} />

@@ -124,9 +124,9 @@ const Index = () => {
         id="work"
         eyebrow="Selected work"
         title="Case studies"
-        intro="Two products I built and shipped: the problem, the decisions and trade-offs, and what came out of it."
+        intro="Three products I built and shipped: the problem, the decisions and trade-offs, and what came out of it."
       >
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {caseStudies.map((p, i) => (
             <Reveal key={p.slug} delay={i * 0.08}>
               <CaseStudyCard project={p} />

@@ -45,7 +45,7 @@ describe("projects and case studies", () => {
   });
 
   it("gives each case study the sections a reviewer expects", () => {
-    expect(caseStudies.map((p) => p.slug)).toEqual(["mind-platform", "cabinet-tij"]);
+    expect(caseStudies.map((p) => p.slug)).toEqual(["sicap", "cabinet-tij", "bonial"]);
     for (const p of caseStudies) {
       const ids = p.caseStudy!.sections.map((s) => s.id);
       for (const required of ["context", "problem", "role", "decisions", "code", "next"]) expect(ids).toContain(required);

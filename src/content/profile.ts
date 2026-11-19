@@ -61,8 +61,8 @@ export const profile = {
   summary:
     `Full-Stack Developer with ${yearsOfExperience()} years of remote experience delivering for product teams in Germany and Oman. I build Java/Spring Boot, NestJS and Django back-ends, Angular and React front-ends, and generative-AI features (RAG pipelines, LLM agents, analytics dashboards), with a focus on code quality, performance and maintainability.`,
   current: {
-    company: "Mind Hands",
-    what: "AI analytics for Mind Platform",
+    company: "Mind Platform",
+    what: "Angular front-end for SICAP",
   },
 } as const;
 
@@ -75,20 +75,21 @@ export const metrics: Metric[] = [
 
 export const experience: Role[] = [
   {
-    id: "mind-hands",
-    title: "Freelance Full-Stack Developer — Angular, NestJS & AI",
-    company: "Mind Hands",
+    id: "mind-platform",
+    title: "Freelance Full-Stack Developer — Angular & NestJS",
+    company: "Mind Platform",
+    companyNote: "Mind Hands Tec",
     engagement: "Freelance assignment",
     location: "Tunis, Tunisia",
     start: "2026-04",
     end: "present",
-    summary: "AI analytics layer for Mind Platform: plain-language questions in, charts and reports out.",
+    summary: "SICAP (Smart Institutional Coordination & Analytics Platform): records, approval workflows and live dashboards. Mostly Angular front-end, plus NestJS.",
     highlights: [
-      "Design and build full-stack features with Angular, NestJS, TypeScript and MongoDB for a scalable, high-performance analytics product.",
+      "Main contributor to the Angular front-end of SICAP: records, approval workflows and dashboards, in five languages with right-to-left Arabic.",
+      "Build NestJS endpoints and MongoDB aggregations behind dashboards and reports, and optimise REST API performance.",
       "Integrate AI agents (Mastra AI, LLMs) that turn plain-language questions into validated MongoDB aggregation pipelines and return dashboards, written reports or direct answers.",
-      "Develop analytical dashboards and data visualisations, and optimise MongoDB aggregations and REST API performance.",
     ],
-    stack: ["Angular", "NestJS", "TypeScript", "MongoDB Aggregation Framework", "Mastra AI", "LLMs", "REST API", "ECharts", "Git"],
+    stack: ["Angular", "TypeScript", "RxJS", "i18n / RTL", "NestJS", "MongoDB Aggregation Framework", "Mastra AI", "LLMs", "REST API", "ECharts", "Git"],
   },
   {
     id: "bonial",
@@ -99,7 +100,7 @@ export const experience: Role[] = [
     location: "Tunis, Tunisia",
     start: "2025-09",
     end: "2026-02",
-    summary: "Retail-tech platforms (Bonial Console, campaign automation) for the publisher of digital-leaflet apps such as kaufDA.",
+    summary: "Planet Express team: Bonial Console, brochure and offer APIs, and campaign automation behind kaufDA, Germany's digital-leaflet app.",
     highlights: [
       "Migrated 15+ front-end modules from JavaScript to TypeScript 5, improving maintainability and reducing production bugs by ~30%.",
       "Refactored React interfaces with Material UI 5 and Tailwind CSS 3 and designed a reusable component library (buttons, forms, tables, modals).",
