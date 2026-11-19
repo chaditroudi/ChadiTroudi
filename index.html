@@ -3,150 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chadi Troudi | Full-Stack Engineer — Java, Spring Boot, React</title>
-    <meta name="description" content="Chadi Troudi — Senior Full-Stack Engineer in Berlin. Specializing in Java Spring Boot, React, and microservices. Currently at Bonial Germany. Also offering a 10-day Java Bootcamp.">
+    <title>Chadi Troudi — Full-Stack Developer (Java · Angular · React · AI)</title>
+    <meta name="description" content="Full-Stack Developer in Tunis, Tunisia. I build scalable web applications and generative-AI features — RAG pipelines, LLM agents and analytics dashboards — for product teams in Germany and Oman." />
     <meta name="author" content="Chadi Troudi" />
-    <meta name="keywords" content="Chadi Troudi, Full-Stack Engineer, Java Developer, Spring Boot, React, Berlin, Bonial, Java Bootcamp, Software Engineer" />
-    <link rel="icon" type="image/x-icon" href="/favicon.jpg">
-    <link rel="canonical" href="https://chaditroudi.dev" />
+    <meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+    <link rel="canonical" href="https://chaditroudi.github.io/ChadiTroudi/" />
+    <link rel="icon" href="%BASE_URL%favicon.ico" sizes="any" />
 
-    <!-- Open Graph -->
-    
-    
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://chaditroudi.dev" />
-    <meta property="og:image" content="/favicon.jpg">
-    <meta property="og:site_name" content="Chadi Troudi Portfolio" />
+    <meta property="og:site_name" content="Chadi Troudi" />
     <meta property="og:locale" content="en_US" />
-
-    <!-- Twitter -->
+    <meta property="og:url" content="https://chaditroudi.github.io/ChadiTroudi/" />
+    <meta property="og:title" content="Chadi Troudi — Full-Stack Developer (Java · Angular · React · AI)" />
+    <meta property="og:description" content="Full-Stack Developer in Tunis, Tunisia. I build scalable web applications and generative-AI features — RAG pipelines, LLM agents and analytics dashboards — for product teams in Germany and Oman." />
+    <meta property="og:image" content="https://chaditroudi.github.io/ChadiTroudi/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    
-    
-    <meta name="twitter:image" content="/favicon.jpg">
+    <meta name="twitter:title" content="Chadi Troudi — Full-Stack Developer (Java · Angular · React · AI)" />
+    <meta name="twitter:description" content="Full-Stack Developer in Tunis, Tunisia. I build scalable web applications and generative-AI features — RAG pipelines, LLM agents and analytics dashboards — for product teams in Germany and Oman." />
+    <meta name="twitter:image" content="https://chaditroudi.github.io/ChadiTroudi/og.png" />
 
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Chadi Troudi",
-      "jobTitle": "Senior Full-Stack Engineer",
-      "url": "https://chaditroudi.dev",
-      "sameAs": [
-        "https://www.linkedin.com/in/chaditroudi",
-        "https://github.com/chaditroudi",
-        "https://github.com/Chadi7781"
-      ],
-      "worksFor": {
-        "@type": "Organization",
-        "name": "Bonial International GmbH"
-      },
-      "knowsAbout": ["Java", "Spring Boot", "React", "TypeScript", "Microservices", "PostgreSQL", "AWS"],
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Berlin",
-        "addressCountry": "DE"
-      }
-    }
+    <!-- Regenerated from src/content/profile.ts at build time (scripts/postbuild.ts). -->
+    <script type="application/ld+json" id="person-jsonld">
+      {"@context":"https://schema.org","@type":"Person","name":"Chadi Troudi","jobTitle":"Full-Stack Developer"}
     </script>
-    <meta property="og:title" content="Chadi Troudi | Full-Stack Engineer — Java, Spring Boot, React">
-  <meta name="twitter:title" content="Chadi Troudi | Full-Stack Engineer — Java, Spring Boot, React">
-  <meta property="og:description" content="Chadi Troudi — Senior Full-Stack Engineer in Berlin. Specializing in Java Spring Boot, React, and microservices. Currently at Bonial Germany. Also offering a 10-day Java Bootcamp.">
-  <meta name="twitter:description" content="Chadi Troudi — Senior Full-Stack Engineer in Berlin. Specializing in Java Spring Boot, React, and microservices. Currently at Bonial Germany. Also offering a 10-day Java Bootcamp.">
-  <script type="module" src="/src/main.tsx"></script>
 
-  <!-- Avatar Motion Graphics Animations -->
-  <style>
-    /* Floating bob animation for testimonial avatar circles */
-    @keyframes avatarFloat {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-6px) scale(1.08); }
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
+    />
 
-    @keyframes avatarPulseGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.3); }
-      50% { box-shadow: 0 0 14px 4px rgba(var(--primary-rgb, 99, 102, 241), 0.18); }
-    }
-
-    @keyframes avatarSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes avatarWobble {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      25% { transform: rotate(-4deg) scale(1.04); }
-      75% { transform: rotate(4deg) scale(1.04); }
-    }
-
-    @keyframes avatarOrbit {
-      0% { transform: translateX(0) translateY(0); }
-      25% { transform: translateX(4px) translateY(-4px); }
-      50% { transform: translateX(0) translateY(-7px); }
-      75% { transform: translateX(-4px) translateY(-4px); }
-      100% { transform: translateX(0) translateY(0); }
-    }
-
-    @keyframes avatarRipple {
-      0% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.35); }
-      70% { box-shadow: 0 0 0 12px rgba(var(--primary-rgb, 99, 102, 241), 0); }
-      100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0); }
-    }
-
-    /* Testimonial avatar circles — float + glow */
-    .w-9.h-9.rounded-full.bg-primary\/10 {
-      animation: avatarFloat 3s ease-in-out infinite, avatarPulseGlow 3s ease-in-out infinite;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      will-change: transform;
-    }
-    /* Stagger siblings: 2nd card offset, 3rd more */
-    .w-9.h-9.rounded-full.bg-primary\/10:nth-child(1) { animation-delay: 0s; }
-
-    .w-9.h-9.rounded-full.bg-primary\/10:hover {
-      animation: avatarWobble 0.6s ease-in-out;
-      box-shadow: 0 0 18px 6px rgba(var(--primary-rgb, 99, 102, 241), 0.28);
-      cursor: pointer;
-    }
-
-    /* Tutor avatar image container — orbit motion */
-    img[alt="Coder Avatar"] {
-      animation: avatarOrbit 5s ease-in-out infinite;
-      will-change: transform;
-    }
-
-    /* Tutor avatar wrapper ripple on hover */
-    .w-24.h-24.rounded-2xl,
-    .w-28.h-28.rounded-2xl {
-      animation: avatarRipple 2.5s ease-in-out infinite;
-    }
-
-    /* Level avatar images — subtle breathe */
-    img[alt="Coder Avatar"]:hover {
-      animation: avatarWobble 0.5s ease-in-out forwards;
-    }
-
-    /* Testimonial cards — entrance slide-up stagger */
-    @keyframes cardSlideUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Reduced motion: respect user preferences */
-    @media (prefers-reduced-motion: reduce) {
-      .w-9.h-9.rounded-full.bg-primary\/10,
-      img[alt="Coder Avatar"],
-      .w-24.h-24.rounded-2xl,
-      .w-28.h-28.rounded-2xl {
-        animation: none !important;
-      }
-    }
-  </style>
-
-</head>
-
+    <!-- Set the theme before first paint to avoid a light/dark flash. -->
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = "dark";
+        }
+      } catch (e) {}
+    </script>
+  </head>
   <body>
     <div id="root"></div>
-
+    <noscript>
+      <p style="padding:24px;font-family:system-ui">Chadi Troudi — Full-Stack Developer. This site needs JavaScript. Email: chadi.troudi.dev@gmail.com</p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
