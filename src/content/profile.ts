@@ -99,7 +99,7 @@ export const experience: Role[] = [
     location: "Tunis, Tunisia",
     start: "2025-09",
     end: "2026-02",
-    summary: "Retail-tech platforms (Bonial Console, campaign automation) for the publisher of digital-leaflet apps such as kaufDA.",
+    summary: "Planet Express team: Bonial Console, brochure and offer APIs, and campaign automation behind kaufDA, Germany's digital-leaflet app.",
     highlights: [
       "Migrated 15+ front-end modules from JavaScript to TypeScript 5, improving maintainability and reducing production bugs by ~30%.",
       "Refactored React interfaces with Material UI 5 and Tailwind CSS 3 and designed a reusable component library (buttons, forms, tables, modals).",

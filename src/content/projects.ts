@@ -3,6 +3,13 @@ import tijResults from "@/assets/case-studies/tij-results.webp";
 import tijJoin from "@/assets/case-studies/tij-join.webp";
 import tijMobile from "@/assets/case-studies/tij-mobile.webp";
 import tenderflow from "@/assets/case-studies/tenderflow.webp";
+import kaufdaShelf from "@/assets/case-studies/bonial-kaufda-shelf.webp";
+import kaufdaBrochure from "@/assets/case-studies/bonial-kaufda-brochure.webp";
+import kaufdaOffers from "@/assets/case-studies/bonial-kaufda-offers.webp";
+import kaufdaMobile from "@/assets/case-studies/bonial-kaufda-mobile.webp";
+import bonialCompany from "@/assets/case-studies/bonial-company.webp";
+import bonialStandup from "@/assets/bonial-standup.webp";
+import bonialOffice from "@/assets/bonial-office.webp";
 
 export interface Shot {
   src: string;
@@ -358,6 +365,149 @@ if (! empty($levels)) {
     },
   },
 
+  /* ────────────────────────── Bonial ────────────────────────── */
+  {
+    slug: "bonial",
+    title: "Bonial — brochures & offers at scale",
+    tagline:
+      "In Bonial's Planet Express team I worked on Bonial Console and the APIs behind the brochures and local offers that millions of shoppers browse on kaufDA, and moved the front-end to TypeScript.",
+    client: "Bonial (Germany) · Planet Express team",
+    period: "Sep 2025 – Feb 2026",
+    role: "Full-stack developer (freelance) — React/TypeScript front-end, Spring Boot APIs, Camunda workflows",
+    stack: ["React", "TypeScript 5", "Material UI 5", "Tailwind CSS 3", "Java", "Spring Boot", "OpenAPI", "Camunda 7 (BPMN)", "Docker", "GitHub Actions"],
+    highlight: "15+ modules migrated to TypeScript · ~30% fewer production bugs",
+    url: "https://bonial.com/de/",
+    cover: { src: kaufdaShelf, alt: "kaufDA home page: a grid of current retailer brochures near Berlin", caption: "kaufDA brochure shelf", frame: "desktop" },
+    caseStudy: {
+      team: "Planet Express team, Bonial (Berlin) — remote from Tunis, with in-person sprint planning at the Berlin office",
+      outcomes: [
+        { value: "15+", label: "front-end modules migrated from JavaScript to TypeScript 5" },
+        { value: "~30%", label: "fewer production bugs after the migration" },
+        { value: "1", label: "shared component library: buttons, forms, tables, modals" },
+        { value: "BPMN", label: "Camunda 7 workflows automating data-driven campaigns" },
+      ],
+      sections: [
+        {
+          id: "context",
+          heading: "Context",
+          paragraphs: [
+            "Bonial is the retail-marketing company behind kaufDA in Germany (and bonial.fr in France). Retailers and brands publish their weekly brochures and offers; shoppers browse them by location, store and product.",
+            "Bonial Console is the platform side of that: where brochures, offers and campaigns are managed. I joined the Planet Express team for six months to work across its React front-end and Spring Boot services.",
+          ],
+          shots: [
+            { src: bonialCompany, alt: "bonial.com home page: the retail marketing hub for retailers and brands", caption: "bonial.com — company context (public site, not built by me)", frame: "desktop" },
+          ],
+        },
+        {
+          id: "problem",
+          heading: "The challenge",
+          paragraphs: [
+            "A large JavaScript front-end shared by several screens: type errors reached production, and similar UI (forms, tables, dialogs) was rebuilt slightly differently on each screen.",
+            "On the back-end, offers and brochures needed precise edits without overwriting other fields, and marketing campaigns built on first-party data needed to run as repeatable, visible workflows instead of manual steps.",
+          ],
+        },
+        {
+          id: "role",
+          heading: "My role",
+          bullets: [
+            "Migrated more than 15 front-end modules from JavaScript to TypeScript 5.",
+            "Refactored React screens with Material UI 5 and Tailwind CSS 3, and built a reusable component library (buttons, forms, tables, modals).",
+            "Developed and maintained Spring Boot REST APIs for offer and brochure management, including PATCH endpoints for partial updates, documented with OpenAPI.",
+            "Implemented BPMN workflows in Camunda 7 to automate data-driven marketing campaigns based on first-party customer data.",
+            "Wrote unit and integration tests and shipped through GitHub Actions and Docker, in Scrum and Kanban ceremonies with the team.",
+          ],
+        },
+        {
+          id: "product",
+          heading: "Where the work shows up",
+          paragraphs: [
+            "Brochures and offers managed on the platform side are what shoppers see on kaufDA: a shelf of current brochures near them, a brochure viewer tied to the nearest store, and offer pages by product.",
+          ],
+          shots: [
+            { src: kaufdaBrochure, alt: "kaufDA brochure viewer: a REWE brochure with the nearest store, opening hours and page count", caption: "Brochure viewer with the nearest store and opening hours", frame: "desktop" },
+            { src: kaufdaMobile, alt: "kaufDA on a phone: brochure grid for postcode 10178", caption: "Mobile brochure shelf", frame: "phone" },
+            { src: kaufdaOffers, alt: "kaufDA offers page for coffee, listing brochures that contain coffee deals", caption: "Offers by product, linked to the brochures that contain them", frame: "desktop" },
+          ],
+        },
+        {
+          id: "decisions",
+          heading: "How I approached it",
+          decisions: [
+            {
+              title: "Migrate module by module, not in one big rewrite",
+              why: "The team kept shipping features while the migration ran. Each module moved to TypeScript on its own, so every merge left the app working.",
+              tradeoff: "For a while JavaScript and TypeScript lived side by side, with typed boundaries between them.",
+            },
+            {
+              title: "One component library instead of per-screen widgets",
+              why: "Buttons, forms, tables and modals were built once on Material UI 5 with Tailwind CSS, so screens look and behave the same and fixes land everywhere at once.",
+              tradeoff: "Up-front design work and agreeing on component APIs before using them.",
+            },
+            {
+              title: "PATCH for partial updates of offers and brochures",
+              why: "Editors change one field (a date, a price, a status) without resending the whole resource, so concurrent edits to other fields aren't overwritten.",
+              tradeoff: "Each patchable field needs its own validation and clear null-versus-missing semantics.",
+            },
+            {
+              title: "Campaigns as BPMN workflows in Camunda 7",
+              why: "Campaign steps become a diagram that product and marketing can read, with retries and timers handled by the engine rather than custom code.",
+              tradeoff: "Another runtime to operate and version alongside the services.",
+            },
+          ],
+        },
+        {
+          id: "code",
+          heading: "Pattern example",
+          code: {
+            filename: "Illustrative example — not Bonial source code",
+            language: "java",
+            intro:
+              "Bonial's code is private, so this is a minimal example of the PATCH pattern I used for partial updates: only the fields present in the request change.",
+            code: `@PatchMapping("/brochures/{id}")
+public BrochureResponse patch(@PathVariable UUID id,
+                              @Valid @RequestBody BrochurePatch patch) {
+    Brochure brochure = brochures.findById(id)
+        .orElseThrow(() -> new BrochureNotFoundException(id));
+
+    patch.title().ifPresent(brochure::setTitle);
+    patch.validFrom().ifPresent(brochure::setValidFrom);
+    patch.validUntil().ifPresent(brochure::setValidUntil);
+    patch.status().ifPresent(brochure::changeStatus); // domain rule checks
+
+    return mapper.toResponse(brochures.save(brochure));
+}
+
+// Optional<T> distinguishes "not sent" (leave unchanged) from a value to set.
+public record BrochurePatch(Optional<String> title,
+                            Optional<LocalDate> validFrom,
+                            Optional<LocalDate> validUntil,
+                            Optional<BrochureStatus> status) {}`,
+          },
+        },
+        {
+          id: "team",
+          heading: "Working with the team",
+          paragraphs: [
+            "Remote from Tunis, in the same daily stand-ups, refinements, reviews and retrospectives as the rest of Planet Express, with in-person sprint planning at Bonial's Berlin office.",
+          ],
+          shots: [
+            { src: bonialStandup, alt: "Daily stand-up with the Planet Express team at Bonial", caption: "Daily stand-up with the Planet Express team", frame: "desktop" },
+            { src: bonialOffice, alt: "Sprint planning at the Bonial office in Berlin", caption: "Sprint planning at the Berlin office", frame: "desktop" },
+          ],
+        },
+        {
+          id: "next",
+          heading: "What I took away",
+          bullets: [
+            "Incremental migrations work when every step ships: small, typed modules merged continuously beat a long-lived rewrite branch.",
+            "A component library only sticks if it is easier to use than copy-paste, so documentation and examples matter as much as the code.",
+            "Workflow engines make long-running business processes visible to people who don't read code.",
+          ],
+        },
+      ],
+    },
+  },
+
   /* ────────────────────────── Project cards (no full case study yet) ────────────────────────── */
   {
     slug: "tenderflow-ai",
@@ -370,16 +520,6 @@ if (! empty($levels)) {
     highlight: "~40% better document-search relevance",
     url: "https://www.tender-flow.com/",
     cover: { src: tenderflow, alt: "TenderFlow AI product screenshot", caption: "TenderFlow AI", frame: "desktop" },
-  },
-  {
-    slug: "bonial-console",
-    title: "Bonial Console",
-    tagline: "Retail SaaS for catalogues and geolocated offers: React front-end, Spring Boot APIs, Camunda campaign automation.",
-    client: "Bonial (Germany)",
-    period: "Sep 2025 – Feb 2026",
-    role: "Full-stack developer",
-    stack: ["React", "TypeScript 5", "Material UI 5", "Tailwind CSS", "Spring Boot", "Camunda 7"],
-    highlight: "15+ modules migrated to TypeScript · ~30% fewer production bugs",
   },
   {
     slug: "catalog-ai",

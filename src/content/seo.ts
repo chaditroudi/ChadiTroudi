@@ -18,7 +18,7 @@ export const staticPages: PageMeta[] = [
   {
     path: "/projects",
     title: `Work & case studies — ${profile.name}`,
-    description: "Case studies and projects: an AI analytics agent on MongoDB, a live directory of sworn translators, RAG pipelines and retail-tech platforms.",
+    description: "Case studies: an AI analytics agent on MongoDB, a live directory of sworn translators, and brochure and offer platforms at Bonial (kaufDA). Plus RAG pipelines and more.",
   },
   {
     path: "/experience",
