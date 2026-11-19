@@ -1,25 +1,27 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { useLang } from "@/hooks/use-lang";
+import SiteLayout from "@/components/site/SiteLayout";
+import { ButtonLink, Container, Eyebrow } from "@/components/site/primitives";
+import { usePageMeta } from "@/hooks/use-page-meta";
 
 const NotFound = () => {
-  const location = useLocation();
-  const { t } = useLang();
-
-  useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-  }, [location.pathname]);
+  usePageMeta({ path: "/404", title: "Page not found — Chadi Troudi", description: "This page doesn't exist. See my work, experience or contact details instead." });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">{t.notFound.title}</h1>
-        <p className="mb-4 text-xl text-muted-foreground">{t.notFound.subtitle}</p>
-        <a href="/" className="text-primary underline hover:text-primary/90">
-          {t.notFound.returnHome}
-        </a>
-      </div>
-    </div>
+    <SiteLayout>
+      <Container className="py-24 text-center sm:py-32">
+        <Eyebrow>404</Eyebrow>
+        <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight">This page doesn't exist.</h1>
+        <p className="mx-auto mt-4 max-w-md text-muted-foreground">The link may be out of date. Here's where most visitors are headed:</p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <ButtonLink to="/projects">See my work</ButtonLink>
+          <ButtonLink variant="secondary" to="/contact">
+            Contact me
+          </ButtonLink>
+          <ButtonLink variant="ghost" to="/">
+            Home
+          </ButtonLink>
+        </div>
+      </Container>
+    </SiteLayout>
   );
 };
 

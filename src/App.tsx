@@ -1,103 +1,44 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route } from "react-router-dom";
-import { LangProvider } from "@/hooks/use-lang";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Index from "./pages/Index";
-import About from "./pages/About";
-import Projects from "./pages/Projects";
-import Skills from "./pages/Skills";
-import Tutoring from "./pages/Tutoring";
-import Pricing from "./pages/Pricing";
-import Blog from "./pages/Blog";
-import Contact from "./pages/Contact";
-import Docs from "./pages/Docs";
-import Admin from "./pages/Admin";
-import NotFound from "./pages/NotFound";
-import PlatformLogin from "./pages/platform/PlatformLogin";
-import PlatformSignup from "./pages/platform/PlatformSignup";
-import Onboarding from "./pages/platform/Onboarding";
-import Assessment from "./pages/platform/Assessment";
-import PlatformLayout from "./pages/platform/PlatformLayout";
-import PlatformDashboard from "./pages/platform/PlatformDashboard";
-import LearningPath from "./pages/platform/LearningPath";
-import LevelDetail from "./pages/platform/LevelDetail";
-import LessonPage from "./pages/platform/LessonPage";
-import AchievementsPage from "./pages/platform/AchievementsPage";
-import CodingPlayground from "./pages/platform/CodingPlayground";
-import WorldMap from "./pages/platform/WorldMap";
-import IslandDetail from "./pages/platform/IslandDetail";
-import BossChallenge from "./pages/platform/BossChallenge";
-import SharpenYourSkills from "./pages/platform/SharpenYourSkills";
-import SkillDetail from "./pages/platform/SkillDetail";
-import AI4ELearning from "./pages/platform/AI4ELearning";
-import InterviewCoach from "./pages/platform/InterviewCoach";
-import DebugDetective from "./pages/platform/DebugDetective";
-import BillingPage from "./pages/platform/BillingPage";
-import AIAssistantPage from "./pages/platform/AIAssistantPage";
-import StudentHelp from "./pages/platform/StudentHelp";
-import CoursesLibrary from "./pages/platform/CoursesLibrary";
-import CourseDetail from "./pages/platform/CourseDetail";
-import CourseLessonViewer from "./pages/platform/CourseLessonViewer";
-import ResourceLibrary from "./pages/platform/ResourceLibrary";
-import { AIAssistantProvider } from "@/features/ai-assistant/hooks/use-ai-assistant";
-import { SubscriptionProvider } from "@/hooks/use-subscription";
-import { FeatureGate } from "@/components/platform/SaasGate";
 
-const queryClient = new QueryClient();
+// Home is eager (it's the landing page); everything else is split into its own chunk.
+const Projects = lazy(() => import("./pages/Projects"));
+const CaseStudy = lazy(() => import("./pages/CaseStudy"));
+const Experience = lazy(() => import("./pages/Experience"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+/** Old links used HashRouter (/#/projects). Send them to the real URL. */
+const LegacyHashRedirect = () => {
+  const { hash } = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (hash.startsWith("#/")) navigate(hash.slice(1), { replace: true });
+  }, [hash, navigate]);
+  return null;
+};
+
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <LangProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <HashRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/skills" element={<Skills />} />
-            <Route path="/tutoring" element={<Tutoring />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/docs" element={<Docs />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/platform/login" element={<PlatformLogin />} />
-            <Route path="/platform/signup" element={<PlatformSignup />} />
-            <Route path="/platform/onboarding" element={<Onboarding />} />
-            <Route path="/platform/assessment" element={<Assessment />} />
-            <Route path="/platform" element={<SubscriptionProvider><AIAssistantProvider><PlatformLayout /></AIAssistantProvider></SubscriptionProvider>}>
-              <Route path="dashboard" element={<PlatformDashboard />} />
-              <Route path="learn" element={<LearningPath />} />
-              <Route path="level/:levelId" element={<LevelDetail />} />
-              <Route path="lesson/:lessonId" element={<LessonPage />} />
-              <Route path="achievements" element={<AchievementsPage />} />
-              <Route path="playground" element={<FeatureGate feature="playground"><CodingPlayground /></FeatureGate>} />
-              <Route path="world-map" element={<WorldMap />} />
-              <Route path="island/:islandId" element={<IslandDetail />} />
-              <Route path="boss/:islandId" element={<BossChallenge />} />
-              <Route path="sharpen" element={<SharpenYourSkills />} />
-              <Route path="sharpen/skill/:skillId" element={<SkillDetail />} />
-              <Route path="ai-courses" element={<FeatureGate feature="ai_courses"><AI4ELearning /></FeatureGate>} />
-              <Route path="interview" element={<FeatureGate feature="interview_coach"><InterviewCoach /></FeatureGate>} />
-              <Route path="debug" element={<FeatureGate feature="debug_detective"><DebugDetective /></FeatureGate>} />
-              <Route path="billing" element={<BillingPage />} />
-              <Route path="ai-assistant" element={<AIAssistantPage />} />
-              <Route path="student-help" element={<StudentHelp />} />
-              <Route path="courses" element={<CoursesLibrary />} />
-              <Route path="courses/:courseId" element={<CourseDetail />} />
-              <Route path="courses/:courseId/:moduleId/:lessonId" element={<CourseLessonViewer />} />
-              <Route path="resources" element={<ResourceLibrary />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </HashRouter>
-      </TooltipProvider>
-    </LangProvider>
-  </QueryClientProvider>
+  <BrowserRouter basename={basename}>
+    <LegacyHashRedirect />
+    <Suspense fallback={<div className="min-h-screen bg-background" aria-busy="true" />}>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:slug" element={<CaseStudy />} />
+        <Route path="/experience" element={<Experience />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        {/* Former URLs */}
+        <Route path="/skills" element={<Navigate to="/experience" replace />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
+  </BrowserRouter>
 );
 
 export default App;
