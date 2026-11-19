@@ -92,7 +92,7 @@ Skip link, `header/nav/main/footer` landmarks, one `h1` per page, ordered lists 
 - The header gains a blurred background after 8 px of scroll.
 
 ### Mockups
-The implemented pages are the high-fidelity reference. To regenerate screenshots: `npm run build && npx vite preview`, then capture `/`, `/projects/mind-platform/`, `/projects/cabinet-tij/` at 1440×900 and 390×844 in both themes.
+The implemented pages are the high-fidelity reference. To regenerate screenshots: `npm run build && npx vite preview`, then capture `/`, `/projects/sicap/`, `/projects/cabinet-tij/`, `/projects/bonial/` at 1440×900 and 390×844 in both themes.
 
 ---
 
@@ -179,7 +179,7 @@ Every case study in `src/content/projects.ts` follows the same structure (tests 
 ## 7. Repository and hiring artifacts
 
 ### Commit convention
-[Conventional Commits](https://www.conventionalcommits.org): `feat(case-study): add TenderFlow AI`, `fix(a11y): list semantics on About`, `content(cv): update Mind Hands role`, `chore(ci): add Lighthouse budget`. Imperative mood, one change per commit.
+[Conventional Commits](https://www.conventionalcommits.org): `feat(case-study): add TenderFlow AI`, `fix(a11y): list semantics on About`, `content(cv): update Mind Platform role`, `chore(ci): add Lighthouse budget`. Imperative mood, one change per commit.
 
 ### Pull requests
 Use the template in `.github/pull_request_template.md`: what and why, screenshots for UI changes, and the QA checklist.
@@ -187,9 +187,9 @@ Use the template in `.github/pull_request_template.md`: what and why, screenshot
 ### Demo scripts
 
 **30 seconds (recruiter call):**
-"I'm a full-stack developer with four years of remote work for teams in Germany and Oman: Java/Spring Boot, Angular and React, and recently AI features. At Bonial I migrated 15+ modules to TypeScript and production bugs dropped by about 30%. Right now I'm building an AI analytics agent for Mind Platform. My portfolio has two case studies if you want to see how I work."
+"I'm a full-stack developer with four years of remote work for teams in Germany and Oman: Java/Spring Boot, Angular and React, and recently AI features. At Bonial I migrated 15+ modules to TypeScript and production bugs dropped by about 30%. Right now I'm the main Angular developer on SICAP, an institutional data platform in five languages, including Arabic. My portfolio has two case studies if you want to see how I work."
 
-**3 minutes (hiring manager), screen-share the Mind Platform case study:**
+**3 minutes (hiring manager), screen-share the SICAP case study (AI module):**
 1. Problem: every new business question needed a developer to write a query and a chart.
 2. Diagram: question → cache → planner LLM → validation → MongoDB → writer/chart LLM.
 3. Decision 1: validate LLM output against the registered schema, so hallucinated fields become retryable errors.
@@ -201,7 +201,8 @@ Use the template in `.github/pull_request_template.md`: what and why, screenshot
 ### Interview talking points (STAR)
 - **TypeScript migration at Bonial.** S: large JS front-end with recurring production bugs. T: migrate without stopping feature work. A: module by module, shared types first, reusable component library (MUI 5 + Tailwind). R: 15+ modules migrated, ~30% fewer production bugs.
 - **RAG relevance at Yanyi.** S: tender search returned weak matches. T: improve retrieval. A: LangChain/LangGraph pipeline with ChromaDB, Celery/Redis for async processing, PostgreSQL/MongoDB indexes and aggregations. R: ~40% better search relevance.
-- **Making LLM output safe to execute (Mind Platform).** Schema-registered fields, forbidden stages, one bounded retry with a targeted hint, classified errors, 7-day cache.
+- **Angular at scale in five languages (SICAP).** One codebase that mirrors for Arabic RTL; records → approvals → dashboards.
+- **Making LLM output safe to execute (SICAP AI module).** Schema-registered fields, forbidden stages, one bounded retry with a targeted hint, classified errors, 7-day cache.
 - **Owning production (Cabinet TIJ).** CORS failures fixed by serving the API on the same origin; deploy pipeline changed from rebuilding on the server to reset-and-restart-what-changed.
 - **Working remotely.** Four years with German and Omani teams in Scrum/Kanban: written updates, small PRs, overlapping CET hours.
 

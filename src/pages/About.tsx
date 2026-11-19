@@ -45,7 +45,7 @@ const About = () => {
           <div className="mt-6 space-y-4 text-lg leading-relaxed text-muted-foreground">
             <p>
               I'm a full-stack developer based in {profile.location}. Since 2022 I've worked remotely for product teams in Germany and Oman: Bonial (retail tech),
-              Yanyi (AI for tenders and catalogues), AlMergab (SaaS and fleet management) and, today, Mind Hands, where I build AI analytics for Mind Platform.
+              Yanyi (AI for tenders and catalogues), AlMergab (SaaS and fleet management) and, today, Mind Platform, where I work mostly on the Angular front-end of SICAP.
             </p>
             <p>
               I hold an engineering degree in computer science from ESPRIT. I'm most useful where correctness matters: typed APIs, migrations, data pipelines,

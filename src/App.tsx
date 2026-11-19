@@ -35,6 +35,7 @@ const App = () => (
         <Route path="/contact" element={<Contact />} />
         {/* Former URLs */}
         <Route path="/skills" element={<Navigate to="/experience" replace />} />
+        <Route path="/projects/mind-platform" element={<Navigate to="/projects/sicap" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

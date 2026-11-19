@@ -9,7 +9,8 @@ Full-Stack Developer (Java/Spring Boot · Angular · React · NestJS · AI). Thi
 | Page | Purpose |
 | --- | --- |
 | `/` | 10-second pitch: who I am, proof metrics, case studies, experience, contact |
-| `/projects/mind-platform` | Case study: an AI agent that turns plain-language questions into validated MongoDB pipelines |
+| `/projects/sicap` | Case study: SICAP on Mind Platform — Angular front-end (5 languages, Arabic RTL) and an AI analytics module |
+| `/projects/bonial` | Case study: Bonial / kaufDA — brochure and offer platforms, TypeScript migration |
 | `/projects/cabinet-tij` | Case study: a live directory of sworn translators (React + Laravel + Docker on a VPS) |
 | `/experience` | HTML version of the CV, readable by people, crawlers and ATS parsers |
 | `/about`, `/contact` | How I work; quick facts for recruiters |

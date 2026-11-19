@@ -3,6 +3,9 @@ import tijResults from "@/assets/case-studies/tij-results.webp";
 import tijJoin from "@/assets/case-studies/tij-join.webp";
 import tijMobile from "@/assets/case-studies/tij-mobile.webp";
 import tenderflow from "@/assets/case-studies/tenderflow.webp";
+import sicapEn from "@/assets/case-studies/sicap-signin-en.webp";
+import sicapAr from "@/assets/case-studies/sicap-signin-ar.webp";
+import sicapMobile from "@/assets/case-studies/sicap-signin-mobile.webp";
 import kaufdaShelf from "@/assets/case-studies/bonial-kaufda-shelf.webp";
 import kaufdaBrochure from "@/assets/case-studies/bonial-kaufda-brochure.webp";
 import kaufdaOffers from "@/assets/case-studies/bonial-kaufda-offers.webp";
@@ -65,64 +68,76 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  /* ────────────────────────── Mind Platform ────────────────────────── */
+  /* ────────────────────────── SICAP (Mind Platform) ────────────────────────── */
   {
-    slug: "mind-platform",
-    title: "Mind Platform — AI analytics agent",
+    slug: "sicap",
+    title: "SICAP — Angular front-end for an institutional data platform",
     tagline:
-      "Business users ask a question in plain language and get a validated MongoDB query back as a chart, a written report or a one-line answer, in seconds.",
-    client: "Mind Hands (2026 – present) · core platform with AlMergab (2022 – 2024)",
-    period: "Dec 2022 – present",
-    role: "Full-stack developer — designed and built the AI analytics service (NestJS) and its Angular client",
-    stack: ["Angular", "NestJS 11", "TypeScript", "MongoDB", "Mastra AI", "Vercel AI SDK", "Zod", "ECharts", "Jest"],
-    highlight: "Natural-language questions → validated MongoDB pipelines → charts & reports",
+      "SICAP lets institutions collect records, route them through approvals and publish live dashboards, in five languages including Arabic. I'm the main contributor to its Angular front-end, plus NestJS work.",
+    client: "Mind Platform (Mind Hands Tec)",
+    period: "Apr 2026 – present",
+    role: "Full-stack developer — mainly the Angular front-end, plus NestJS services and the AI analytics module",
+    stack: ["Angular", "TypeScript", "RxJS", "i18n (RTL + LTR)", "NestJS", "MongoDB", "Mastra AI", "ECharts", "Jest"],
+    highlight: "Angular app in 5 languages, Arabic right-to-left, records → approvals → dashboards",
     url: "https://www.mind-platform.com",
+    cover: { src: sicapEn, alt: "SICAP sign-in page: Govern your data. Decide with confidence. Records, approvals and dashboards.", caption: "SICAP sign-in", frame: "desktop" },
     caseStudy: {
-      team: "Sole developer of the AI analytics service",
+      team: "Mind Platform product team; I'm the main Angular contributor and sole developer of the AI analytics service",
       outcomes: [
-        { value: "2", label: "LLM calls per question (planner + writer), 0 on a cached repeat" },
-        { value: "3", label: "answer types from one endpoint: dashboard, report, inquiry" },
-        { value: "7", label: "LLM providers behind one model client, with automatic fallback" },
-        { value: "1", label: "bounded retry with a targeted hint — never an open-ended loop" },
+        { value: "5", label: "UI languages: Arabic, English, French, Spanish, Turkish" },
+        { value: "RTL ⇄ LTR", label: "one Angular app that mirrors its layout for Arabic" },
+        { value: "3", label: "core modules: records, approval workflows, dashboards" },
+        { value: "0", label: "LLM calls for a repeated AI question, thanks to a 7-day cache" },
       ],
       sections: [
         {
           id: "context",
           heading: "Context",
           paragraphs: [
-            "Mind Platform is a SaaS product for workflows, dashboards and business data management. From 2022 to 2024, with AlMergab, I built core platform features on an Angular + NestJS Nx monorepo: authentication (OTP, sessions, email verification, password reset), notifications over Server-Sent Events, reporting, workflows and permissions.",
-            "In 2026, as a freelancer for Mind Hands, I added an AI analytics layer on top of that data.",
+            "SICAP (Smart Institutional Coordination & Analytics Platform) is built by Mind Hands Tec on Mind Platform. Teams keep their data in records that are checked as they are entered, approval workflows send each record to the right people on time, and dashboards stay up to date as records change.",
+            "I first worked on Mind Platform in 2022–2024 through AlMergab (authentication with OTP, sessions and password reset; notifications over Server-Sent Events; reporting, workflows and permissions). Since April 2026 I've worked on SICAP as a freelancer, mostly on the Angular front-end.",
           ],
         },
         {
           id: "problem",
-          heading: "The problem",
+          heading: "The challenge",
           paragraphs: [
-            "Every new business question (\"top 5 projects by budget\", \"how many projects are active?\") needed a developer to write an aggregation pipeline and a chart. Fixed report templates did not keep up with new datasets.",
-            "The obvious fix, letting an LLM write database queries, brings real risks: invented field names, write or cross-collection stages, unbounded retries and unpredictable cost.",
+            "Users work in Arabic and in European languages, from data-entry staff filling in records to managers reading dashboards. The same Angular app has to switch language and direction without breaking layouts, stay responsive with large record lists and live charts, and validate forms strictly enough that bad data never reaches an approval step.",
+            "On top of that, managers wanted answers that dashboards didn't anticipate, without waiting for a developer to build a new chart.",
           ],
         },
         {
           id: "role",
           heading: "My role",
           bullets: [
-            "Designed the request pipeline end to end: intent detection, planning, validation, execution, chart and report generation.",
-            "Built the NestJS service (modules for analytics, data sources, cache, history, memory, provider settings) and the Angular client.",
-            "Wrote the model client that wraps OpenAI, Anthropic, Gemini, Groq, Mistral, Together and Perplexity behind one interface.",
-            "Added unit tests for the planner, writer, model client, pipeline and analytics services.",
+            "Main contributor to the Angular front-end: screens for records, approval workflows and dashboards, with reusable form and data-visualisation components.",
+            "Screens that work in all five languages, with the layout mirrored for Arabic right-to-left.",
+            "NestJS endpoints and MongoDB aggregations behind dashboards and reports, with attention to query and API performance.",
+            "The AI analytics module: a NestJS service and Angular client that turn plain-language questions into validated MongoDB pipelines, charts and reports (details below).",
+          ],
+        },
+        {
+          id: "product",
+          heading: "The product",
+          paragraphs: [
+            "Everything past sign-in holds client data, so only the public sign-in screens are shown here. They show the two things the front-end has to get right everywhere: Arabic right-to-left and Latin left-to-right from the same components, on desktop and mobile.",
+          ],
+          shots: [
+            { src: sicapAr, alt: "SICAP sign-in in Arabic, laid out right to left", caption: "Arabic (right-to-left) — the default language", frame: "desktop" },
+            { src: sicapMobile, alt: "SICAP sign-in on a phone in Arabic", caption: "Mobile, Arabic", frame: "phone" },
           ],
         },
         {
           id: "architecture",
-          heading: "How a question becomes an answer",
+          heading: "AI analytics module: how a question becomes an answer",
           paragraphs: [
-            "Datasets are registered at runtime as data sources: a MongoDB collection plus a field schema. The planner LLM only ever sees registered field names, and its output is a Zod-typed plan that must pass validation before it reaches the database.",
+            "Inside SICAP, managers can also ask a question in plain language (English or Arabic) and get a chart, a short report or a one-line answer. Datasets are registered at runtime as data sources: a MongoDB collection plus a field schema. The planner LLM only ever sees registered field names, and its output is a Zod-typed plan that must pass validation before it reaches the database.",
           ],
           diagram: "mind-pipeline",
         },
         {
           id: "decisions",
-          heading: "Key decisions",
+          heading: "Key decisions in the AI module",
           decisions: [
             {
               title: "Validate every LLM-written pipeline against a registered schema",
@@ -195,7 +210,7 @@ export const projects: Project[] = [
           heading: "Results",
           bullets: [
             "One endpoint (POST /api/analytics) returns three kinds of answer: ECharts dashboards, 1–5 section reports, or short factual answers.",
-            "Questions can be asked in English or Arabic.",
+            "AI questions can be asked in English or Arabic, matching the rest of the interface.",
             "LLM failures surface as classified errors (INVALID_API_KEY, LLM_RATE_LIMIT, TOKEN_LIMIT_TOO_LOW…) with a human-readable next step, instead of stack traces.",
             "Token usage is tracked per user and per connection, so AI cost can be attributed.",
           ],
@@ -204,7 +219,7 @@ export const projects: Project[] = [
           id: "next",
           heading: "What I'd do next",
           bullets: [
-            "Production-grade multi-tenant access control and per-tenant cost caps.",
+            "Per-tenant cost caps and stricter access control for the AI module.",
             "Extend unit tests to the chart, cache and history services.",
             "An evaluation set of real business questions to catch prompt regressions in CI.",
           ],
@@ -283,7 +298,7 @@ export const projects: Project[] = [
         },
         {
           id: "decisions",
-          heading: "Key decisions",
+          heading: "Key decisions in the AI module",
           decisions: [
             {
               title: "Serve the API on the same origin",
